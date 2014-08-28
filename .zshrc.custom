@@ -42,7 +42,7 @@ case ${UID} in
     RED="%{${fg[red]}%}"
     CYAN="%{${fg[cyan]}%}"
     WHITE="%{${fg[white]}%}"
-    POH="( ꒪⌓꒪) $"
+    POH="$"
 
     #
     # Prompt

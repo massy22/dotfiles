@@ -7,7 +7,7 @@ set laststatus=2 " 常にステータスラインを表示
 set ruler
 
 " vim-powerlineでフォントにパッチを当てないなら以下をコメントアウト
-let g:Powerline_symbols = 'fancy'
+" let g:Powerline_symbols = 'fancy'
 
 "ステータスラインに文字コードと改行文字を表示する
 " if winwidth(0) >= 120
