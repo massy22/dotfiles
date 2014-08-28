@@ -244,9 +244,9 @@ call neobundle#begin(expand('~/.vim/bundle'))
   " DumbBuf.vim : quickbufっぽくbufferを管理。 "<Leader>b<Space>でBufferList
   NeoBundle 'DumbBuf'
 
+  " 肌に合わないから無効化
   " minibufexpl.vim : タブエディタ風にバッファ管理ウィンドウを表示
-  " NeoBundle 'minibufexpl.vim'
-  NeoBundle 'fholgado/minibufexpl.vim'
+  " NeoBundle 'fholgado/minibufexpl.vim'
 
   " NERDTree : ツリー型エクスプローラ
   NeoBundle 'The-NERD-tree'
