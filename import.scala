@@ -1,6 +1,6 @@
-import com.yuroyoro.util._
-import com.yuroyoro.util.io._
-import com.yuroyoro.util.net._
+import com.massy22.util._
+import com.massy22.util.io._
+import com.massy22.util.net._
 
 import scala.io.Source
 import scala.collection.JavaConversions._
@@ -12,7 +12,7 @@ import scala.xml.parsing.XhtmlParser
 // import java.util.{List => JList, Map => JMap }
 // import java.util.{Calendar,Date }
 
-// // import _root_.com.yuroyoro.interactivehelp.Help._
+// // import _root_.com.massy22.interactivehelp.Help._
 // //
 // type -->[A, B]  = PartialFunction[A, B]
 

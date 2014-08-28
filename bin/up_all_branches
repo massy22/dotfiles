@@ -1,5 +1,5 @@
 #!/bin/bash
-ssh-agent /home/ozaki/.ssh/ozaki_id_rsa
+ssh-agent /home/mashiko_kazuki/.ssh/id_rsa
 git fetch
 for branch in `git branch -r | cut -d " " -f3 | grep -v HEAD | sed -e "s/^origin\///g" | sort | uniq` ; do
   echo ${branch}

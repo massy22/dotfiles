@@ -1,6 +1,6 @@
 [user]
-  name = Tomohito Ozaki
-  email = ozaki@yuroyoro.com
+  name = Kazuki Mashiko
+  email = kazuki.mashiko@drecom.co.jp
 [color]
   # colorの設定(以下のコマンドは自動で色つける)
   status = auto
@@ -183,10 +183,10 @@
   generic = <Ctrl-B> move-page-up
 
 [ghq]
-	root = /Users/ozaki/src
+  root = /Users/kazuki_mashiko/src
 [rerere]
-	enabled = true
+  enabled = true
 [mergetool]
-	keepBackup = false
+  keepBackup = false
 [ruby]
-	version = 2.2.4
+  version = 2.2.4

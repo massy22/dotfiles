@@ -27,10 +27,10 @@ export PATH=$JAVA_HOME/bin:$PATH
 export _JAVA_OPTIONS="-Dfile.encoding=UTF-8"
 
 # haskell
-export PATH=/Users/ozaki/Library/Haskell/bin:$PATH
+export PATH=/Users/mashiko_kazuki/Library/Haskell/bin:$PATH
 
 # scala
-export SCALA_HOME=/Users/ozaki/.svm/current/rt
+export SCALA_HOME=/Users/mashiko_kazuki/.svm/current/rt
 PATH=$SCALA_HOME/bin:$PATH
 export SCALA_DOC_HOME=$SCALA_HOME/../devel-docs/api/
 
@@ -79,7 +79,7 @@ export PATH="/usr/local/heroku/bin:$PATH"
 
 
 # Ruby
-# if [[ -s /Users/ozaki/.rvm/scripts/rvm ]] ; then source $HOME/.rvm/scripts/rvm ; fi
+# if [[ -s /Users/mashiko_kazuki/.rvm/scripts/rvm ]] ; then source $HOME/.rvm/scripts/rvm ; fi
 export RBENV_ROOT=/usr/local/var/rbenv
 if which rbenv > /dev/null 2>&1 ; then eval "$(rbenv init -)"; fi
 
@@ -103,7 +103,7 @@ alias tm='tmuxx'
 alias tma='tmux attach'
 alias tml='tmux list-window'
 
-#ec2
+# ec2
 export JAVA_HOME="$(/usr/libexec/java_home)"
 #export EC2_PRIVATE_KEY="$(/bin/ls "$HOME"/.ec2/pk-*.pem | /usr/bin/head -1)"
 #export EC2_CERT="$(/bin/ls "$HOME"/.ec2/cert-*.pem | /usr/bin/head -1)"
