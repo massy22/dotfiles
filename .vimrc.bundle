@@ -191,6 +191,9 @@ call neobundle#begin(expand('~/.vim/bundle'))
   " haml
   NeoBundle 'haml.zip'
 
+  " slim
+  NeoBundle 'slim-template/vim-slim'
+
   " JavaScript
   " NeoBundle 'JavaScript-syntax'
   NeoBundle 'pangloss/vim-javascript'
