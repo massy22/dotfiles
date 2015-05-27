@@ -98,8 +98,6 @@ export PATH=$PATH:$(go env GOROOT)/bin:$GOPATH/bin
 export PATH=$HOME/.nodebrew/current/bin:$PATH
 
 # tmux
-alias tmux='tmuxx'
-alias tm='tmuxx'
 alias tma='tmux attach'
 alias tml='tmux list-window'
 

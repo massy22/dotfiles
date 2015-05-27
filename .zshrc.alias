@@ -58,7 +58,9 @@ alias sr='screen -r main'
 alias srr='screen -U -D -RR'
 
 # tmux
+alias tmux='TERM=screen-256color tmux'
 alias tm='tmux'
+alias tmn='tmux new-session -n zsh'
 alias tma='tmux attach'
 alias tma0='tmux attach -t 0'
 alias tma1='tmux attach -t 1'
