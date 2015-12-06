@@ -416,6 +416,9 @@ let g:syntastic_enable_signs = 1
 let g:syntastic_enable_highlighting = 1
 " 自動的に開いたり閉じたりする
 let g:syntastic_auto_loc_list=1
+" エラーを抑制する
+let g:syntastic_eruby_ruby_quiet_messages =
+    \ {'regex': 'possibly useless use of a variable in void context'}
 
 let g:syntastic_aggregate_errors = 1
 " https://github.com/scrooloose/syntastic/wiki/JavaScript:---jsxhint
