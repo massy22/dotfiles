@@ -498,6 +498,14 @@ let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
 let g:go_list_type = "quickfix"
 
+au FileType go nmap <leader>gb <Plug>(go-build)
+au FileType go nmap <leader>gt <Plug>(go-test)
+au FileType go nmap <Leader>d <Plug>(go-doc)
+au FileType go nmap <Leader>js <Plug>(go-def-split)
+au FileType go nmap <Leader>jv <Plug>(go-def-vertical)
+au FileType go nmap <Leader>dv <Plug>(go-doc-vertical)
+au FileType go nmap gf <Plug>(go-def)
+
 "------------------------------------
 " mxw/vim-jsx
 "------------------------------------
