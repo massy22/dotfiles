@@ -89,7 +89,8 @@ alias gci='git commit -a'
 alias '偽ｔ'=git
 
 # jq
-alias -g JQ='jq "."'
+alias -g JQ='jq -C "."'
+alias -g LJQ='jq -C "." | less -R'
 
 function lessjq() {
   cat $1 | jq -C "." | less -R
@@ -141,7 +142,7 @@ alias sce='scala'
 alias ex='extract'
 
 alias ev='vi ~/dotfiles/.vimrc*'
-alias be='bundle exec'
+# alias be='bundle exec'
 
 grepvim() {
     XFS=`grep -ERUInl $* | uniq | xargs`

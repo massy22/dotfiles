@@ -34,7 +34,7 @@ DISABLE_AUTO_TITLE="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 
-plugins=(brew bundler capistrano coffee command-not-found extract gem git git-flow github heroku history history-substring-search lein mvn node npm pip python rails rake rbenv redis-cli rsync ruby svn thor urltools vagrant vi-mode vundle yum)
+plugins=(brew capistrano coffee command-not-found extract gem git git-flow github heroku history history-substring-search lein mvn node npm pip python rails rake rbenv redis-cli rsync ruby svn thor urltools vagrant vi-mode vundle yum)
 source $ZSH/oh-my-zsh.sh
 
 # Customize to your needs...
@@ -43,6 +43,12 @@ source $HOME/.zshrc.custom
 
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
+
+# The next line updates PATH for the Google Cloud SDK.
+source '/home/mashiko_kazuki/src/google-cloud-sdk/path.zsh.inc'
+
+# The next line enables shell command completion for gcloud.
+source '/home/mashiko_kazuki/src/google-cloud-sdk/completion.zsh.inc'
 
 # for neovim
 export XDG_CONFIG_HOME=~/.config

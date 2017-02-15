@@ -33,6 +33,7 @@ command! -nargs=1 Gr :Rgrep <args> *<Enter><CR>
 nnoremap <silent> <C-g><C-r> :<C-u>Rgrep<Space><C-r><C-w> *<Enter><CR>
 
 let Grep_Skip_Dirs = '.svn .git'
+let Grep_Default_Options = '-I'   "バイナルファイルがgrepしない;
 let Grep_Skip_Files = '*.bak *~'
 
 " A wrapper function of :keeppatterns for Vim 7.4 compativility
