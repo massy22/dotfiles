@@ -15,11 +15,15 @@
   autocrlf = input                 # CRLFを自動変換
   editor = vim
   quotepath = false
+  attributesfile = /Users/mashiko_kazuki/.gitattributes
 [merge]
   tool = vimdiff
   ff = false
 [diff]
   tool=vimdiff
+[diff "xlsx"]
+  binary = true
+  textconv = $GOPATH/bin/git-xlsx-textconv
 [branch]
   autosetuprebase = always
 [pull]
