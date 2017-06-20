@@ -18,10 +18,12 @@ alias duh="du -h ./ --max-depth=1"
 alias su="su -l"
 
 # vim
-alias v='vim'
 alias 'src'='exec zsh'
 alias -g V="| vim -"
 alias -g EV="| xargs --verbose sh -c 'vim \"\$@\" < /dev/tty'"
+
+# nvim
+alias v='nvim'
 
 # rails
 alias -g RET="RAILS_ENV=test"

@@ -1,0 +1,1 @@
+/Users/mashiko_kazuki/.vimrc
