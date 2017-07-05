@@ -320,7 +320,7 @@ call dein#add('Shougo/vimproc.vim', {'build': 'make'})
 
 " }}}
 
-" ColorSchema{{{{
+" ColorSchema {{{{
   " color schema 256
   call dein#add('desert256.vim')
   call dein#add('mrkn256.vim')
