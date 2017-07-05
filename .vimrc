@@ -1,4 +1,4 @@
-"vunlde.vimで管理してるpluginを読み込む
+" dein.vimで管理してるpluginを読み込む
 source ~/dotfiles/.vimrc.bundle
 
 "基本設定
@@ -33,5 +33,3 @@ source ~/dotfiles/.vimrc.plugins_setting
 "Vimでgitのログをきれいに表示する - derisの日記
 "  http://deris.hatenablog.jp/entry/2013/05/10/003430
 " source ~/dotfiles/.vimrc.gitlogviewer
-
-
