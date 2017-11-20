@@ -19,6 +19,7 @@
 [merge] tool = vimdiff ff = false
 [diff]
   tool=vimdiff
+  compactionHeuristic = true
 [diff "xlsx"]
   binary = true
   textconv = $GOPATH/bin/git-xlsx-textconv
@@ -27,7 +28,7 @@
 [pull]
   rebase = true
 [pager]
-  log = diff-highlight | less
+  log  = diff-highlight | less
   show = diff-highlight | less
   diff = diff-highlight | less
 [alias]
