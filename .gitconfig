@@ -16,9 +16,7 @@
   editor = vim
   quotepath = false
   attributesfile = /Users/mashiko_kazuki/.gitattributes
-[merge]
-  tool = vimdiff
-  ff = false
+[merge] tool = vimdiff ff = false
 [diff]
   tool=vimdiff
 [diff "xlsx"]
