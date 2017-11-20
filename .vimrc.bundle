@@ -241,6 +241,10 @@ call dein#add('Shougo/vimproc.vim', {'build': 'make'})
   " http://qiita.com/karur4n/items/a26007236c59c5fb8735
   call dein#add('elzr/vim-json')
 
+  " Rust
+  NeoBundle 'rust-lang/rust.vim'
+  NeoBundle 'racer-rust/vim-racer'
+  NeoBundle 'rhysd/rust-doc.vim'
 " }}}
 
 " Buffer {{{

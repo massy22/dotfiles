@@ -31,6 +31,7 @@ inoremap <C-w>  <C-g>u<C-w>
 " :Ptでインデントモード切替
 command! Pt :set paste!
 
+
 " インサートモード中に<C-o>でyankした内容をputする
 inoremap <C-o> <ESC>:<C-U>YRPaste 'p'<CR>i
 
