@@ -1,3 +1,5 @@
+source ~/dotfiles/nvim/dein.rc.vim
+
 " load option settings
 source ~/dotfiles/nvim/options.rc.vim
 

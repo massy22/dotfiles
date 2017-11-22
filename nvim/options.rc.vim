@@ -74,6 +74,8 @@ set smartcase   " disable ignorecase if search word contains uppercase charactor
 "-------------------------------------------------------------------------------
 " Colors
 "-------------------------------------------------------------------------------
+colorscheme iceberg
+
 set termguicolors " 256 color
 
 " change selected completion item color
