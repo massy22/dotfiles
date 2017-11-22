@@ -38,6 +38,22 @@ set display=uhex      " show unprintable charactor as hex string
 highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=darkgray
 match ZenkakuSpace /　/
 
+
+"-------------------------------------------------------------------------------
+" Colors
+"-------------------------------------------------------------------------------
+
+set termguicolors " 256 color
+
+" Highlight the go 'error'
+autocmd FileType go :highlight goErr cterm=bold ctermfg=214
+autocmd FileType go :match goErr /\<err\>/
+
+" Highlight the js colon at end of line
+autocmd FileType javascript :highlight jsColonAtTail  cterm=underline ctermfg=lightblue guibg=darkgray
+autocmd FileType javascript :match jsColonAtTail /:$/
+
+
 "-------------------------------------------------------------------------------
 " Cursor
 "-------------------------------------------------------------------------------
@@ -50,18 +66,17 @@ augroup cch
   autocmd! cch
   autocmd WinLeave * set nocursorline
   autocmd WinEnter,BufRead * set cursorline
+
+   " cursor line highlight settings. (draw underline)
+  autocmd VimEnter * highlight CursorLine gui=underline term=underline cterm=underline
 augroup END
 
-" cursor line highlight settings. (draw underline)
-hi clear CursorLine
-hi CursorLine gui=underline
-highlight CursorLine ctermbg=black guibg=black
 
-" change the current cursor line color when into insert mode
+" change the current cursor line bgcolor when into insert mode
 augroup vimrc_change_cursorline_color
   autocmd!
-  autocmd InsertEnter * highlight CursorLine term=underline cterm=underline ctermbg=240 gui=underline guibg=#666666 | highlight CursorColumn ctermfg=231 ctermbg=31 gui=bold guifg=#ffffff guibg=#0087af
-  autocmd InsertLeave * highlight CursorLine term=underline cterm=underline ctermbg=235 gui=underline guibg=#333333 | highlight CursorColumn term=reverse ctermbg=235 guibg=#333333
+  autocmd InsertEnter * highlight CursorLine term=underline cterm=underline ctermbg=236 gui=underline guibg=#3d425b
+  autocmd InsertLeave * highlight CursorLine term=underline cterm=underline ctermbg=235 gui=underline guibg=#1e2132
 augroup END
 
 "-------------------------------------------------------------------------------
@@ -70,30 +85,6 @@ augroup END
 
 set ignorecase  " case insensitive search
 set smartcase   " disable ignorecase if search word contains uppercase charactor
-
-"-------------------------------------------------------------------------------
-" Colors
-"-------------------------------------------------------------------------------
-colorscheme iceberg
-
-set termguicolors " 256 color
-
-" change selected completion item color
-hi PmenuSel cterm=reverse ctermfg=33 ctermbg=222 gui=reverse guifg=#3399ff guibg=#f0e68c
-
-" Highlight the go 'error'
-autocmd FileType go :highlight goErr cterm=bold ctermfg=214
-autocmd FileType go :match goErr /\<err\>/
-
-" Highlight the js colon at end of line
-autocmd FileType javascript :highlight jsColonAtTail  cterm=underline ctermfg=lightblue guibg=darkgray
-autocmd FileType javascript :match jsColonAtTail /:$/
-
-" vimdiff coloring
-highlight DiffAdd    cterm=bold ctermfg=10 ctermbg=22
-highlight DiffDelete cterm=bold ctermfg=10 ctermbg=52
-highlight DiffChange cterm=bold ctermfg=10 ctermbg=17
-highlight DiffText   cterm=bold ctermfg=10 ctermbg=21
 
 "-------------------------------------------------------------------------------
 " Editing
