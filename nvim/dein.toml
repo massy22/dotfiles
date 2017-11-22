@@ -17,3 +17,21 @@ colorscheme iceberg
 
 [[plugins]]
 repo = 'scrooloose/nerdcommenter'
+
+
+# ==========================================================
+# filter
+# ==========================================================
+[[plugins]]
+repo = 'Shougo/neomru.vim'
+
+[[plugins]]
+repo = 'Shougo/denite.nvim'
+depends = ['neomru.vim']
+hook_add = '''
+source ~/.config/nvim/plugins/denite.rc.vim
+'''
+
+[[plugins]]
+repo = 'nixprime/cpsm'
+build = 'env PY3=ON ./install.sh'
