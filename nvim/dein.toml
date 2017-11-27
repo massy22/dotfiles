@@ -14,13 +14,23 @@ source ~/.config/nvim/plugins/iceberg.rc.vim
 '''
 
 # ==========================================================
-# basic
+# moving
+# ==========================================================
+
+# camel motion
+[[plugins]]
+repo = 'bkad/CamelCaseMotion'
+hook_add = '''
+source ~/.config/nvim/plugins/CamelCaseMotion.rc.vim
+'''
+
+# ==========================================================
+# editing
 # ==========================================================
 
 # comment functions
 [[plugins]]
 repo = 'scrooloose/nerdcommenter'
-
 
 # align
 [[plugins]]
