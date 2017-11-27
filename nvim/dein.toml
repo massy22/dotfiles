@@ -9,9 +9,8 @@ repo = 'Shougo/dein.vim'
 # status line
 [[plugins]]
 repo = 'vim-airline/vim-airline'
-hook_add = '''
-let g:airline_powerline_fonts = 1
-'''
+hook_add = 'let g:airline_powerline_fonts = 1'
+
 # status line
 [[plugins]]
 repo = 'vim-airline/vim-airline-themes'
@@ -19,9 +18,7 @@ repo = 'vim-airline/vim-airline-themes'
 # color scheme
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
-hook_add = '''
-source ~/.config/nvim/plugins/iceberg.rc.vim
-'''
+hook_add = 'source ~/.config/nvim/plugins/iceberg.rc.vim'
 
 # ==========================================================
 # moving
@@ -30,9 +27,7 @@ source ~/.config/nvim/plugins/iceberg.rc.vim
 # camel motion
 [[plugins]]
 repo = 'bkad/CamelCaseMotion'
-hook_add = '''
-source ~/.config/nvim/plugins/CamelCaseMotion.rc.vim
-'''
+hook_add = 'source ~/.config/nvim/plugins/CamelCaseMotion.rc.vim'
 
 # ==========================================================
 # editing
@@ -45,9 +40,7 @@ repo = 'scrooloose/nerdcommenter'
 # align
 [[plugins]]
 repo = 'junegunn/vim-easy-align'
-hook_add = '''
-source ~/.config/nvim/plugins/vim-easy-align.rc.vim
-'''
+hook_add = 'source ~/.config/nvim/plugins/vim-easy-align.rc.vim'
 
 [[plugins]]
 repo = 'tpope/vim-surround'
@@ -56,15 +49,22 @@ source ~/.config/nvim/plugins/vim-surround.rc.vim
 '''
 
 # ==========================================================
+# completion
+# ==========================================================
+
+[[plugins]]
+repo = 'Shougo/deoplete.nvim'
+hook_add = 'source ~/.config/nvim/plugins/vim-surround.rc.vim'
+
+# ==========================================================
 # filter
 # ==========================================================
 
 # minibufexplorer
 [[plugins]]
 repo = 'fholgado/minibufexpl.vim'
-hook_add = '''
-source ~/.config/nvim/plugins/minibufexpl.rc.vim
-'''
+hook_add = ' source ~/.config/nvim/plugins/minibufexpl.rc.vim '
+
 
 # mru files
 [[plugins]]
@@ -74,9 +74,7 @@ repo = 'Shougo/neomru.vim'
 [[plugins]]
 repo = 'Shougo/denite.nvim'
 depends = ['neomru.vim']
-hook_add = '''
-source ~/.config/nvim/plugins/denite.rc.vim
-'''
+hook_add = 'source ~/.config/nvim/plugins/denite.rc.vim'
 
 # fastest matcher
 [[plugins]]
@@ -91,6 +89,4 @@ build = 'env PY3=ON ./install.sh'
 # git
 [[plugins]]
 repo = 'airblade/vim-gitgutter'
-hook_add = '''
-source ~/.config/nvim/plugins/gitgutter.rc.vim
-'''
+hook_add = ' source ~/.config/nvim/plugins/gitgutter.rc.vim '
