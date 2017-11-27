@@ -22,8 +22,12 @@ source ~/.config/nvim/plugins/iceberg.rc.vim
 repo = 'scrooloose/nerdcommenter'
 
 
+# align
 [[plugins]]
-repo = 'scrooloose/nerdcommenter'
+repo = 'junegunn/vim-easy-align'
+hook_add = '''
+source ~/.config/nvim/plugins/vim-easy-align.rc.vim
+'''
 
 # ==========================================================
 # filter

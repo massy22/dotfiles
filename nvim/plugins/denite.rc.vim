@@ -1,3 +1,7 @@
+"------------------------------------
+" denite.nvim
+"------------------------------------
+
 " Change default prompt
 call denite#custom#option('default', {
       \ 'prompt': '>',

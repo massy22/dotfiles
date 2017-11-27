@@ -38,7 +38,6 @@ set display=uhex      " show unprintable charactor as hex string
 highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=darkgray
 match ZenkakuSpace /　/
 
-
 "-------------------------------------------------------------------------------
 " Colors
 "-------------------------------------------------------------------------------
@@ -52,8 +51,6 @@ autocmd FileType go :match goErr /\<err\>/
 " Highlight the js colon at end of line
 autocmd FileType javascript :highlight jsColonAtTail  cterm=underline ctermfg=lightblue guibg=darkgray
 autocmd FileType javascript :match jsColonAtTail /:$/
-
-
 
 "-------------------------------------------------------------------------------
 " Cursor
