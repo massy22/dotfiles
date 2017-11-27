@@ -29,6 +29,12 @@ hook_add = '''
 source ~/.config/nvim/plugins/vim-easy-align.rc.vim
 '''
 
+[[plugins]]
+repo = 'tpope/vim-surround'
+hook_add = '''
+source ~/.config/nvim/plugins/vim-surround.rc.vim
+'''
+
 # ==========================================================
 # filter
 # ==========================================================
