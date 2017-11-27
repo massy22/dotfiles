@@ -3,8 +3,18 @@
 repo = 'Shougo/dein.vim'
 
 # ==========================================================
-# color
+# color,look and feel
 # ==========================================================
+
+# status line
+[[plugins]]
+repo = 'vim-airline/vim-airline'
+hook_add = '''
+let g:airline_powerline_fonts = 1
+'''
+# status line
+[[plugins]]
+repo = 'vim-airline/vim-airline-themes'
 
 # color scheme
 [[plugins]]
@@ -79,7 +89,7 @@ build = 'env PY3=ON ./install.sh'
 # ==========================================================
 
 # git
-[hplugins]]
+[[plugins]]
 repo = 'airblade/vim-gitgutter'
 hook_add = '''
 source ~/.config/nvim/plugins/gitgutter.rc.vim
