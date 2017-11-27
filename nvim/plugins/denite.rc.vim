@@ -57,7 +57,7 @@ nnoremap <silent> [denite]u :<C-u>Denite file_mru <CR>
 nnoremap <silent> [denite]r :<C-u>Denite file_rec <CR>
 
 " source buffer
-nnoremap <silent> [denite]b :<C-u>Denite file <CR>
+nnoremap <silent> [denite]b :<C-u>Denite buffer <CR>
 
 " source help
 nnoremap <silent> [denite]h :<C-u>DeniteCursorWord help <CR>

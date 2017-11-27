@@ -74,3 +74,13 @@ repo = 'nixprime/cpsm'
 build = 'env PY3=ON ./install.sh'
 
 
+# ==========================================================
+# programming
+# ==========================================================
+
+# git
+[hplugins]]
+repo = 'airblade/vim-gitgutter'
+hook_add = '''
+source ~/.config/nvim/plugins/gitgutter.rc.vim
+'''
