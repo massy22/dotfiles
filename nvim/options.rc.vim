@@ -54,6 +54,7 @@ autocmd FileType javascript :highlight jsColonAtTail  cterm=underline ctermfg=li
 autocmd FileType javascript :match jsColonAtTail /:$/
 
 
+
 "-------------------------------------------------------------------------------
 " Cursor
 "-------------------------------------------------------------------------------

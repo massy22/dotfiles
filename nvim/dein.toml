@@ -1,3 +1,4 @@
+# plugiin magagement
 [[plugins]]
 repo = 'Shougo/dein.vim'
 
@@ -5,26 +6,34 @@ repo = 'Shougo/dein.vim'
 # color
 # ==========================================================
 
+# color scheme
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
 hook_add = '''
-colorscheme iceberg
+source ~/.config/nvim/plugins/iceberg.rc.vim
 '''
 
 # ==========================================================
 # basic
 # ==========================================================
 
+# comment functions
 [[plugins]]
 repo = 'scrooloose/nerdcommenter'
 
 
+[[plugins]]
+repo = 'scrooloose/nerdcommenter'
+
 # ==========================================================
 # filter
 # ==========================================================
+
+# mru files
 [[plugins]]
 repo = 'Shougo/neomru.vim'
 
+# fizzy finder
 [[plugins]]
 repo = 'Shougo/denite.nvim'
 depends = ['neomru.vim']
@@ -32,6 +41,9 @@ hook_add = '''
 source ~/.config/nvim/plugins/denite.rc.vim
 '''
 
+# fastest matcher
 [[plugins]]
 repo = 'nixprime/cpsm'
 build = 'env PY3=ON ./install.sh'
+
+

@@ -98,7 +98,7 @@ vnoremap v $h
 inoremap jj <Esc>
 
 " in insert-mode, paste the clipboard
-imap <C-v><CR>  <ESC>pa
+imap <C-v><C-V>  <ESC>pa
 
 " yank to end on line
 nmap y9 y$
