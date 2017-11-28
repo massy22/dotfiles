@@ -15,6 +15,8 @@ set notitle                   " 'Thanks for Flying Vim'
 set noundofile                " avoid creating a undo file
 set clipboard=unnamed         " put the yanked string into unnamed buffer(as system clipboard)
 set wildmode=list:full        " command-line completion, list all matches and complete first match
+
+
 "-------------------------------------------------------------------------------
 " Indentation
 "-------------------------------------------------------------------------------
@@ -23,6 +25,8 @@ set smartindent  " smart autoindenting when starting a new line
 set cindent      " enables automatic C program indenting
 set tabstop=2 shiftwidth=2 softtabstop=0
 
+filetype plugin indent on
+syntax enable
 
 "-------------------------------------------------------------------------------
 " Apperance

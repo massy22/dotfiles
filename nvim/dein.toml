@@ -9,7 +9,7 @@ repo = 'Shougo/dein.vim'
 # status line
 [[plugins]]
 repo = 'vim-airline/vim-airline'
-hook_add = 'let g:airline_powerline_fonts = 1'
+hook_add = 'source ~/.config/nvim/plugins/airline.rc.vim'
 
 # status line
 [[plugins]]
@@ -17,8 +17,9 @@ repo = 'vim-airline/vim-airline-themes'
 
 # color scheme
 [[plugins]]
+depends = ['airline.vim']
 repo = 'cocopon/iceberg.vim'
-hook_add = 'source ~/.config/nvim/plugins/iceberg.rc.vim'
+hook_post_source = 'source ~/.config/nvim/plugins/iceberg.rc.vim'
 
 # ==========================================================
 # moving
@@ -52,6 +53,7 @@ source ~/.config/nvim/plugins/vim-surround.rc.vim
 # completion
 # ==========================================================
 
+
 [[plugins]]
 repo = 'Shougo/deoplete.nvim'
 hook_add = 'source ~/.config/nvim/plugins/deoplete.rc.vim'
@@ -63,7 +65,7 @@ hook_add = 'source ~/.config/nvim/plugins/deoplete.rc.vim'
 # minibufexplorer
 [[plugins]]
 repo = 'fholgado/minibufexpl.vim'
-hook_add = ' source ~/.config/nvim/plugins/minibufexpl.rc.vim '
+hook_add = 'source ~/.config/nvim/plugins/minibufexpl.rc.vim '
 
 
 # mru files
@@ -89,9 +91,8 @@ build = 'env PY3=ON ./install.sh'
 # git
 [[plugins]]
 repo = 'airblade/vim-gitgutter'
-hook_add = ' source ~/.config/nvim/plugins/gitgutter.rc.vim '
+hook_add = 'source ~/.config/nvim/plugins/gitgutter.rc.vim '
 
-# syntax checking plugins exist for eruby, haml, html, javascript, php, python, ruby and sass.
 [[plugins]]
-repo = 'scrooloose/syntastic'
-hook_add = ' source ~/.config/nvim/plugins/syntastic.rc.vim '
+repo = 'w0rp/ale'
+hook_post_source = 'source ~/.config/nvim/plugins/ale.rc.vim'
