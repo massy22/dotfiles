@@ -9,3 +9,7 @@ depends = ['deoplete.nvim']
 build = 'make'
 hook_post_source = 'source ~/.config/nvim/plugins/deoplete-go.rc.vim'
 on_ft = 'go'
+
+[[plugins]]
+repo = 'fatih/vim-go'
+on_ft = 'go'

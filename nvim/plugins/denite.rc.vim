@@ -62,7 +62,9 @@ nnoremap <silent> [denite]b :<C-u>Denite buffer <CR>
 " source help
 nnoremap <silent> [denite]h :<C-u>DeniteCursorWord help <CR>
 
-nnoremap  [denite]w :<C-u>DeniteCursorWord grep <CR>
+" grep
+nnoremap <silent> [denite]w :<C-u>DeniteCursorWord grep <CR>
+nnoremap <silent> [denite]g :<C-u>DeniteProjectDir grep <CR>
 
 " Ripgrep command on grep source
  call denite#custom#var('grep', 'command', ['rg'])
