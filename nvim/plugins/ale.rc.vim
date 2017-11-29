@@ -26,3 +26,4 @@ let g:ale_loclist_msg_format   = '[%linter%] %s [%severity%]'
 let g:ale_fix_on_save = 1
 let g:ale_linters.go  = ['go build', 'gofmt', 'golint', 'gometalinter']
 let g:ale_fixers.go   = ['gofmt', 'goimports']
+

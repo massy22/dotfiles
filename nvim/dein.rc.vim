@@ -3,6 +3,8 @@ if &compatible
   set nocompatible
 endif
 
+filetype plugin indent on
+
 " ensure cache dir
 let $CACHE = expand('~/.cache')
 
