@@ -3,9 +3,7 @@
 "-------------------------------------------------------------------------------
 
 set textwidth=0               " don't insert linebreak when insert a long line
-set nobackup                  " disable auto backup
 set autoread                  " reload the file if other process updates it
-set noswapfile                " avoid creating a swapfile
 set hidden                    " buffer becomes hidden when it is abandoned
 set formatoptions=jlmB        " formatting behaivior. disable auto comment insertion etc. see fo-table
 set vb t_vb=                  " disable beep
@@ -16,6 +14,16 @@ set noundofile                " avoid creating a undo file
 set clipboard=unnamed         " put the yanked string into unnamed buffer(as system clipboard)
 set wildmode=list:full        " command-line completion, list all matches and complete first match
 
+
+" ensure cache dir
+let $VIMTMP = expand('~/.cache/vim')
+
+if !isdirectory(expand($VIMTMP))
+  call mkdir(expand($VIMTMP), 'p')
+endif
+
+set directory=$VIMTMP
+set backupdir=$VIMTMP
 
 "-------------------------------------------------------------------------------
 " Indentation
