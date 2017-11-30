@@ -96,6 +96,11 @@ build = 'env PY3=ON ./install.sh'
 repo = 'airblade/vim-gitgutter'
 hook_add = 'source ~/.config/nvim/plugins/gitgutter.rc.vim '
 
+# syntax checker framework
 [[plugins]]
 repo = 'w0rp/ale'
 hook_post_source = 'source ~/.config/nvim/plugins/ale.rc.vim'
+
+# reference
+[[plugins]]
+repo = 'thinca/vim-ref'
