@@ -86,6 +86,10 @@ hook_add = 'source ~/.config/nvim/plugins/denite.rc.vim'
 repo = 'nixprime/cpsm'
 build = 'env PY3=ON ./install.sh'
 
+#
+[[plugins]]
+repo = 'ozelentok/denite-gtags'
+hook_add = 'source ~/.config/nvim/plugins/denite-gtags.rc.vim'
 
 # ==========================================================
 # programming
@@ -104,3 +108,10 @@ hook_post_source = 'source ~/.config/nvim/plugins/ale.rc.vim'
 # reference
 [[plugins]]
 repo = 'thinca/vim-ref'
+
+# automatic gtags generation
+[[plugins]]
+repo = 'jsfaint/gen_tags.vim'
+hook_add = '''
+    let g:gen_tags#gtags_auto_gen = 1
+'''
