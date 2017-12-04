@@ -112,6 +112,4 @@ repo = 'thinca/vim-ref'
 # automatic gtags generation
 [[plugins]]
 repo = 'jsfaint/gen_tags.vim'
-hook_add = '''
-    let g:gen_tags#gtags_auto_gen = 1
-'''
+hook_add = 'source ~/.config/nvim/plugins/gen_tags.rc.vim'
