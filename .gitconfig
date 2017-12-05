@@ -13,7 +13,7 @@
 [core]
   excludesfile = ~/.gitignore  # globalな.gitignoreの指定
   autocrlf = input                 # CRLFを自動変換
-  editor = vim
+  editor = nvim
   quotepath = false
   attributesfile = /Users/mashiko_kazuki/.gitattributes
 [merge] tool = vimdiff ff = false
@@ -78,7 +78,7 @@
   bn  = branch --no-merged  # mergeしてないbranchを表示
   bo  = branch -r           # remote branchを表示
   # log関連
-  edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
+  edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; nvim `f`"
   wc  = whatchanged         # logに変更されたファイルも一緒に出す
   ls  = log --stat          # logに変更されたファイルも一緒に出す
   lp  = log -p              # diffも一緒に出す
@@ -127,14 +127,14 @@
   d10 = diff HEAD~~~~~~~~~~  # HEADから10前とdiff
   # edit関連
   # modified or untrackedなファイルを編集する
-  edit = "!f() { git status -s | cut -b 4- | grep -v '\\/$' | uniq ; }; vim `f`"
+  edit = "!f() { git status -s | cut -b 4- | grep -v '\\/$' | uniq ; }; nvim `f`"
   # mergeの際にconflictが起きたファイルを編集
-  edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
+  edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; nvim `f`"
   # mergeの際にconflictが起きたファイルをadd
   add-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
   delete-unmerged =  "!f() { git ls-files --deleted | cut -f2 | sort -u ; }; git rm `f`"
   # 指定したコミットで変更されたファイルを編集する
-  modified = "!f() { git diff $1..$1\\^ --name-only | xargs sh -c 'vim "$@" < /dev/tty' - ;}; f"
+  modified = "!f() { git diff $1..$1\\^ --name-only | xargs sh -c 'nvim "$@" < /dev/tty' - ;}; f"
   # cherr -vで出てくる;commitから#1234なチケット番号を切り出す
   cherry-ticket-numbers = "!f() { git cherry -v "$@" | cut -b 44- | awk 'match($0, /#[0-9]+/) {print substr($0, RSTART, RLENGTH)}' | sort -u ;}; f"
   # cherr -vに含まれるチケットを列挙する
