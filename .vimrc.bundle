@@ -22,10 +22,10 @@ call dein#add('Shougo/vimproc.vim', {'build': 'make'})
   call dein#add('nathanaelkane/vim-indent-guides')
 
   " XMLとかHTMLとかの編集機能を強化する
-  call dein#add('xmledit')
+  call dein#add('vim-scripts/xmledit')
 
   " Align : 高機能整形・桁揃えプラグイン
-  call dein#add('Align')
+  call dein#add('vim-scripts/Align')
 
   " フィルタリングと整形
   call dein#add('godlygeek/tabular')
@@ -37,25 +37,25 @@ call dein#add('Shougo/vimproc.vim', {'build': 'make'})
   " call dein#add('YankRing.vim')
 
   " undo履歴を追える (need python support)
-  call dein#add('Gundo')
+  call dein#add('vim-scripts/Gundo')
 
   " surround.vim : テキストを括弧で囲む／削除する
   call dein#add('tpope/vim-surround')
 
   " smartchr.vim : ==などの前後を整形
-  call dein#add('smartchr')
+  call dein#add('vim-scripts/smartchr')
 
   " vim-operator-user : 簡単にoperatorを定義できるようにする
-  call dein#add('operator-user')
+  call dein#add('vim-scripts/operator-user')
 
   " operator-camelize : camel-caseへの変換
-  call dein#add('operator-camelize')
+  call dein#add('vim-scripts/operator-camelize')
 
   " operator-replace : yankしたものでreplaceする
-  call dein#add('operator-replace')
+  call dein#add('vim-scripts/operator-replace')
 
   " textobj-user : 簡単にVimエディタのテキストオブジェクトをつくれる
-  call dein#add('textobj-user')
+  call dein#add('vim-scripts/textobj-user')
 
   " vim-textobj-syntax : syntax hilightされたものをtext-objectに
   call dein#add('kana/vim-textobj-syntax.git')
@@ -82,7 +82,7 @@ call dein#add('Shougo/vimproc.vim', {'build': 'make'})
   " call dein#add('textobj-entire')
 
   " 「foo」 or 【bar】などをtext-objectに
-  call dein#add('textobj-jabraces')
+  call dein#add('vim-scripts/textobj-jabraces')
 
   " 改造したmonday.vim(git rebase -i とかtrue/falseとか)
   " call dein#add('yuroyoro/monday')
@@ -123,25 +123,25 @@ call dein#add('Shougo/vimproc.vim', {'build': 'make'})
   call dein#add('yuroyoro/smooth_scroll.vim')
 
   " vim-smartword : 単語移動がスマートな感じで
-  call dein#add('smartword')
+  call dein#add('vim-scripts/smartword')
 
   " camelcasemotion : CamelCaseやsnake_case単位でのワード移動
-  call dein#add('camelcasemotion')
+  call dein#add('vim-scripts/camelcasemotion')
 
   " <Leader><Leader>w/fなどで、motion先をhilightする
-  call dein#add('EasyMotion')
+  call dein#add('vim-scripts/EasyMotion')
 
   " matchit.vim : 「%」による対応括弧へのカーソル移動機能を拡張
-  call dein#add('matchit.zip')
+  call dein#add('vim-scripts/matchit.zip')
 
   " ruby用のmatchit拡張
-  call dein#add('ruby-matchit')
+  call dein#add('vim-scripts/ruby-matchit')
 
   " grep.vim : 外部のgrep利用。:Grepで対話形式でgrep :Rgrepは再帰
-  call dein#add('grep.vim')
+  call dein#add('vim-scripts/grep.vim')
 
   " eregex.vim : vimの正規表現をrubyやperlの正規表現な入力でできる :%S/perlregex/
-  call dein#add('eregex.vim')
+  call dein#add('vim-scripts/eregex.vim')
 
   " open-browser.vim : カーソルの下のURLを開くor単語を検索エンジンで検索
   call dein#add('tyru/open-browser.vim')
@@ -159,7 +159,7 @@ call dein#add('Shougo/vimproc.vim', {'build': 'make'})
   call dein#add('thinca/vim-ref')
 
   " SQLUtilities : SQL整形、生成ユーティリティ
-  call dein#add('SQLUtilities')
+  call dein#add('vim-scripts/SQLUtilities')
 
   " vim-ruby : VimでRubyを扱う際の最も基本的な拡張機能
   call dein#add('vim-ruby/vim-ruby')
@@ -168,13 +168,13 @@ call dein#add('Shougo/vimproc.vim', {'build': 'make'})
   call dein#add('tpope/vim-rails')
 
   " Pydiction : Python用の入力補完
-  call dein#add('Pydiction')
+  call dein#add('vim-scripts/Pydiction')
 
   " ソースコード上のメソッド宣言、変数宣言の一覧を表示
-  call dein#add('taglist.vim')
+  call dein#add('vim-scripts/taglist.vim')
 
   " エラーがある場所をhilight
-  call dein#add('errormarker.vim')
+  call dein#add('vim-scripts/errormarker.vim')
 
   " GOPATHから検索
   call dein#add('koron/vim-gosrc')
@@ -189,7 +189,7 @@ call dein#add('Shougo/vimproc.vim', {'build': 'make'})
 "
 " Syntax {{{
   " haml
-  call dein#add('haml.zip')
+  call dein#add('vim-scripts/haml.zip')
 
   " slim
   call dein#add('slim-template/vim-slim')
@@ -199,10 +199,10 @@ call dein#add('Shougo/vimproc.vim', {'build': 'make'})
   call dein#add('pangloss/vim-javascript')
 
   " jQuery
-  call dein#add('jQuery')
+  call dein#add('vim-scripts/jQuery')
 
   " nginx conf
-  call dein#add('nginx.vim')
+  call dein#add('vim-scripts/nginx.vim')
 
   " markdown
   call dein#add('tpope/vim-markdown')
@@ -245,17 +245,17 @@ call dein#add('Shougo/vimproc.vim', {'build': 'make'})
 
 " Buffer {{{
   " DumbBuf.vim : quickbufっぽくbufferを管理。 "<Leader>b<Space>でBufferList
-  call dein#add('DumbBuf')
+  call dein#add('vim-scripts/DumbBuf')
 
   " 肌に合わないから無効化
   " minibufexpl.vim : タブエディタ風にバッファ管理ウィンドウを表示
   " call dein#add('fholgado/minibufexpl.vim')
 
   " NERDTree : ツリー型エクスプローラ
-  call dein#add('The-NERD-tree')
+  call dein#add('vim-scripts/The-NERD-tree')
 
   " vtreeexplorer.vim : ツリー状にファイルやディレクトリの一覧を表示
-  call dein#add('vtreeexplorer')
+  call dein#add('vim-scripts/vtreeexplorer')
 " }}}
 
 
@@ -271,7 +271,7 @@ call dein#add('Shougo/vimproc.vim', {'build': 'make'})
   call dein#add('mattn/webapi-vim')
 
   " cecutil.vim : 他のpluginのためのutillity1
-  call dein#add('cecutil')
+  call dein#add('vim-scripts/cecutil')
 
   " urilib.vim : vim scriptからURLを扱うライブラリ
   call dein#add('tyru/urilib.vim')
@@ -280,7 +280,7 @@ call dein#add('Shougo/vimproc.vim', {'build': 'make'})
   " call dein#add('mattn/hahhah-vim')
 
   " utillity
-  call dein#add('L9')
+  call dein#add('vim-scripts/L9')
 
   " Buffer管理のLibrary
   call dein#add('thinca/vim-openbuf')
@@ -322,9 +322,6 @@ call dein#add('Shougo/vimproc.vim', {'build': 'make'})
 
 " ColorSchema {{{{
   " color schema 256
-  call dein#add('desert256.vim')
-  call dein#add('mrkn256.vim')
-  call dein#add('tomasr/molokai')
   call dein#add('yuroyoro/yuroyoro256.vim')
 " }}}
 
