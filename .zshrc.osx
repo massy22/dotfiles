@@ -108,7 +108,7 @@ export JAVA_HOME="$(/usr/libexec/java_home)"
 export EC2_HOME="/usr/local/Library/LinkedKegs/ec2-api-tools/jars"
 
 # docker and boot2docker
-export DOCKER_HOST=tcp://:2375
+# export DOCKER_HOST=tcp://:2375
 
 # Android
 export PATH=~/adt-bundle-mac-x86_64/sdk/platform-tools:$PATH
