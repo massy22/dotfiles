@@ -242,9 +242,9 @@ call dein#add('Shougo/vimproc.vim', {'build': 'make'})
   call dein#add('elzr/vim-json')
 
   " Rust
-  NeoBundle 'rust-lang/rust.vim'
-  NeoBundle 'racer-rust/vim-racer'
-  NeoBundle 'rhysd/rust-doc.vim'
+  call dein#add('rust-lang/rust.vim')
+  call dein#add('racer-rust/vim-racer')
+  call dein#add('rhysd/rust-doc.vim')
 " }}}
 
 " Buffer {{{
