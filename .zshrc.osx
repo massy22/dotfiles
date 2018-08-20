@@ -76,7 +76,9 @@ export PATH="/usr/local/heroku/bin:$PATH"
 # source /usr/local/Cellar/python/2.7/bin/virtualenvwrapper.sh
 # export PATH=/opt/local/Library/Frameworks/Python.framework/Versions/2.6/bin:$PATH
 # export PYTHONSTARTUP=~/.pythonstartup
-
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 
 # Ruby
 # if [[ -s /Users/mashiko_kazuki/.rvm/scripts/rvm ]] ; then source $HOME/.rvm/scripts/rvm ; fi
