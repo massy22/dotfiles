@@ -681,8 +681,11 @@ esac
 
 
 # ~/.zshrc
-# setting for percol
+# setting for percol.zsh
 source ~/.zsh/percol.zsh
+
+# setting for peco.zsh
+source ~/.zsh/peco.zsh
 
 ## local固有設定
 #
