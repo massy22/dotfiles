@@ -8,6 +8,3 @@ export PATH="/usr/local/heroku/bin:$PATH"
 
 # The next line enables shell command completion for gcloud.
 # source '/home/mashiko_kazuki/src/google-cloud-sdk/completion.zsh.inc'
-
-# for neovim
-export XDG_CONFIG_HOME=~/.config
