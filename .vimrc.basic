@@ -6,8 +6,7 @@ set scrolloff=5                  " スクロール時の余白確保
 set textwidth=0                  " 一行に長い文章を書いていても自動折り返しをしない
 set nobackup                     " バックアップ取らない
 set autoread                     " 他で書き換えられたら自動で読み直す
-set noswapfile                   " スワップファイル作らない
-set noundofile                   " アンドゥファイル作らない
+" set noswapfile                   " スワップファイル作らない
 set hidden                       " 編集中でも他のファイルを開けるようにする
 set backspace=indent,eol,start   " バックスペースでなんでも消せるように
 set formatoptions=lmoq           " テキスト整形オプション，マルチバイト系を追加
@@ -39,6 +38,16 @@ command! Ev edit $MYVIMRC
 command! Rv source $MYVIMRC
 
 set helpfile=$VIMRUNTIME/doc/help.txt
+
+" ensure cache dir
+let $VIMTMP = expand('~/.cache/vim')
+
+if !isdirectory(expand($VIMTMP))
+  call mkdir(expand($VIMTMP), 'p')
+endif
+
+set directory=$VIMTMP
+set backupdir=$VIMTMP
 
 
 " Some Linux distributions set filetype in /etc/vimrc.
