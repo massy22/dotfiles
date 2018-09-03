@@ -9,6 +9,7 @@ call denite#custom#option('default', {
       \ })
 
 call denite#custom#source('_', 'matchers', ['matcher_cpsm'])
+call denite#custom#source('_', 'sorters', ['sorter_word', 'sorter_rank'])
 
 " Change mapping in denite buffer
 call denite#custom#map(
@@ -54,7 +55,7 @@ nnoremap <silent> [denite]p :<C-u>DeniteProjectDir file <CR>
 nnoremap <silent> [denite]u :<C-u>Denite file_mru <CR>
 
 " source file_rec
-nnoremap <silent> [denite]r :<C-u>Denite file_rec <CR>
+nnoremap <silent> [denite]t :<C-u>Denite file_rec <CR>
 
 " source buffer
 nnoremap <silent> [denite]b :<C-u>Denite buffer <CR>
@@ -65,6 +66,7 @@ nnoremap <silent> [denite]h :<C-u>DeniteCursorWord help <CR>
 " grep
 nnoremap <silent> [denite]w :<C-u>DeniteCursorWord grep <CR>
 nnoremap <silent> [denite]g :<C-u>DeniteProjectDir grep <CR>
+
 
 " Ripgrep command on grep source
  call denite#custom#var('grep', 'command', ['rg'])

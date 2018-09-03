@@ -91,6 +91,9 @@ build = 'env PY3=ON ./install.sh'
 repo = 'ozelentok/denite-gtags'
 hook_add = 'source ~/.config/nvim/plugins/denite-gtags.rc.vim'
 
+#[[plugins]]
+#repo = 'yuroyoro/denite-ascii-sorter'
+
 # ==========================================================
 # programming
 # ==========================================================

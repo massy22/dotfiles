@@ -118,6 +118,9 @@ inoremap <silent> <C-d> <Esc>lc$
 inoremap <silent> <C-y>e <Esc>ly0<Insert>
 inoremap <silent> <C-y>0 <Esc>ly$<Insert>
 
+" insert space after comma
+inoremap , ,<Space>
+
 "-------------------------------------------------------------------------------
 " Window
 "-------------------------------------------------------------------------------

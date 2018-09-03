@@ -206,4 +206,7 @@ dbu() { docker build -t=$1 .; }
 # Show all alias related docker
 dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
 
+# terraforming https://github.com/dtan4/terraforming
+alias terraforming='docker run --rm --name terraforming -e AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id) -e AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key) -e AWS_REGION=$(aws configure get region) quay.io/dtan4/terraforming:latest terraforming'
+
 alias ssh='TERM=xterm ssh'

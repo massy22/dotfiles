@@ -7,6 +7,9 @@ let g:airline#extensions#ale#enabled = 1
 " always show error sign colum left with line number col
 let g:ale_sign_column_always = 1
 
+" don't fire linting on each text chnage evnet
+let g:ale_lint_on_text_changed = 'never'
+
 " add errors to quickfix, not to location list
 let g:ale_set_loclist  = 0
 let g:ale_set_quickfix = 1
