@@ -16,10 +16,25 @@ hook_add = 'source ~/.config/nvim/plugins/airline.rc.vim'
 repo = 'vim-airline/vim-airline-themes'
 
 # color scheme
+# [[plugins]]
+# depends = ['airline.vim']
+# repo = 'cocopon/iceberg.vim'
+# hook_post_source = 'source ~/.config/nvim/plugins/iceberg.rc.vim'
+
+# [[plugins]]
+# depends = ['airline.vim']
+# repo = 'nanotech/jellybeans.vim'
+# hook_post_source = 'source ~/.config/nvim/plugins/jellybeans.rc.vim'
+
+# [[plugins]]
+# depends = ['airline.vim']
+# repo = 'yuroyoro/yuroyoro256.vim'
+# hook_post_source = 'source ~/.config/nvim/plugins/yuroyoro256.rc.vim'
+
 [[plugins]]
 depends = ['airline.vim']
-repo = 'cocopon/iceberg.vim'
-hook_post_source = 'source ~/.config/nvim/plugins/iceberg.rc.vim'
+repo = 'jonathanfilip/vim-lucius'
+hook_post_source = 'source ~/.config/nvim/plugins/lucius.rc.vim'
 
 # ==========================================================
 # moving
@@ -37,6 +52,7 @@ hook_add = 'source ~/.config/nvim/plugins/CamelCaseMotion.rc.vim'
 # comment functions
 [[plugins]]
 repo = 'scrooloose/nerdcommenter'
+hook_add = 'source ~/.config/nvim/plugins/nerdcommenter.rc.vim'
 
 # align
 [[plugins]]

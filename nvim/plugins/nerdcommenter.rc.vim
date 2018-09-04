@@ -3,7 +3,10 @@
 "------------------------------------
 
 " insert space into comment
-let NERDSpaceDelims = 1
+let NERDSpaceDelims=1
+
+" align comment charactor
+let g:NERDDefaultAlign='left'
 
 " toggle comment
 map <Leader>x<space> <Leader>c<space>
