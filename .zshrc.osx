@@ -9,9 +9,11 @@ export CLICOLOR=1
 export LSCOLORS=ExFxCxDxBxegedabagacad
 
 # vim
-export EDITOR=/usr/local/Cellar/macvim-kaoriya/HEAD/MacVim.app/Contents/MacOS/Vim
-alias vi='env LANG=ja_JP.UTF-8 /usr/local/Cellar/macvim-kaoriya/HEAD/MacVim.app/Contents/MacOS/Vim "$@"'
-alias vim='env LANG=ja_JP.UTF-8 /usr/local/Cellar/macvim-kaoriya/HEAD/MacVim.app/Contents/MacOS/Vim "$@"'
+# export EDITOR=/usr/local/Cellar/macvim-kaoriya/HEAD/MacVim.app/Contents/MacOS/Vim
+export EDITOR=/usr/local/bin/nvim
+
+alias vi8='env LANG=ja_JP.UTF-8 /usr/local/Cellar/macvim-kaoriya/HEAD/MacVim.app/Contents/MacOS/Vim "$@"'
+alias vim8='env LANG=ja_JP.UTF-8 /usr/local/Cellar/macvim-kaoriya/HEAD/MacVim.app/Contents/MacOS/Vim "$@"'
 
 # SVN
 # UTF-8.MAC用のパッチ当てた
