@@ -22,9 +22,9 @@ repo = 'tpope/vim-rails'
 on_ft = 'ruby'
 
 [[plugins]]
-# repo = '5t111111/denite-rails'
-repo = 'yuroyoro/denite-rails'
-rev = 'patch-1'
+repo = '5t111111/denite-rails'
+# repo = 'yuroyoro/denite-rails'
+# rev = 'patch-1'
 hook_post_source = 'source ~/.config/nvim/plugins/denite-rails.rc.vim'
 on_ft = 'ruby'
 
