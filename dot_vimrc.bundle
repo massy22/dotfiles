@@ -1,0 +1,348 @@
+"dein.vimで管理してるpluginを読み込む
+
+filetype off
+
+set runtimepath+=~/.cache/dein/repos/github.com/Shougo/dein.vim
+call dein#begin(expand('~/.cache/dein'))
+
+call dein#add('Shougo/dein.vim')
+call dein#add('Shougo/vimproc.vim', {'build': 'make'})
+
+" Edit {{{
+  " NERD_commenter.vim :最強コメント処理 (<Leader>c<space>でコメントをトグル)
+  call dein#add('scrooloose/nerdcommenter.git')
+
+  " 自動閉じタグ
+  " call dein#add('yuroyoro/vim-autoclose')
+
+  " -- でメソッドチェーン整形
+  call dein#add('c9s/cascading.vim')
+
+  " visually indent guide
+  call dein#add('nathanaelkane/vim-indent-guides')
+
+  " XMLとかHTMLとかの編集機能を強化する
+  call dein#add('vim-scripts/xmledit')
+
+  " Align : 高機能整形・桁揃えプラグイン
+  call dein#add('vim-scripts/Align')
+
+  " フィルタリングと整形
+  call dein#add('godlygeek/tabular')
+
+  " マルチバイト対応の整形
+  call dein#add('h1mesuke/vim-alignta')
+
+  " YankRing.vim : ヤンクの履歴を管理し、順々に参照、出力できるようにする
+  " call dein#add('YankRing.vim')
+
+  " undo履歴を追える (need python support)
+  call dein#add('vim-scripts/Gundo')
+
+  " surround.vim : テキストを括弧で囲む／削除する
+  call dein#add('tpope/vim-surround')
+
+  " smartchr.vim : ==などの前後を整形
+  call dein#add('vim-scripts/smartchr')
+
+  " vim-operator-user : 簡単にoperatorを定義できるようにする
+  call dein#add('vim-scripts/operator-user')
+
+  " operator-camelize : camel-caseへの変換
+  call dein#add('vim-scripts/operator-camelize')
+
+  " operator-replace : yankしたものでreplaceする
+  call dein#add('vim-scripts/operator-replace')
+
+  " textobj-user : 簡単にVimエディタのテキストオブジェクトをつくれる
+  call dein#add('vim-scripts/textobj-user')
+
+  " vim-textobj-syntax : syntax hilightされたものをtext-objectに
+  call dein#add('kana/vim-textobj-syntax.git')
+
+  " vim-textobj-plugins : いろんなものをtext-objectにする
+  " obsolated
+  "call dein#add('thinca/vim-textobj-plugins.git')
+  call dein#add('thinca/vim-textobj-function-javascript')
+
+  " vim-textobj-lastpat : 最後に検索されたパターンをtext-objectに
+  " call dein#add('kana/vim-textobj-lastpat.git')
+
+  " vim-textobj-indent : インデントされたものをtext-objectに
+  call dein#add('kana/vim-textobj-indent.git')
+
+  " vim-textobj-function : 関数の中身をtext-objectに
+  " call dein#add('kana/vim-textobj-function.git')
+
+  " vim-textobj-fold : 折りたたまれたアレをtext-objectに
+  " call dein#add('kana/vim-textobj-fold.git')
+  " call dein#add('textobj-rubyblock')
+
+  " vim-textobj-entire : buffer全体をtext-objectに
+  " call dein#add('textobj-entire')
+
+  " 「foo」 or 【bar】などをtext-objectに
+  call dein#add('vim-scripts/textobj-jabraces')
+
+  " 改造したmonday.vim(git rebase -i とかtrue/falseとか)
+  " call dein#add('yuroyoro/monday')
+
+  " <C-a>でtrue/false切替。他色々
+  call dein#add('taku-o/vim-toggle')
+
+" }}}
+
+" Completion {{{
+  " 補完 autocomplpop.vim : insertmodeで自動で補完をpopup
+  " call dein#add('AutoComplPop')
+
+  " 補完 neocomplcache.vim : 究極のVim的補完環境
+  call dein#add('Shougo/neocomplcache')
+
+  " neocomplcacheのsinpet補完
+  call dein#add('Shougo/neosnippet.git')
+  call dein#add('Shougo/neosnippet-snippets')
+
+  " various langueages snippets
+  call dein#add('honza/vim-snippets')
+
+  " for rsense
+  " call dein#add('m2ym/rsense')
+  " call dein#add('taichouchou2/vim-rsense')
+
+  " rubyでrequire先を補完する
+  " call dein#add('ujihisa/neco-ruby')
+
+  " A neocomplcache plugin for English, using look command
+  " call dein#add('ujihisa/neco-look')
+" }}}
+
+" Searching/Moving{{{
+  " smooth_scroll.vim : スクロールを賢く
+  " call dein#add('Smooth-Scroll')
+  call dein#add('yuroyoro/smooth_scroll.vim')
+
+  " vim-smartword : 単語移動がスマートな感じで
+  call dein#add('vim-scripts/smartword')
+
+  " camelcasemotion : CamelCaseやsnake_case単位でのワード移動
+  call dein#add('vim-scripts/camelcasemotion')
+
+  " <Leader><Leader>w/fなどで、motion先をhilightする
+  call dein#add('vim-scripts/EasyMotion')
+
+  " matchit.vim : 「%」による対応括弧へのカーソル移動機能を拡張
+  call dein#add('vim-scripts/matchit.zip')
+
+  " ruby用のmatchit拡張
+  call dein#add('vim-scripts/ruby-matchit')
+
+  " grep.vim : 外部のgrep利用。:Grepで対話形式でgrep :Rgrepは再帰
+  call dein#add('vim-scripts/grep.vim')
+
+  " eregex.vim : vimの正規表現をrubyやperlの正規表現な入力でできる :%S/perlregex/
+  call dein#add('vim-scripts/eregex.vim')
+
+  " open-browser.vim : カーソルの下のURLを開くor単語を検索エンジンで検索
+  call dein#add('tyru/open-browser.vim')
+
+  " VimからThe Silver Searcherを利用する
+  "  http://blog.glidenote.com/blog/2013/02/28/the-silver-searcher-better-than-ack/
+  call dein#add('rking/ag.vim')
+" }}}
+
+" Programming {{{
+  " quickrun.vim : 編集中のファイルを簡単に実行できるプラグイン
+  call dein#add('thinca/vim-quickrun')
+
+  " perldocやphpmanual等のリファレンスをvim上で見る
+  call dein#add('thinca/vim-ref')
+
+  " SQLUtilities : SQL整形、生成ユーティリティ
+  call dein#add('vim-scripts/SQLUtilities')
+
+  " vim-ruby : VimでRubyを扱う際の最も基本的な拡張機能
+  call dein#add('vim-ruby/vim-ruby')
+
+  " rails.vim : rails的なアレ
+  call dein#add('tpope/vim-rails')
+
+  " Pydiction : Python用の入力補完
+  call dein#add('vim-scripts/Pydiction')
+
+  " ソースコード上のメソッド宣言、変数宣言の一覧を表示
+  call dein#add('vim-scripts/taglist.vim')
+
+  " エラーがある場所をhilight
+  call dein#add('vim-scripts/errormarker.vim')
+
+  " GOPATHから検索
+  call dein#add('koron/vim-gosrc')
+
+  " tagsを利用したソースコード閲覧・移動補助機能 tagsファイルの自動生成
+  " call dein#add('Source-Explorer-srcexpl.vim')
+
+  " NERD_tree, taglist, srcexpl の統合
+  " call dein#add('trinity.vim')
+
+" }}}
+"
+" Syntax {{{
+  " haml
+  call dein#add('vim-scripts/haml.zip')
+
+  " slim
+  call dein#add('slim-template/vim-slim')
+
+  " JavaScript
+  " call dein#add('JavaScript-syntax')
+  call dein#add('pangloss/vim-javascript')
+
+  " jQuery
+  call dein#add('vim-scripts/jQuery')
+
+  " nginx conf
+  call dein#add('vim-scripts/nginx.vim')
+
+  " markdown
+  call dein#add('tpope/vim-markdown')
+
+  " coffee script
+  call dein#add('kchmck/vim-coffee-script')
+
+  " python
+  call dein#add('yuroyoro/vim-python')
+
+  " scala
+  call dein#add('yuroyoro/vim-scala')
+
+  " clojure
+  call dein#add('jondistad/vimclojure')
+
+  " ghc-mod
+  call dein#add('eagletmt/ghcmod-vim')
+
+  " jsx
+  call dein#add('mxw/vim-jsx')
+
+  " TypeScript
+  call dein#add('leafgarland/typescript-vim')
+
+  " syntax checking plugins exist for eruby, haml, html, javascript, php, python, ruby and sass.
+  call dein#add('scrooloose/syntastic')
+
+  " Elixir
+  call dein#add('elixir-lang/vim-elixir')
+
+  " Go (golang) support for Vim (enhanced bundled vim)
+  call dein#add('fatih/vim-go')
+
+  " vim-json
+  " http://qiita.com/karur4n/items/a26007236c59c5fb8735
+  call dein#add('elzr/vim-json')
+
+  " Rust
+  call dein#add('rust-lang/rust.vim')
+  call dein#add('racer-rust/vim-racer')
+  call dein#add('rhysd/rust-doc.vim')
+" }}}
+
+" Buffer {{{
+  " DumbBuf.vim : quickbufっぽくbufferを管理。 "<Leader>b<Space>でBufferList
+  call dein#add('vim-scripts/DumbBuf')
+
+  " 肌に合わないから無効化
+  " minibufexpl.vim : タブエディタ風にバッファ管理ウィンドウを表示
+  " call dein#add('fholgado/minibufexpl.vim')
+
+  " NERDTree : ツリー型エクスプローラ
+  call dein#add('vim-scripts/The-NERD-tree')
+
+  " vtreeexplorer.vim : ツリー状にファイルやディレクトリの一覧を表示
+  call dein#add('vim-scripts/vtreeexplorer')
+" }}}
+
+
+" Encording {{{
+  call dein#add('banyan/recognize_charcode.vim')
+" }}}
+
+" Utility {{{
+  " vim-altercmd : Ex command拡張
+  call dein#add('tyru/vim-altercmd')
+
+  " vim Interface to Web API
+  call dein#add('mattn/webapi-vim')
+
+  " cecutil.vim : 他のpluginのためのutillity1
+  call dein#add('vim-scripts/cecutil')
+
+  " urilib.vim : vim scriptからURLを扱うライブラリ
+  call dein#add('tyru/urilib.vim')
+
+  " ステータスラインに顔文字を表示
+  " call dein#add('mattn/hahhah-vim')
+
+  " utillity
+  call dein#add('vim-scripts/L9')
+
+  " Buffer管理のLibrary
+  call dein#add('thinca/vim-openbuf')
+
+  " vimdoc 日本語
+  call dein#add('yuroyoro/vimdoc_ja')
+
+  " vim上のtwitter client
+  " call dein#add('TwitVim')
+
+  " Lingrのclient
+  call dein#add('tsukkee/lingr-vim')
+
+  " vimからGit操作する
+  call dein#add('tpope/vim-fugitive')
+
+  " ステータスラインをカッコよくする
+  call dein#add('Lokaltog/vim-powerline')
+
+  " A framework to read/write fake:path
+  call dein#add('kana/vim-metarw')
+
+  " shows a git diff in the 'gutter' (sign column)
+  call dein#add('airblade/vim-gitgutter')
+
+  " git-vim: Plugin files for calling git functions from inside Vim and Syntax files for git displays
+  call dein#add('motemen/git-vim')
+
+  " Create your own submodes
+  " 任意キーでサブモードを作れる
+  " http://d.hatena.ne.jp/thinca/20130131/1359567419
+  call dein#add('kana/vim-submode')
+
+  " local_vimrc の焼き直し localrc.vim 書いた - 永遠に未完成
+  " http://thinca.hatenablog.com/entry/20110108/1294427418
+  call dein#add('thinca/vim-localrc')
+
+" }}}
+
+" ColorSchema {{{{
+  " color schema 256
+  call dein#add('yuroyoro/yuroyoro256.vim')
+" }}}
+
+" Unite {{{{
+  " unite.vim : - すべてを破壊し、すべてを繋げ - vim scriptで実装されたanythingプラグイン
+  call dein#add('Shougo/unite.vim')
+  call dein#add('Shougo/neomru.vim')
+  call dein#add('tsukkee/unite-help')
+  call dein#add('h1mesuke/unite-outline')
+  " call dein#add('Sixeight/unite-grep')
+  call dein#add('basyura/unite-rails')
+  call dein#add('thinca/vim-unite-history')
+  call dein#add('tsukkee/unite-tag')
+  call dein#add('choplin/unite-vim_hacks')
+  call dein#add('Shougo/neomru.vim')
+" }}}
+
+call dein#end()
+
+filetype plugin indent on

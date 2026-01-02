@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# usage :
+#  socks-proxy [NETWORK] [on|off] [PROXY] [PORT]
+#  socks-proxy Wi-Fi on localhost 1080
+#
+# SOCKSプロキシを使った接続とその設定 - 帽子の中 http://d.hatena.ne.jp/seaborgium/20111227/1324993156
+
+NETWORK=$1
+SWITCH=$2
+PROXY=$3
+PORT=$4
+
+if [ -z "${NETWORK}" ]; then
+  NETWORK="Ethernet"
+fi
+if [ -z "${SWITCH}" ]; then
+  SEITCH="on"
+fi
+
+if [ -n "${PROXY}" -a -n "${PORT}" ]; then
+  networksetup -setsocksfirewallproxy "${NETWORK}" ${PROXY} ${PORT}
+  echo "Network [${NETWORK}] : set socks proxy to '${PROXY}:${PORT}'"
+fi
+
+networksetup -setsocksfirewallproxystate "${NETWORK}" ${SWITCH}
+if [ ${SWITCH} = "on" ]; then
+  echo "Network [${NETWORK}] : socks proxy is enabled"
+else
+  echo "Network [${NETWORK}] : socks proxy is disabled"
+fi

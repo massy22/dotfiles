@@ -1,0 +1,16 @@
+{
+  "mcpServers": {},
+  "general": {
+    "preferredEditor": "vim",
+    "vimMode": true
+  },
+  "security": {
+    "auth": {
+      "selectedType": "vertex-ai"
+    }
+  },
+  "ui": {
+    "theme": "Default"
+  }{{ if eq .pcType "work" }},
+  "telemetry": {{ onepasswordRead "op://Private/Dotfiles Config/gemini_work_telemetry" }}{{ end }}
+}

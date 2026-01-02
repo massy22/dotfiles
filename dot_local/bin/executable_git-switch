@@ -1,0 +1,78 @@
+#!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
+
+require 'optparse'
+
+@hard = false
+opt_parser = OptionParser.new{|opts|
+  opts.banner = 'git switch [--hard] [--repository=<path>] [--new-workdir=<path>] <branch> <command...>'
+  opts.on("--hard",        'execute `git reset --hard` before switch to branch'){ @hard == true}
+  opts.on("--repository=V",  "target repository.(default is current repository)"){|v| @repository = v}
+  opts.on("--new-workdir=V", "path to the new working directory.(default /tmp/<repsitory_name>)"){|v| @new_work_dir = v}
+}
+
+args = ARGV.dup
+opt_parser.order!(args)
+@branch = args.shift
+@command = args
+
+unless @branch && @command && @command.length > 0
+  puts opt_parser.banner
+  exit 128
+end
+
+unless @repository
+  @repository = `git rev-parse -q --show-toplevel`.chomp
+end
+
+unless File.exists?(@repository)
+  puts "No such repository: #{@repository}"
+  exit 128
+end
+
+unless @new_work_dir
+  @new_work_dir = "/tmp/#{File.basename(@repository)}"
+end
+
+unless File.exists?(@new_work_dir)
+  res = system("git-new-workdir #{@repository} #{@new_work_dir} ")
+  exit 128 unless res
+  puts "git-new-workdir #{@repository} #{@new_work_dir} "
+end
+
+if @hard
+  res = system("git reset --hard HEAD")
+  exit 128 unless res
+end
+
+Dir.chdir(@new_work_dir){
+  res = system("git checkout #{@branch}")
+  exit 128 unless res
+
+  pid = fork do
+    exec(*@command)
+  end
+
+  if pid
+    # TODO signal handling
+    # force terminate child process
+    [:INT, :TERM, :KILL, :CHLD, :QUIT].each do |sig|
+      Signal.trap(sig){
+        catch(:done) {
+          [:INT, :CHLD, :KILL, :QUIT].each do |s|
+            begin
+              Process.kill(s, pid)
+            rescue Errno::ECHILD
+              throw :done
+            rescue Errno::ESRCH
+              throw :done
+            end
+          end
+        }
+      }
+    end
+  end
+
+  Process.wait
+}
+

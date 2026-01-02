@@ -1,0 +1,134 @@
+# plugiin magagement
+[[plugins]]
+repo = 'Shougo/dein.vim'
+
+# ==========================================================
+# color,look and feel
+# ==========================================================
+
+# status line
+[[plugins]]
+repo = 'vim-airline/vim-airline'
+hook_add = 'source ~/.config/nvim/plugins/airline.rc.vim'
+
+# status line
+[[plugins]]
+repo = 'vim-airline/vim-airline-themes'
+
+# color scheme
+# [[plugins]]
+# depends = ['airline.vim']
+# repo = 'cocopon/iceberg.vim'
+# hook_post_source = 'source ~/.config/nvim/plugins/iceberg.rc.vim'
+
+# [[plugins]]
+# depends = ['airline.vim']
+# repo = 'nanotech/jellybeans.vim'
+# hook_post_source = 'source ~/.config/nvim/plugins/jellybeans.rc.vim'
+
+# [[plugins]]
+# depends = ['airline.vim']
+# repo = 'yuroyoro/yuroyoro256.vim'
+# hook_post_source = 'source ~/.config/nvim/plugins/yuroyoro256.rc.vim'
+
+[[plugins]]
+depends = ['airline.vim']
+repo = 'jonathanfilip/vim-lucius'
+hook_post_source = 'source ~/.config/nvim/plugins/lucius.rc.vim'
+
+# ==========================================================
+# moving
+# ==========================================================
+
+# camel motion
+[[plugins]]
+repo = 'bkad/CamelCaseMotion'
+hook_add = 'source ~/.config/nvim/plugins/CamelCaseMotion.rc.vim'
+
+# ==========================================================
+# editing
+# ==========================================================
+
+# comment functions
+[[plugins]]
+repo = 'scrooloose/nerdcommenter'
+hook_add = 'source ~/.config/nvim/plugins/nerdcommenter.rc.vim'
+
+# align
+[[plugins]]
+repo = 'junegunn/vim-easy-align'
+hook_add = 'source ~/.config/nvim/plugins/vim-easy-align.rc.vim'
+
+[[plugins]]
+repo = 'tpope/vim-surround'
+hook_add = '''
+source ~/.config/nvim/plugins/vim-surround.rc.vim
+'''
+
+# ==========================================================
+# completion
+# ==========================================================
+
+
+[[plugins]]
+repo = 'Shougo/deoplete.nvim'
+hook_add = 'source ~/.config/nvim/plugins/deoplete.rc.vim'
+
+[[plugins]]
+repo = 'cohama/lexima.vim'
+
+# ==========================================================
+# filter
+# ==========================================================
+
+# minibufexplorer
+# [[plugins]]
+# repo = 'fholgado/minibufexpl.vim'
+# hook_add = 'source ~/.config/nvim/plugins/minibufexpl.rc.vim'
+
+
+# mru files
+[[plugins]]
+repo = 'Shougo/neomru.vim'
+
+# fizzy finder
+[[plugins]]
+repo = 'Shougo/denite.nvim'
+depends = ['neomru.vim']
+hook_add = 'source ~/.config/nvim/plugins/denite.rc.vim'
+
+# fastest matcher
+[[plugins]]
+repo = 'nixprime/cpsm'
+build = 'env PY3=ON ./install.sh'
+
+#
+[[plugins]]
+repo = 'ozelentok/denite-gtags'
+hook_add = 'source ~/.config/nvim/plugins/denite-gtags.rc.vim'
+
+#[[plugins]]
+#repo = 'yuroyoro/denite-ascii-sorter'
+
+# ==========================================================
+# programming
+# ==========================================================
+
+# git
+[[plugins]]
+repo = 'airblade/vim-gitgutter'
+hook_add = 'source ~/.config/nvim/plugins/gitgutter.rc.vim '
+
+# syntax checker framework
+[[plugins]]
+repo = 'w0rp/ale'
+hook_post_source = 'source ~/.config/nvim/plugins/ale.rc.vim'
+
+# reference
+[[plugins]]
+repo = 'thinca/vim-ref'
+
+# automatic gtags generation
+# [[plugins]]
+# repo = 'jsfaint/gen_tags.vim'
+# hook_add = 'source ~/.config/nvim/plugins/gen_tags.rc.vim'

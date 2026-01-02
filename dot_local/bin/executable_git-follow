@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# this command exec git pull --rebase from othre branch.
+# usage) git follow branch1 branch2 ...
+# ex) git follow develop test
+
+if [ $# -eq 0 ]; then
+  git pull --rebase
+  exit
+fi
+
+CURRENT=`git symbolic-ref --short HEAD`
+
+git fetch --prune
+
+for branch in $* ; do
+  REMOTE=`git config branch.${branch}.remote`
+  MERGE=`git config branch.${branch}.merge | sed -e "s/^refs\/heads\///g"`
+
+  if [ -z "$REMOTE" -o -z "$MERGE" ]; then
+    echo "${branch} is not remote-tracking branch."
+    exit
+  fi
+
+  git rebase --onto ${REMOTE}/${branch} ${branch} ${branch}
+done
+
+git co ${CURRENT}

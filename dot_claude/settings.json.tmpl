@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__serena"
+    ],
+    "deny": []
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bun x ccusage statusline"
+  },
+  "enabledPlugins": {
+    "gopls-lsp@claude-plugins-official": true{{ if eq .pcType "work" }},
+    "{{ onepasswordRead "op://Private/Dotfiles Config/claude_work_plugin" }}": true{{ end }}
+  },
+  "alwaysThinkingEnabled": true{{ if eq .pcType "work" }},
+  "env": {{ onepasswordRead "op://Private/Dotfiles Config/claude_work_env" }}{{ end }}
+}

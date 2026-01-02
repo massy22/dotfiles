@@ -1,0 +1,83 @@
+*.o
+\#*#
+*#
+.#*
+.*~
+*~
+.DS_Store
+*.sw[po]
+tags
+TAGS
+Session.vim
+.svn
+*.dSYM
+*.log
+*.dvi
+*.aux
+*.elc
+.zshrc.local
+# samples
+
+.vim/bundle/
+.vim/dein/
+.vim/.netrwhist
+.vimrc_sample
+
+.rsync_cache
+
+# for JetBrain IDEs
+.editorconfig
+.generators
+.idea
+.rakeTasks
+
+# for Claude Code（実行時に自動生成されるログ/キャッシュ/内部状態を誤コミット防止）
+.claude/CLAUDE.md
+# デバッグログ
+.claude/debug
+# 参照ファイル履歴
+.claude/file-history
+# 会話/実行履歴ログ
+.claude/history.jsonl
+# プロジェクト別の状態（ログ/履歴等）
+.claude/projects
+.claude/settings.local.json
+# シェルスナップショット
+.claude/shell-snapshots
+# TODO状態
+.claude/todos
+# Claude Code がプロジェクト配下に生成する内部状態（誤コミット防止）
+.claude/.claude
+# プラグインのキャッシュ/状態
+.claude/plugins/
+# 作業計画の状態
+.claude/plans/
+# 利用統計キャッシュ
+.claude/stats-cache.json
+# インストール済みプラグイン状態
+.claude/installed_plugins.json
+# marketplace状態
+.claude/known_marketplaces.json
+.playwright-mcp
+.serena
+# CLAUDE.md
+
+# for Gemini CLI（実行時に自動生成される認証/状態/内部ファイルを誤コミット防止）
+# OAuthトークン（機密）
+.gemini/mcp-oauth-tokens.json
+# 一時ファイル
+.gemini/tmp
+.gemini/settings.local.json
+# Gemini CLI がプロジェクト配下に生成する内部状態（誤コミット防止）
+.gemini/.gemini
+# 状態ファイル
+.gemini/state.json
+# Googleアカウント情報（機密）
+.gemini/google_accounts.json
+# 端末識別子
+.gemini/installation_id
+# ユーザー識別子
+.gemini/user_id
+
+# Local configuration files
+.gitconfig.local
