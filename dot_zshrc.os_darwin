@@ -85,7 +85,7 @@ export GOPATH=$HOME
 export PATH=$PATH:$(go env GOROOT)/bin:$GOPATH/bin
 
 # node.js
-eval "$(nodenv init - --no-rehash)"
+eval "$(fnm env --use-on-cd)"
 
 # tmux
 alias tma='tmux attach'
