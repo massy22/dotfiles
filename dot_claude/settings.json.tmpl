@@ -1,9 +1,30 @@
 {
+  {{ if eq .pcType "work" }}"env": {{ onepasswordRead "op://Private/Dotfiles Config/claude_work_env" }},{{ end }}
   "permissions": {
     "allow": [
-      "mcp__serena"
+      "Bash(cat:*)",
+      "Bash(diff:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(git blame:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)",
+      "Bash(head:*)",
+      "Bash(ls:*)",
+      "Bash(tree:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)"
     ],
-    "deny": []
+    "ask": [
+      "Bash(git clean:*)",
+      "Bash(git push:*)",
+      "Bash(git rebase:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)"
+    ]
   },
   "statusLine": {
     "type": "command",
@@ -13,6 +34,6 @@
     "gopls-lsp@claude-plugins-official": true{{ if eq .pcType "work" }},
     "{{ onepasswordRead "op://Private/Dotfiles Config/claude_work_plugin" }}": true{{ end }}
   },
-  "alwaysThinkingEnabled": true{{ if eq .pcType "work" }},
-  "env": {{ onepasswordRead "op://Private/Dotfiles Config/claude_work_env" }}{{ end }}
+  "alwaysThinkingEnabled": true,
+  "model": "opusplan"
 }
