@@ -17,22 +17,24 @@
       "Bash(tail:*)",
       "Bash(wc:*)"
     ],
+    "deny": [
+      "Bash(rm -rf:*)"
+    ],
     "ask": [
       "Bash(git clean:*)",
       "Bash(git push:*)",
       "Bash(git rebase:*)"
-    ],
-    "deny": [
-      "Bash(rm -rf:*)"
     ]
   },
+  "model": "opusplan",
   "statusLine": {
     "type": "command",
     "command": "bun x ccusage statusline"
   },
   "enabledPlugins": {
-    {{ if eq .pcType "work" }}"{{ onepasswordRead "op://Private/Dotfiles Config/claude_work_plugin" }}": true{{ end }}
+    "code-simplifier@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true{{ if eq .pcType "work" }},
+    "{{ onepasswordRead "op://Private/Dotfiles Config/claude_work_plugin" }}": true{{ end }}
   },
-  "alwaysThinkingEnabled": true,
-  "model": "opusplan"
+  "alwaysThinkingEnabled": true
 }
