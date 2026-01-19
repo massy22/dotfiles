@@ -52,8 +52,6 @@
 theme = tokyonight
 
 # フォント
-font-family = "JetBrains Mono"
-font-family = "Hiragino Kaku Gothic ProN"
 font-size = 13
 
 # 背景
