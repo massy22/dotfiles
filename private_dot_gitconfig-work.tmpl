@@ -1,0 +1,7 @@
+{{- if eq .pcType "work" -}}
+{{- $gitEmailWork := onepasswordRead "op://Private/Dotfiles Config/git_email_work" -}}
+
+[user]
+  name = Kazuki Mashiko
+  email = {{ $gitEmailWork }}
+{{- end }}

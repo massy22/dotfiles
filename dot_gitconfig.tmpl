@@ -1,7 +1,22 @@
 [user]
   name = Kazuki Mashiko
-[includeIf "gitdir:~/git/github.com/massy22/**"]
+
+{{- if eq .pcType "work" }}
+[include]
+  path = ~/.gitconfig-work
+{{- end }}
+
+# Default to personal for GitHub repos under ghq.
+[includeIf "gitdir:~/git/github.com/**"]
   path = ~/.gitconfig-personal
+
+{{- if eq .pcType "work" }}
+{{- $githubWorkOrg := onepasswordRead "op://Private/Dotfiles Config/github_work_org" }}
+# Override back to work for company org repos.
+[includeIf "gitdir:~/git/github.com/{{ $githubWorkOrg }}/**"]
+  path = ~/.gitconfig-work
+{{- end }}
+
 [color]
   # colorの設定(以下のコマンドは自動で色つける)
   status = auto

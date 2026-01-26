@@ -3,13 +3,9 @@
   insteadOf = https://github.com/massy22
 
 {{- if eq .pcType "work" }}
-{{- $gitEmailWork := onepasswordRead "op://Private/Dotfiles Config/git_email_work" }}
 {{- $githubPatWork := onepasswordRead "op://Private/Dotfiles Config/github_pat_work" }}
 {{- $githubWorkOrg := onepasswordRead "op://Private/Dotfiles Config/github_work_org" }}
 {{- $githubEnterpriseHost := onepasswordRead "op://Private/Dotfiles Config/github_enterprise_host" }}
-
-[user]
-  email = {{ $gitEmailWork }}
 
 [url "https://{{ $githubPatWork }}:x-oauth-basic@github.com/{{ $githubWorkOrg }}"]
   insteadOf = https://github.com/{{ $githubWorkOrg }}
