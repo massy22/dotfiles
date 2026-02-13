@@ -87,6 +87,12 @@ alias gc='git commit'
 alias gci='git commit -a'
 alias '偽ｔ'=git
 
+# git completion for aliases
+compdef g=git
+compdef gi=git
+compdef oppai=git
+compdef '偽ｔ'=git
+
 # jq
 alias -g JQ='jq -C "."'
 alias -g LJQ='jq -C "." | less -R'
