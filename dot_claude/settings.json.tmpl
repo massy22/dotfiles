@@ -3,6 +3,8 @@
   "permissions": {
     "allow": [
       "Bash(cat:*)",
+      "Bash(chmod:*)",
+      "Bash(claude:*)",
       "Bash(diff:*)",
       "Bash(echo:*)",
       "Bash(find:*)",
@@ -10,7 +12,9 @@
       "Bash(gh pr diff:*)",
       "Bash(gh pr list:*)",
       "Bash(gh pr view:*)",
+      "Bash(git add:*)",
       "Bash(git blame:*)",
+      "Bash(git commit:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
       "Bash(git show:*)",
@@ -19,20 +23,34 @@
       "Bash(head:*)",
       "Bash(ls:*)",
       "Bash(make build:*)",
-      "Bash(tree:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm show:*)",
+      "Bash(shuf:*)",
       "Bash(tail:*)",
+      "Bash(test:*)",
+      "Bash(touch:*)",
+      "Bash(tree:*)",
+      "Bash(unzip:*)",
       "Bash(wc:*)",
       "Bash(yarn build:*)",
       "Bash(yarn lint:*)",
-      "Bash(yarn lint:fix:*)"
+      "Bash(yarn lint:fix:*)",
+      "WebSearch"
     ],
     "deny": [
       "Bash(rm -rf:*)"
     ],
     "ask": [
+      "Bash(curl:*)",
+      "WebFetch",
+      "Bash(gh pr create:*)",
+      "Bash(git checkout:*)",
       "Bash(git clean:*)",
       "Bash(git push:*)",
-      "Bash(git rebase:*)"
+      "Bash(git rebase:*)",
+      "Bash(mv:*)",
+      "Bash(osascript:*)",
+      "Bash(xargs:*)"
     ]
   },
   "model": "opusplan",
