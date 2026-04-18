@@ -104,8 +104,7 @@
     "command": "bun x ccusage statusline"
   },
   "enabledPlugins": {
-    "code-simplifier@claude-plugins-official": true{{ if eq .pcType "work" }},
-    "{{ onepasswordRead "op://Private/Dotfiles Config/claude_work_plugin" }}": true,{{ end }}
+    {{ if eq .pcType "work" }}"{{ onepasswordRead "op://Private/Dotfiles Config/claude_work_plugin" }}": true,{{ end }}
     "skill-creator@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
