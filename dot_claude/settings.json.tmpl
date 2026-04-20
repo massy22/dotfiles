@@ -1,5 +1,6 @@
 {
-  {{ if eq .pcType "work" }}"env": {{ onepasswordRead "op://Private/Dotfiles Config/claude_work_env" }},{{ end }}
+  {{ if eq .pcType "work" }}"env": {{ onepasswordRead "op://Private/Dotfiles Config/claude_work_env" }},
+  "otelHeadersHelper": "~/.claude/otel-headers-helper.sh",{{ end }}
   "permissions": {
     "allow": [
       "Bash(awk:*)",
@@ -104,7 +105,8 @@
     "command": "bun x ccusage statusline"
   },
   "enabledPlugins": {
-    {{ if eq .pcType "work" }}"{{ onepasswordRead "op://Private/Dotfiles Config/claude_work_plugin" }}": true,{{ end }}
+    {{ if eq .pcType "work" }}"{{ onepasswordRead "op://Private/Dotfiles Config/claude_work_plugin" }}": true,
+    "slack@claude-plugins-official": true,{{ end }}
     "skill-creator@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
