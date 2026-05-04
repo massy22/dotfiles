@@ -4,6 +4,7 @@ Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/).
 
 ## Prerequisites
 
+- [Homebrew](https://brew.sh/)
 - [chezmoi](https://www.chezmoi.io/install/)
 - [1Password CLI](https://developer.1password.com/docs/cli/get-started) (for secrets)
 - [ghq](https://github.com/x-motemen/ghq) (optional, recommended for repository management)
@@ -73,6 +74,19 @@ git remote set-url origin git@github.com-work:ORG/REPO.git
 
 `ORG/REPO` should be replaced locally. Do not write work account names into this repository.
 
+### Homebrew packages
+
+Homebrew packages are managed as `~/.Brewfile` via chezmoi. After applying dotfiles, check what would be installed before running the bundle:
+
+```bash
+chezmoi diff
+chezmoi apply
+brew bundle check --global
+brew bundle --global
+```
+
+Edit `dot_Brewfile.tmpl` in this repository when adding or removing packages. Do not edit the generated `~/.Brewfile` directly.
+
 ### 1Password Configuration
 
 Create a Secure Note in 1Password named `Dotfiles Config` with the following fields:
@@ -106,6 +120,7 @@ chezmoi update
 
 - Shell: `.zshrc`, `.zshrc.custom`, `.zshrc.alias`, `.zshrc.os` (OS-specific), `.zshrc.local`
 - Git: `.gitconfig`, `.gitconfig-personal`, `.gitconfig.local`, `.gitignore`
+- Homebrew: `.Brewfile`
 - Vim: `.vimrc`, `.ideavimrc`
 - Ruby: `.gemrc`, `.irbrc`, `.pryrc`
 - Tmux: `.tmux.conf`
