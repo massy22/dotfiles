@@ -70,45 +70,17 @@ case ${UID} in
     # Show git branch when you are in git repository
     # http://d.hatena.ne.jp/mollifier/20100906/p1
 
-    autoload -Uz add-zsh-hook
-    autoload -Uz vcs_info
-
-    zstyle ':vcs_info:*' enable git svn hg bzr
-    zstyle ':vcs_info:*' formats '(%s)-[%b]'
-    zstyle ':vcs_info:*' actionformats '(%s)-[%b|%a]'
-    zstyle ':vcs_info:(svn|bzr):*' branchformat '%b:r%r'
-    zstyle ':vcs_info:bzr:*' use-simple true
-
-    autoload -Uz is-at-least
-    if is-at-least 4.3.10; then
-      # この check-for-changes が今回の設定するところ
-      zstyle ':vcs_info:git:*' check-for-changes true
-      zstyle ':vcs_info:git:*' stagedstr "+"    # 適当な文字列に変更する
-      zstyle ':vcs_info:git:*' unstagedstr "-"  # 適当の文字列に変更する
-      zstyle ':vcs_info:git:*' formats '(%s)-[%c%u%b]'
-      zstyle ':vcs_info:git:*' actionformats '(%s)-[%c%u%b|%a]'
-    fi
-
-    function _update_vcs_info_msg() {
-        psvar=()
-        LANG=en_US.UTF-8 vcs_info
-        psvar[2]=$(_git_not_pushed)
-        [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
-    }
-    add-zsh-hook precmd _update_vcs_info_msg
-
     # show status of git pushed to HEAD in prompt
     function _git_not_pushed()
     {
-      if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ]; then
-        head="$(git rev-parse HEAD)"
-        for x in $(git rev-parse --remotes)
-        do
-          if [ "$head" = "$x" ]; then
-            return 0
-          fi
-        done
-        echo "|?"
+      local upstream ahead
+      if [[ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ]]; then
+        upstream="$(git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null)" || {
+          echo "|?"
+          return 0
+        }
+        ahead="$(git rev-list --count "${upstream}..HEAD" 2>/dev/null)"
+        [[ "${ahead:-0}" -gt 0 ]] && echo "|?"
       fi
       return 0
     }
@@ -123,24 +95,22 @@ case ${UID} in
               return
       fi
 
-      name=`git rev-parse --abbrev-ref=loose HEAD 2> /dev/null`
+      name="$(git rev-parse --abbrev-ref=loose HEAD 2> /dev/null)"
       if [[ -z $name ]]; then
               return
       fi
 
-      gitdir=`git rev-parse --git-dir 2> /dev/null`
+      gitdir="$(git rev-parse --git-dir 2> /dev/null)"
       action=`VCS_INFO_git_getaction "$gitdir"` && action="|$action"
-      pushed="`_git_not_pushed`"
+      pushed="$(_git_not_pushed)"
 
-      st=`git status 2> /dev/null`
-      if [[ -n `echo "$st" | grep "^nothing to"` ]]; then
+      st="$(git status --porcelain=v1 2> /dev/null)"
+      if [[ -z "$st" ]]; then
         color=%F{green}
-      elif [[ -n `echo "$st" | grep "^nothing added"` ]]; then
-        color=%F{yellow}
-      elif [[ -n `echo "$st" | grep "^# Untracked"` ]]; then
+      elif [[ "$st" == *\?\?* ]]; then
         color=%B%F{red}
       else
-        color=%F{red}
+        color=%F{yellow}
       fi
 
       echo "[$color$name$action$pushed%f%b]"
@@ -354,11 +324,16 @@ e_normal=`echo -e "¥033[0;30m"`
 e_RED=`echo -e "¥033[1;31m"`
 e_BLUE=`echo -e "¥033[1;36m"`
 
+function __colorize_build_output() {
+    sed -e "s@[Ee]rror:.*@$e_RED&$e_normal@g" -e "s@cannot¥sfind.*@$e_RED&$e_normal@g" -e "s@[Ww]arning:.*@$e_BLUE&$e_normal@g"
+}
 function make() {
-    LANG=C command make "$@" 2>&1 | sed -e "s@[Ee]rror:.*@$e_RED&$e_normal@g" -e "s@cannot¥sfind.*@$e_RED&$e_normal@g" -e "s@[Ww]arning:.*@$e_BLUE&$e_normal@g"
+    LANG=C command make "$@" 2>&1 | __colorize_build_output
+    return $pipestatus[1]
 }
 function cwaf() {
-    LANG=C command ./waf "$@" 2>&1 | sed -e "s@[Ee]rror:.*@$e_RED&$e_normal@g" -e "s@cannot¥sfind.*@$e_RED&$e_normal@g" -e "s@[Ww]arning:.*@$e_BLUE&$e_normal@g"
+    LANG=C command ./waf "$@" 2>&1 | __colorize_build_output
+    return $pipestatus[1]
 }
 
 ## Completion configuration
@@ -478,16 +453,23 @@ esac
 
 
 export EDITOR=nvim
-export PATH=$PATH:$HOME/local/bin:/usr/local/git/bin
-export PATH=$PATH:$HOME/.local/bin
-export PATH=$PATH:$HOME/bin
-export PATH=$PATH:/sbin:/usr/local/bin
-export MANPATH=$MANPATH:/opt/local/man:/usr/local/share/man
+typeset -U path
+path=(
+    $path
+    "$HOME/local/bin"
+    "/usr/local/git/bin"
+    "$HOME/.local/bin"
+    "$HOME/bin"
+    "/sbin"
+    "/usr/local/bin"
+)
+export PATH
+export MANPATH="${MANPATH:+$MANPATH:}/opt/local/man:/usr/local/share/man"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
 [ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+[[ -d "$BUN_INSTALL/bin" ]] && path=("$BUN_INSTALL/bin" $path)
 
 expand-to-home-or-insert () {
         if [ "$LBUFFER" = "" -o "$LBUFFER[-1]" = " " ]; then
@@ -547,9 +529,9 @@ bindkey "."   magic-abbrev-expand-and-insert
 bindkey "^x " no-magic-abbrev-expand
 
 function rmf(){
-   for file in $*
+   for file in "$@"
    do
-      __rm_single_file $file
+      __rm_single_file "$file"
    done
 }
 
@@ -562,23 +544,23 @@ function __rm_single_file(){
        if ! [ $# -eq 1 ]
        then
                echo "__rm_single_file: 1 argument required but $# passed."
-               exit
+               return 1
        fi
 
-       if [ -e $1 ]
+       if [ -e "$1" ]
        then
-               BASENAME=`basename $1`
+               BASENAME="$(basename "$1")"
                NAME=$BASENAME
                COUNT=0
-               while [ -e ~/.Trash/$NAME ]
+               while [ -e "$HOME/.Trash/$NAME" ]
                do
                        COUNT=$(($COUNT+1))
                        NAME="$BASENAME.$COUNT"
                done
 
-               command /bin/mv $1 ~/.Trash/$NAME
+               command /bin/mv -- "$1" "$HOME/.Trash/$NAME"
        else
-               echo "No such file or directory: $file"
+               echo "No such file or directory: $1"
        fi
 }
 
@@ -599,10 +581,10 @@ esac
 
 # ~/.zshrc
 # setting for percol.zsh
-source ~/.zsh/percol.zsh
+[[ -f ~/.zsh/percol.zsh ]] && source ~/.zsh/percol.zsh
 
 # setting for peco.zsh
-source ~/.zsh/peco.zsh
+[[ -f ~/.zsh/peco.zsh ]] && source ~/.zsh/peco.zsh
 
 ## local固有設定
 #

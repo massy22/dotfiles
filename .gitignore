@@ -1,0 +1,17 @@
+# Local agent/editor state
+.cursor/
+.claude/
+.gemini/
+.playwright-mcp/
+.serena/
+
+# Logs and runtime caches
+*.log
+*.tmp
+*.cache
+.cache/
+
+# Local secrets
+.env
+.env.*
+!.env.example

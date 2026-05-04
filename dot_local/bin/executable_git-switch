@@ -6,7 +6,7 @@ require 'optparse'
 @hard = false
 opt_parser = OptionParser.new{|opts|
   opts.banner = 'git switch [--hard] [--repository=<path>] [--new-workdir=<path>] <branch> <command...>'
-  opts.on("--hard",        'execute `git reset --hard` before switch to branch'){ @hard == true}
+  opts.on("--hard",        'execute `git reset --hard` before switch to branch'){ @hard = true}
   opts.on("--repository=V",  "target repository.(default is current repository)"){|v| @repository = v}
   opts.on("--new-workdir=V", "path to the new working directory.(default /tmp/<repsitory_name>)"){|v| @new_work_dir = v}
 }
@@ -25,7 +25,7 @@ unless @repository
   @repository = `git rev-parse -q --show-toplevel`.chomp
 end
 
-unless File.exists?(@repository)
+unless File.exist?(@repository)
   puts "No such repository: #{@repository}"
   exit 128
 end
@@ -34,19 +34,19 @@ unless @new_work_dir
   @new_work_dir = "/tmp/#{File.basename(@repository)}"
 end
 
-unless File.exists?(@new_work_dir)
-  res = system("git-new-workdir #{@repository} #{@new_work_dir} ")
+unless File.exist?(@new_work_dir)
+  res = system("git-new-workdir", @repository, @new_work_dir)
   exit 128 unless res
   puts "git-new-workdir #{@repository} #{@new_work_dir} "
 end
 
-if @hard
-  res = system("git reset --hard HEAD")
-  exit 128 unless res
-end
-
 Dir.chdir(@new_work_dir){
-  res = system("git checkout #{@branch}")
+  if @hard
+    res = system("git", "reset", "--hard", "HEAD")
+    exit 128 unless res
+  end
+
+  res = system("git", "checkout", @branch)
   exit 128 unless res
 
   pid = fork do

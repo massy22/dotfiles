@@ -1,0 +1,13 @@
+Host github.com-personal
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/github_personal
+  IdentitiesOnly yes
+
+{{- if eq .pcType "work" }}
+Host github.com-work
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/github_work
+  IdentitiesOnly yes
+{{- end }}

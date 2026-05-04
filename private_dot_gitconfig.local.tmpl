@@ -1,17 +1,18 @@
-{{- $githubPatPersonal := onepasswordRead "op://Private/Dotfiles Config/github_pat_personal" -}}
-[url "https://{{ $githubPatPersonal }}:x-oauth-basic@github.com/massy22"]
-  insteadOf = https://github.com/massy22
+# GitHub authentication is intentionally delegated to gh auth, SSH,
+# or the platform credential helper. Do not embed PATs in remote URLs.
+[url "git@github.com-personal:massy22/"]
+  insteadOf = https://github.com/massy22/
+  insteadOf = git@github.com:massy22/
 
 {{- if eq .pcType "work" }}
-{{- $githubPatWork := onepasswordRead "op://Private/Dotfiles Config/github_pat_work" }}
 {{- $githubWorkOrg := onepasswordRead "op://Private/Dotfiles Config/github_work_org" }}
 {{- $githubEnterpriseHost := onepasswordRead "op://Private/Dotfiles Config/github_enterprise_host" }}
 
-[url "https://{{ $githubPatWork }}:x-oauth-basic@github.com/{{ $githubWorkOrg }}"]
-  insteadOf = https://github.com/{{ $githubWorkOrg }}
+[url "git@github.com-work:{{ $githubWorkOrg }}/"]
+  insteadOf = https://github.com/{{ $githubWorkOrg }}/
+  insteadOf = git@github.com:{{ $githubWorkOrg }}/
 
 {{- if $githubEnterpriseHost }}
-
 [hub]
   host = {{ $githubEnterpriseHost }}
 {{- end }}

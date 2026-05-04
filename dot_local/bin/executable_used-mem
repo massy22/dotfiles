@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## debug mode
-#DEBUG="yes"
+# DEBUG="yes"
 if [ "$DEBUG" = "yes" ]; then
     set -x
 fi
@@ -10,99 +10,54 @@ fi
 # メモリ使用率(%)を求める
 #   精度は小数点第1位までとする
 #
-calculate_used_mem() {
-    # vm_stat
-    #  page size of 4096 bytes
+calculate_used_mem_vm_stat() {
     VM_STAT=$(vm_stat)
-    PAGES_FREE=$(echo "$VM_STAT" | awk '/Pages free/ {print $3}' | tr -d '.')
+    PAGE_SIZE=$(pagesize 2>/dev/null || sysctl -n hw.pagesize 2>/dev/null || echo 4096)
     PAGES_ACTIVE=$(echo "$VM_STAT" | awk '/Pages active/ {print $3}' | tr -d '.')
     PAGES_INACTIVE=$(echo "$VM_STAT" | awk '/Pages inactive/ {print $3}' | tr -d '.')
     PAGES_SPECULATIVE=$(echo "$VM_STAT" | awk '/Pages speculative/ {print $3}' | tr -d '.')
     PAGES_WIRED=$(echo "$VM_STAT" | awk '/Pages wired down/ {print $4}' | tr -d '.')
+    PAGES_FREE=$(echo "$VM_STAT" | awk '/Pages free/ {print $3}' | tr -d '.')
 
-    # 空きメモリ
-    FREE_MEM=$(($PAGES_FREE + $PAGES_SPECULATIVE))
-
-    # 使用中メモリ
-    USED_MEM=$(($PAGES_ACTIVE + $PAGES_INACTIVE + $PAGES_WIRED))
-    ACTUAL_USED_MEM=$((PAGES_ACTIVE + $PAGES_WIRED))
-    ACTUAL_USED_MEM_GB=$(echo "$(($ACTUAL_USED_MEM * 4096 / 1024 / 1024 ))" | sed -e 's/\(.*\)\([0-9]\{3\}\)/\1.\2/' -e 's/\(.*\)\.\([0-9]\{1\}\).*/\1.\2/' -e 's/^\./0./' )
-
-    # 合計
-    TOTAL_MEM=$(($FREE_MEM + $USED_MEM))
-    TOTAL_MEM_GB=$(echo "$(($TOTAL_MEM * 4096 / 1024 / 1024 ))" | sed -e 's/\(.*\)\([0-9]\{3\}\)/\1.\2/' -e 's/\(.*\)\.\([0-9]\{1\}\).*/\1.\2/' -e 's/^\./0./' )
-
-    # 使用中メモリ(%)
-    #  小数点第1位まで求めて後から小数点文字(ドット)を挿入
-    USED_MEM_PERCENT=$(echo "$(($ACTUAL_USED_MEM * 1000 / $TOTAL_MEM))" | sed -e 's/\(.*\)\([0-9]\)/\1.\2/' -e 's/^\./0./')
-    echo "${USED_MEM_PERCENT}%(${ACTUAL_USED_MEM_GB}G/${TOTAL_MEM_GB}G)"
-
-    # RET
-    return 0
-}
-
-# Debug
-debug() {
-    if [ "$DEBUG" = "yes" ]; then
-        echo "PAGES_FREE: $PAGES_FREE pages"
-        echo "PAGES_FREE: $(($PAGES_FREE * 4096 / 1024 / 1024 )) MB"
-        echo "PAGES_ACTIVE: $PAGES_ACTIVE pages"
-        echo "PAGES_ACTIVE: $(($PAGES_ACTIVE * 4096 / 1024 / 1024)) MB"
-        echo "PAGES_INACTIVE: $PAGES_INACTIVE pages"
-        echo "PAGES_INACTIVE: $(($PAGES_INACTIVE * 4096 / 1024 / 1024)) MB"
-        echo "PAGES_SPECULATIVE: $PAGES_SPECULATIVE pages"
-        echo "PAGES_SPECULATIVE: $(($PAGES_SPECULATIVE * 4096 / 1024 / 1024 )) MB"
-        echo "PAGES_WIRED: $PAGES_WIRED pages"
-        echo "PAGES_WIRED: $(($PAGES_WIRED * 4096 / 1024 / 1024)) MB"
-        echo "FREE_MEM: $FREE_MEM pages"
-        echo "FREE_MEM: $(($FREE_MEM * 4096 / 1024 / 1024)) MB"
-        echo "USED_MEM: $USED_MEM pages"
-        echo "USED_MEM: $(($USED_MEM * 4096 / 1024 / 1024)) MB"
-        echo "TOTAL_MEM: $TOTAL_MEM pages"
-        echo "TOTAL_MEM: $(($TOTAL_MEM * 4096 / 1024 / 1024)) MB"
-        echo "---------------"
-        # 搭載メモリ(理論値): 8GBの場合
-        echo "TOTAL_MEM: $((8 * 1024)) MB (Theoretical value)"
-        echo "---------------"
-        echo "USED_MEM: $(($USED_MEM * 1000 / $TOTAL_MEM)) %"
+    if [ -z "$PAGES_ACTIVE" ] || [ -z "$PAGES_INACTIVE" ] || [ -z "$PAGES_SPECULATIVE" ] || [ -z "$PAGES_WIRED" ] || [ -z "$PAGES_FREE" ]; then
+        return 1
     fi
-}
 
-if type vm_stat > /dev/null 2>&1; then
-  calculate_used_mem
-  RET=$?
-  exit $RET
-fi
+    FREE_MEM=$((PAGES_FREE + PAGES_SPECULATIVE))
+    USED_MEM=$((PAGES_ACTIVE + PAGES_INACTIVE + PAGES_WIRED))
+    ACTUAL_USED_MEM=$((PAGES_ACTIVE + PAGES_WIRED))
+    TOTAL_MEM=$((FREE_MEM + USED_MEM))
+
+    awk \
+        -v used="$ACTUAL_USED_MEM" \
+        -v total="$TOTAL_MEM" \
+        -v page_size="$PAGE_SIZE" \
+        'BEGIN {
+            printf "%.1f%%(%.1fG/%.1fG)\n",
+                used * 100 / total,
+                used * page_size / 1024 / 1024 / 1024,
+                total * page_size / 1024 / 1024 / 1024
+        }'
+}
 
 calculate_used_mem_free() {
-    FREE=$(free)
-
-    # 空きメモリ
-    FREE_MEM=$(echo "$FREE" | awk '/-\/\+ buffers\/cache/ {print $4}')
-
-    # 使用中メモリ
-    USED_MEM=$(echo "$FREE" | awk '/-\/\+ buffers\/cache/ {print $3}')
-    USED_MEM_GB=$(echo "$(($USED_MEM / 1024 ))" | sed -e 's/\(.*\)\([0-9]\{3\}\)/\1.\2/' -e 's/\(.*\)\.\([0-9]\{1\}\).*/\1.\2/' -e 's/^\./0./' )
-
-    # 合計
-    TOTAL_MEM=$(($FREE_MEM + $USED_MEM))
-    TOTAL_MEM_GB=$(echo "$(($TOTAL_MEM / 1024 ))" | sed -e 's/\(.*\)\([0-9]\{3\}\)/\1.\2/' -e 's/\(.*\)\.\([0-9]\{1\}\).*/\1.\2/' -e 's/^\./0./' )
-
-
-
-    # 使用中メモリ(%)
-    #  小数点第1位まで求めて後から小数点文字(ドット)を挿入
-    USED_MEM_PERCENT=$(echo "$(($USED_MEM * 1000 / $TOTAL_MEM))" | sed -e 's/\(.*\)\([0-9]\)/\1.\2/' -e 's/^\./0./')
-    echo "${USED_MEM_PERCENT}%(${USED_MEM_GB}G/${TOTAL_MEM_GB}G)"
-
-    # RET
-    return 0
+    free -m | awk '/^Mem:/ {
+        used = $3
+        total = $2
+        printf "%.1f%%(%.1fG/%.1fG)\n", used * 100 / total, used / 1024, total / 1024
+        found = 1
+    }
+    END { exit found ? 0 : 1 }'
 }
 
-if type free > /dev/null 2>&1; then
+if command -v vm_stat > /dev/null 2>&1; then
+  calculate_used_mem_vm_stat
+  exit $?
+fi
+
+if command -v free > /dev/null 2>&1; then
   calculate_used_mem_free
-  RET=$?
-  exit $RET
+  exit $?
 fi
 
 exit 1

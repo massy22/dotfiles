@@ -1,8 +1,8 @@
 {{- $pcType := promptStringOnce . "pcType" "PC type (personal/work)" -}}
 {{- $opAccount := promptStringOnce . "onepassword.account" "1Password account ID (op account list で確認)" -}}
-{{- $homeDir := .chezmoi.homeDir -}}
+{{- $sourceDir := .chezmoi.sourceDir -}}
 
-sourceDir: "{{ $homeDir }}/git/github.com/massy22/dotfiles"
+sourceDir: "{{ $sourceDir }}"
 
 data:
   pcType: {{ $pcType | quote }}

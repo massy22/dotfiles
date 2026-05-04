@@ -15,16 +15,26 @@ if [ -z "${NETWORK}" ]; then
   NETWORK="Ethernet"
 fi
 if [ -z "${SWITCH}" ]; then
-  SEITCH="on"
+  SWITCH="on"
 fi
 
-if [ -n "${PROXY}" -a -n "${PORT}" ]; then
-  networksetup -setsocksfirewallproxy "${NETWORK}" ${PROXY} ${PORT}
+if ! command -v networksetup >/dev/null 2>&1; then
+  echo "networksetup command is required (macOS only)" >&2
+  exit 1
+fi
+
+if [ "${SWITCH}" != "on" ] && [ "${SWITCH}" != "off" ]; then
+  echo "usage: socks-proxy [NETWORK] [on|off] [PROXY] [PORT]" >&2
+  exit 2
+fi
+
+if [ -n "${PROXY}" ] && [ -n "${PORT}" ]; then
+  networksetup -setsocksfirewallproxy "${NETWORK}" "${PROXY}" "${PORT}"
   echo "Network [${NETWORK}] : set socks proxy to '${PROXY}:${PORT}'"
 fi
 
-networksetup -setsocksfirewallproxystate "${NETWORK}" ${SWITCH}
-if [ ${SWITCH} = "on" ]; then
+networksetup -setsocksfirewallproxystate "${NETWORK}" "${SWITCH}"
+if [ "${SWITCH}" = "on" ]; then
   echo "Network [${NETWORK}] : socks proxy is enabled"
 else
   echo "Network [${NETWORK}] : socks proxy is disabled"
