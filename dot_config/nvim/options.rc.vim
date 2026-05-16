@@ -95,6 +95,11 @@ augroup END
 set ignorecase  " case insensitive search
 set smartcase   " disable ignorecase if search word contains uppercase charactor
 
+if executable('rg')
+  set grepprg=rg\ --vimgrep\ --no-heading\ --smart-case
+  set grepformat=%f:%l:%c:%m
+endif
+
 "-------------------------------------------------------------------------------
 " Editing
 "-------------------------------------------------------------------------------
