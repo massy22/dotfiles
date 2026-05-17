@@ -1,24 +1,199 @@
-"基本設定
-source ~/.vimrc.basic
-"StatusLine設定
-source ~/.vimrc.statusline
-"インデント設定
-source ~/.vimrc.indent
-"表示関連
-source ~/.vimrc.apperance
-"Tags関連
-source ~/.vimrc.tags
-"検索関連
-source ~/.vimrc.search
-"移動関連
-source ~/.vimrc.moving
-"ウィンドウ関連
-source ~/.vimrc.window
-"Color関連
-source ~/.vimrc.colors
-"編集関連
-source ~/.vimrc.editing
-"エンコーディング関連
-source ~/.vimrc.encoding
-"その他
-source ~/.vimrc.misc
+"-------------------------------------------------------------------------------
+" Basics
+"-------------------------------------------------------------------------------
+let mapleader = ","
+
+set autoread
+set backspace=indent,eol,start
+set hidden
+set modelines=0
+set nobackup
+set noundofile
+set scrolloff=5
+set textwidth=0
+set vb t_vb=
+set whichwrap=b,s,h,l,<,>,[,]
+set showcmd
+set showmode
+set laststatus=2
+set ruler
+set mouse=a
+set clipboard=unnamed
+
+command! Ev edit $MYVIMRC
+command! Rv source $MYVIMRC
+
+let $VIMTMP = expand('~/.cache/vim')
+if !isdirectory(expand($VIMTMP))
+  call mkdir(expand($VIMTMP), 'p')
+endif
+set directory=$VIMTMP
+set backupdir=$VIMTMP
+
+filetype plugin indent on
+syntax enable
+
+"-------------------------------------------------------------------------------
+" Display
+"-------------------------------------------------------------------------------
+silent! colorscheme default
+
+set number
+set showmatch
+set list
+set listchars=tab:>.,trail:_,extends:>,precedes:<
+set display=uhex
+set cursorline
+set lazyredraw
+
+highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=darkgray
+match ZenkakuSpace /　/
+
+augroup vimrc_cursorline
+  autocmd!
+  autocmd WinLeave * setlocal nocursorline
+  autocmd WinEnter,BufRead * setlocal cursorline
+augroup END
+
+highlight DiffAdd    cterm=bold ctermfg=10 ctermbg=22
+highlight DiffDelete cterm=bold ctermfg=10 ctermbg=52
+highlight DiffChange cterm=bold ctermfg=10 ctermbg=17
+highlight DiffText   cterm=bold ctermfg=10 ctermbg=21
+
+"-------------------------------------------------------------------------------
+" Indent
+"-------------------------------------------------------------------------------
+set autoindent
+set smartindent
+set cindent
+set expandtab
+set tabstop=2 shiftwidth=2 softtabstop=0
+
+augroup vimrc_indent
+  autocmd!
+  autocmd FileType apache,c,cpp,cs,diff,eruby,java,perl,php,python,sh,sql,vb,wsh,xhtml,xml,zsh setlocal shiftwidth=4 softtabstop=4 tabstop=4 expandtab
+  autocmd FileType css,html,javascript,jsx,ruby,haml,vim,yaml,scala setlocal shiftwidth=2 softtabstop=2 tabstop=2 expandtab
+  autocmd FileType go setlocal noexpandtab list tabstop=2 shiftwidth=2
+augroup END
+
+"-------------------------------------------------------------------------------
+" Search
+"-------------------------------------------------------------------------------
+set wrapscan
+set ignorecase
+set smartcase
+set incsearch
+set hlsearch
+
+nnoremap <silent> <Esc><Esc> :nohlsearch<CR><Esc>
+vnoremap <silent> // y/<C-R>=escape(@", '\\/.*$^~[]')<CR><CR>
+vnoremap /r "xy:%s/<C-R>=escape(@x, '\\/.*$^~[]')<CR>//gc<Left><Left><Left>
+nnoremap <expr> s* ':%substitute/\<' . expand('<cword>') . '\>/'
+
+if executable('rg')
+  set grepprg=rg\ --vimgrep\ --no-heading\ --smart-case
+  set grepformat=%f:%l:%c:%m
+endif
+
+function! s:keeppatterns(cmd)
+  let old = @/
+  try
+    execute a:cmd
+    call histdel("/", -1)
+  catch
+    echohl ErrorMsg
+    echo v:exception
+    echohl NONE
+  finally
+    let @/ = old
+  endtry
+endfunction
+command! -complete=command -nargs=* Keeppatterns call s:keeppatterns(<q-args>)
+
+"-------------------------------------------------------------------------------
+" Editing
+"-------------------------------------------------------------------------------
+inoremap jj <Esc>
+inoremap <C-e> <End>
+inoremap <C-a> <Home>
+inoremap <C-u> <C-g>u<C-u>
+inoremap <C-w> <C-g>u<C-w>
+
+nnoremap y9 y$
+nnoremap yd y$
+nnoremap y0 y^
+nnoremap yk y^
+nnoremap <silent> <C-d> d0
+nnoremap vy vawy
+
+set virtualedit+=block
+vnoremap v $h
+
+command! Pt set paste!
+nnoremap <Leader>j :%!python3 -m json.tool<CR>
+
+augroup vimrc_editing
+  autocmd!
+  autocmd BufWritePre * %s/\s\+$//ge
+  autocmd FileType qf nnoremap <buffer> q :cclose<CR>
+  autocmd FileType qf nnoremap <buffer> <Esc> :cclose<CR>
+augroup END
+
+"-------------------------------------------------------------------------------
+" Windows and buffers
+"-------------------------------------------------------------------------------
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+nnoremap <silent> <F2> :bprevious<CR>
+nnoremap <silent> <F3> :bnext<CR>
+nnoremap <silent> <F4> :bnext \| bdelete #<CR>
+command! Bw bnext | bdelete #
+
+function! s:toggle_qf_window()
+  for winnr in range(1, winnr('$'))
+    if getwinvar(winnr, '&buftype') ==# 'quickfix'
+      cclose
+      return
+    endif
+  endfor
+  botright cwindow
+endfunction
+nnoremap <silent> cw :call <SID>toggle_qf_window()<CR>
+
+augroup vimrc_quickfix
+  autocmd!
+  autocmd QuickfixCmdPost make,grep,grepadd,vimgrep,vimgrepadd cwindow
+  autocmd QuickfixCmdPost lmake,lgrep,lgrepadd,lvimgrep,lvimgrepadd lwindow
+augroup END
+
+"-------------------------------------------------------------------------------
+" Tags
+"-------------------------------------------------------------------------------
+set tags=tags;
+set notagbsearch
+
+nnoremap t <Nop>
+nnoremap tt <C-]>
+nnoremap tj :<C-u>tag<CR>
+nnoremap tk :<C-u>pop<CR>
+nnoremap tl :<C-u>tags<CR>
+
+"-------------------------------------------------------------------------------
+" Encoding
+"-------------------------------------------------------------------------------
+set ffs=unix,dos,mac
+set encoding=utf-8
+set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+
+command! Cp932 edit ++enc=cp932
+command! Eucjp edit ++enc=euc-jp
+command! Iso2022jp edit ++enc=iso-2022-jp
+command! Utf8 edit ++enc=utf-8
+command! Jis Iso2022jp
+command! Sjis Cp932
+
+" ; starts command-line mode.
+noremap ; :
