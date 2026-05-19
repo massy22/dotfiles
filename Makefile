@@ -18,6 +18,7 @@ check-json:
 		exit 0; \
 	fi; \
 	for file in $(JSON_FILES); do \
+		[ -f "$$file" ] || continue; \
 		echo "json $$file"; \
 		$(PYTHON) -m json.tool "$$file" >/dev/null; \
 	done

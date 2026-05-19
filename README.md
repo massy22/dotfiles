@@ -125,7 +125,7 @@ chezmoi update
 - Ruby: `.gemrc`, `.irbrc`, `.pryrc`
 - Tmux: `.tmux.conf`
 - Terminal: `.dir_colors`
-- Config: `.config/nvim`, `.config/peco`, `.config/powerline`
+- Config: `.config/nvim`, `.config/peco`
 - SSH: `.ssh/config`
 - Claude: `.claude/settings.json`
 - Gemini: `.gemini/settings.json`
