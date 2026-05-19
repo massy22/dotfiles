@@ -580,9 +580,6 @@ esac
 
 
 # ~/.zshrc
-# setting for percol.zsh
-[[ -f ~/.zsh/percol.zsh ]] && source ~/.zsh/percol.zsh
-
 # setting for peco.zsh
 [[ -f ~/.zsh/peco.zsh ]] && source ~/.zsh/peco.zsh
 
