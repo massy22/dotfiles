@@ -176,22 +176,6 @@
   chpk = cherry-pick # チンピク
   iss = issue # my extended command
 
-  # git-風呂関連
-  ff  = flow feature
-  ffl = flow feature list
-  ffs = flow feature start
-  fff = flow feature finish
-  ffc = flow feature checkout
-  ffp = flow feature publish
-  fr = flow release
-  fh  = flow hotfix
-  fhl = flow hotfix list
-  fhs = flow hotfix start
-  fhf = flow hotfix finish
-  fhp = flow hotfix publish
-  fs  = flow support
-  fhd = "!f() { git branch | grep hotfix | xargs git branch -D ;}; f"
-
   fizzbuzz = "!f() { seq "$@" | awk '$0=NR%15?NR%5?NR%3?$0:\"Fizz\":\"Buzz\":\"FizzBuzz\"' ;}; f"
 [http]
   sslVerify = false
