@@ -43,10 +43,10 @@ vnoremap <silent> // y/<C-R>=escape(@", '\\/.*$^~[]')<CR><CR>
 " カーソル下のキーワードをヘルプでひく
 nnoremap <C-i><C-i> :<C-u>help<Space><C-r><C-w><Enter>
 
-" :Gb <args> でGrepBufferする
-command! -nargs=1 Gb :GrepBuffer <args>
-" カーソル下の単語をGrepBufferする
-nnoremap <C-g><C-b> :<C-u>GrepBuffer<Space><C-r><C-w><Enter>
+" :Gb <args> searches with grepprg and opens quickfix.
+command! -nargs=+ Gb execute 'silent grep! ' . <q-args> | cwindow
+" カーソル下の単語をgrepする
+nnoremap <C-g><C-b> :<C-u>silent grep! <C-r><C-w><CR>:cwindow<CR>
 
 "-------------------------------------------------------------------------------
 " Moving

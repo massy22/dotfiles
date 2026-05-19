@@ -15,22 +15,6 @@ hook_add = 'source ~/.config/nvim/plugins/airline.rc.vim'
 [[plugins]]
 repo = 'vim-airline/vim-airline-themes'
 
-# color scheme
-# [[plugins]]
-# depends = ['airline.vim']
-# repo = 'cocopon/iceberg.vim'
-# hook_post_source = 'source ~/.config/nvim/plugins/iceberg.rc.vim'
-
-# [[plugins]]
-# depends = ['airline.vim']
-# repo = 'nanotech/jellybeans.vim'
-# hook_post_source = 'source ~/.config/nvim/plugins/jellybeans.rc.vim'
-
-# [[plugins]]
-# depends = ['airline.vim']
-# repo = 'yuroyoro/yuroyoro256.vim'
-# hook_post_source = 'source ~/.config/nvim/plugins/yuroyoro256.rc.vim'
-
 [[plugins]]
 depends = ['airline.vim']
 repo = 'jonathanfilip/vim-lucius'
@@ -72,36 +56,3 @@ source ~/.config/nvim/plugins/vim-surround.rc.vim
 
 [[plugins]]
 repo = 'cohama/lexima.vim'
-
-# ==========================================================
-# filter
-# ==========================================================
-
-# minibufexplorer
-# [[plugins]]
-# repo = 'fholgado/minibufexpl.vim'
-# hook_add = 'source ~/.config/nvim/plugins/minibufexpl.rc.vim'
-
-
-# ==========================================================
-# programming
-# ==========================================================
-
-# git
-[[plugins]]
-repo = 'airblade/vim-gitgutter'
-hook_add = 'source ~/.config/nvim/plugins/gitgutter.rc.vim '
-
-# syntax checker framework
-[[plugins]]
-repo = 'w0rp/ale'
-hook_post_source = 'source ~/.config/nvim/plugins/ale.rc.vim'
-
-# reference
-[[plugins]]
-repo = 'thinca/vim-ref'
-
-# automatic gtags generation
-# [[plugins]]
-# repo = 'jsfaint/gen_tags.vim'
-# hook_add = 'source ~/.config/nvim/plugins/gen_tags.rc.vim'

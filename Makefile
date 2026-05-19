@@ -24,7 +24,7 @@ check-json:
 	done
 
 check-toml:
-	@$(PYTHON) -c 'import pathlib, subprocess, tomllib; files = subprocess.check_output(["git", "ls-files", "*.toml"], text=True).splitlines(); [tomllib.load(open(pathlib.Path(f), "rb")) for f in files]; print("toml checked: {}".format(len(files)))'
+	@$(PYTHON) -c 'import pathlib, subprocess, tomllib; files = [pathlib.Path(f) for f in subprocess.check_output(["git", "ls-files", "*.toml"], text=True).splitlines()]; files = [f for f in files if f.is_file()]; [tomllib.load(open(f, "rb")) for f in files]; print("toml checked: {}".format(len(files)))'
 
 check-zsh:
 	@if ! command -v zsh >/dev/null 2>&1; then \

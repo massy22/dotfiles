@@ -26,7 +26,9 @@ if dein#load_state(s:dein_dir)
 
   " load pluginsettings from toml file
   call dein#load_toml('~/.config/nvim/dein.toml',     {'lazy' : 0})
-  call dein#load_toml('~/.config/nvim/deinlazy.toml', {'lazy' : 1})
+  if filereadable(expand('~/.config/nvim/deinlazy.toml'))
+    call dein#load_toml('~/.config/nvim/deinlazy.toml', {'lazy' : 1})
+  endif
 
   call dein#end()
   call dein#save_state()
