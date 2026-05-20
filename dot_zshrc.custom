@@ -568,13 +568,10 @@ function __rm_single_file(){
 #
 [ -f ~/.zshrc.alias ] && source ~/.zshrc.alias
 
-# OS-specific settings
+# OS-specific settings (macOS)
 case "${OSTYPE}" in
 darwin*)
     [ -f ~/.zshrc.os_darwin ] && source ~/.zshrc.os_darwin
-    ;;
-linux*)
-    [ -f ~/.zshrc.os_linux ] && source ~/.zshrc.os_linux
     ;;
 esac
 
