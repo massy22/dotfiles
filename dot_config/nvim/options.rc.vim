@@ -56,14 +56,6 @@ match ZenkakuSpace /　/
 
 set termguicolors " 256 color
 
-" Highlight the go 'error'
-autocmd FileType go :highlight goErr cterm=bold ctermfg=214
-autocmd FileType go :match goErr /\<err\>/
-
-" Highlight the js colon at end of line
-autocmd FileType javascript :highlight jsColonAtTail  cterm=underline ctermfg=lightblue guibg=darkgray
-autocmd FileType javascript :match jsColonAtTail /:$/
-
 "-------------------------------------------------------------------------------
 " Cursor
 "-------------------------------------------------------------------------------

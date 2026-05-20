@@ -155,8 +155,6 @@
   modified = "!f() { git diff $1..$1\\^ --name-only | xargs sh -c 'nvim "$@" < /dev/tty' - ;}; f"
   # cherr -vで出てくる;commitから#1234なチケット番号を切り出す
   cherry-ticket-numbers = "!f() { git cherry -v "$@" | cut -b 44- | awk 'match($0, /#[0-9]+/) {print substr($0, RSTART, RLENGTH)}' | sort -u ;}; f"
-  # cherr -vに含まれるチケットを列挙する
-  cherry-tickets = "!f() { git cherry -v "$@" | cut -b 44- | awk 'match($0, /#[0-9]+/) {print substr($0, RSTART+1, RLENGTH-1)}' | sort -u | xargs git issue --oneline  ;}; f"
   # colorized cheery -v
   cch= "!f() { git cherry -v "$@" | awk '{ if($1 == \"+\"){ color = \"green\" } if($1 == \"-\"){ color = \"red\" } cmd = \"git show --date=short --no-notes --pretty=format:\\047%C\" color $1 \" %h %Cgreen%cd %Cblue%cn%x09%Creset%s\\047 --summary \" $2; cmd | getline t; close(cmd); print t }' ;}; f"
 
@@ -174,11 +172,8 @@
   # ss = stash save
 
   chpk = cherry-pick # チンピク
-  iss = issue # my extended command
-
-  fizzbuzz = "!f() { seq "$@" | awk '$0=NR%15?NR%5?NR%3?$0:\"Fizz\":\"Buzz\":\"FizzBuzz\"' ;}; f"
 [http]
-  sslVerify = false
+  sslVerify = true
 [tig "bind"]
   generic = g move-first-line
   generic = G move-last-line
@@ -190,8 +185,6 @@
   enabled = true
 [mergetool]
   keepBackup = false
-[ruby]
-  version = 2.2.4
 [filter "lfs"]
   clean = git-lfs clean -- %f
   smudge = git-lfs smudge -- %f

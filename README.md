@@ -118,10 +118,10 @@ chezmoi update
 
 ## Files managed
 
-- Shell: `.zshrc`, `.zshrc.custom`, `.zshrc.alias`, `.zshrc.os` (OS-specific), `.zshrc.local`
+- Shell: `.zshrc`, `.zshrc.custom`, `.zshrc.alias`, `.zshrc.os_darwin`, `.zshrc.local`
 - Git: `.gitconfig`, `.gitconfig-personal`, `.gitconfig.local`, `.gitignore`
 - Homebrew: `.Brewfile`
-- Vim: `.vimrc`, `.ideavimrc`
+- Vim: `.vimrc`, `.vim/`, `.ideavimrc`
 - Ruby: `.gemrc`, `.irbrc`, `.pryrc`
 - Tmux: `.tmux.conf`
 - Terminal: `.dir_colors`
@@ -133,7 +133,7 @@ chezmoi update
 
 ## Notes
 
-- `.vim` and `.zsh` directories are not managed by chezmoi (legacy symlinks)
+- `.vim/` and `.zsh/` are managed by chezmoi alongside `.vimrc`
 - Secrets are stored in 1Password and injected via templates
 - Work-specific settings are only applied when `pcType` is `work`
 - GitHub PATs are not embedded in git remote URLs. GitHub repository access is routed through SSH host aliases.
