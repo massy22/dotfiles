@@ -79,19 +79,10 @@
   bn  = branch --no-merged  # mergeしてないbranchを表示
   bo  = branch -r           # remote branchを表示
   # log関連
-  wc  = whatchanged         # logに変更されたファイルも一緒に出す
-  ls  = log --stat          # logに変更されたファイルも一緒に出す
-  lp  = log -p              # diffも一緒に出す
-  la  = log --pretty=\"format:%ad %h (%an): %s\" --date=short  # ざっくりログ出す
-  lr  = log origin          # originのlog
-  ll = log --date=short --pretty=format:'%Cgreen%h %cd %Cblue%cn%x09%Creset%s' # onelineでlogを出す
-  ll1 = log --date=short --max-count=1 --pretty=format:'%Cgreen%h %cd %Cblue%cn%x09%Creset%s' # onelineでlogを出す
-  lll = log --date=short --max-count=10 --pretty=format:'%Cgreen%h %cd %Cblue%cn%x09%Creset%s' # onelineでlogを出す
-  oneline = log --pretty=oneline
-  ranking = shortlog -s -n --no-merges
-  # logをtree表示
+  lp  = log -p
+  lr  = log origin
+  ll  = log --date=short --pretty=format:'%Cgreen%h %cd %Cblue%cn%x09%Creset%s'
   log-graph = log --graph --date=short --pretty=format:'%Cgreen%h %cd %Cblue%cn %Creset%s'
-  log-all = log --graph --all --color --pretty='%x09%h %cn%x09%s %Cred%d%Creset'
   # reset
   r    = reset HEAD
   r1   = reset HEAD~
@@ -105,8 +96,7 @@
   di = diff
   dm = diff main             # mainとのdiff
   dw = diff --color-words    # 単語単位でいろつけてdiff
-  dc = diff --cached         # addされているものとのdiff
-  ds = diff --staged         # 同上(1.6.1移行)
+  dc = diff --cached
   d1 = diff HEAD~            # HEADから1つ前とdiff
   d10 = diff HEAD~~~~~~~~~~  # HEADから10前とdiff
   # edit関連
@@ -117,21 +107,11 @@
   # mergeの際にconflictが起きたファイルをadd
   add-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
   delete-unmerged =  "!f() { git ls-files --deleted | cut -f2 | sort -u ; }; git rm `f`"
-  # 指定したコミットで変更されたファイルを編集する
-  modified = "!f() { git diff $1..$1\\^ --name-only | xargs sh -c 'nvim "$@" < /dev/tty' - ;}; f"
-  # cherr -vで出てくる;commitから#1234なチケット番号を切り出す
-  cherry-ticket-numbers = "!f() { git cherry -v "$@" | cut -b 44- | awk 'match($0, /#[0-9]+/) {print substr($0, RSTART, RLENGTH)}' | sort -u ;}; f"
-  # colorized cheery -v
-  cch= "!f() { git cherry -v "$@" | awk '{ if($1 == \"+\"){ color = \"green\" } if($1 == \"-\"){ color = \"red\" } cmd = \"git show --date=short --no-notes --pretty=format:\\047%C\" color $1 \" %h %Cgreen%cd %Cblue%cn%x09%Creset%s\\047 --summary \" $2; cmd | getline t; close(cmd); print t }' ;}; f"
-
-  # blame
-  blame-at = "!f() { git blame $1 | sed -n $2P | cut -d ' ' -f1 | xargs git show ;}; f"
 
   # grep関連
   gr = grep
   gn = grep -n
   sm = submodule
-  smupdate = submodule foreach "git checkout main; git pull origin main"
   # stash関連(stashもう使わないのでコメントあうと)
   # sl = stash list
   # sp = stash pop
