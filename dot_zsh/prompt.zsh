@@ -1,4 +1,4 @@
-# プロンプトと git ブランチ表示（~/.zshrc.custom から source）
+# プロンプトと git ブランチ表示（~/.zshrc から source）
 
 case ${UID} in
 0)

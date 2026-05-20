@@ -3,7 +3,7 @@ PYTHON ?= python3
 
 JSON_FILES := $(shell git ls-files '*.json' ':!:*.tmpl')
 TOML_FILES := $(shell git ls-files '*.toml')
-ZSH_FILES := dot_zshrc dot_zshrc.custom dot_zsh/options.zsh dot_zsh/path.zsh dot_zsh/trash.zsh dot_zsh/prompt.zsh dot_zsh/magic-abbrev.zsh dot_zsh/alias.zsh dot_zsh/os-darwin.zsh
+ZSH_FILES := dot_zshrc dot_zsh/options.zsh dot_zsh/path.zsh dot_zsh/trash.zsh dot_zsh/prompt.zsh dot_zsh/magic-abbrev.zsh dot_zsh/alias.zsh dot_zsh/os-darwin.zsh
 CHEZMOI_TARGETS := .zshrc .gitconfig .gitconfig.local .zshrc.local .Brewfile .ssh/config .claude/settings.json .gemini/settings.json
 
 .PHONY: check check-json check-toml check-zsh check-shell check-chezmoi check-brewfile

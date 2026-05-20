@@ -118,7 +118,7 @@ chezmoi update
 
 ## Files managed
 
-- Shell: `.zshrc`, `.zshrc.custom`, `.zshrc.local`, `.zsh/` (prompt, alias, os-darwin, etc.)
+- Shell: `.zshrc`, `.zshrc.local`, `.zsh/` (options, path, prompt, alias, os-darwin, etc.)
 - Git: `.gitconfig`, `.gitconfig-personal`, `.gitconfig.local`, `.gitignore`
 - Homebrew: `.Brewfile`
 - Vim: `.vimrc`, `.config/nvim` (`shared.rc.vim` + options + keymap), `.ideavimrc`
@@ -130,7 +130,7 @@ chezmoi update
 
 ## Notes
 
-- `.zsh/` holds shell modules (`options.zsh`, `path.zsh`, `prompt.zsh`, `alias.zsh`, `os-darwin.zsh`, `peco.zsh`, `magic-abbrev.zsh`, etc.); `.zshrc.custom` sources them; editor config is `.vimrc` and `.config/nvim`
+- `.zsh/` holds shell modules (`options.zsh`, `path.zsh`, `prompt.zsh`, `alias.zsh`, `os-darwin.zsh`, `peco.zsh`, `magic-abbrev.zsh`, etc.); `.zshrc` sources them; editor config is `.vimrc` and `.config/nvim`
 - Secrets are stored in 1Password and injected via templates
 - Work-specific settings are only applied when `pcType` is `work`
 - GitHub PATs are not embedded in git remote URLs. GitHub repository access is routed through SSH host aliases.
