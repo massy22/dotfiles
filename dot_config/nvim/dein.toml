@@ -23,16 +23,6 @@ hook_add = 'source ~/.config/nvim/plugins/CamelCaseMotion.rc.vim'
 # editing
 # ==========================================================
 
-# comment functions
-[[plugins]]
-repo = 'scrooloose/nerdcommenter'
-hook_add = 'source ~/.config/nvim/plugins/nerdcommenter.rc.vim'
-
-# align
-[[plugins]]
-repo = 'junegunn/vim-easy-align'
-hook_add = 'source ~/.config/nvim/plugins/vim-easy-align.rc.vim'
-
 [[plugins]]
 repo = 'tpope/vim-surround'
 hook_add = '''
