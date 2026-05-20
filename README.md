@@ -118,20 +118,19 @@ chezmoi update
 
 ## Files managed
 
-- Shell: `.zshrc`, `.zshrc.custom`, `.zshrc.alias`, `.zshrc.os_darwin`, `.zshrc.local`
+- Shell: `.zshrc`, `.zshrc.custom`, `.zshrc.local`, `.zsh/` (prompt, alias, os-darwin, etc.)
 - Git: `.gitconfig`, `.gitconfig-personal`, `.gitconfig.local`, `.gitignore`
 - Homebrew: `.Brewfile`
 - Vim: `.vimrc`, `.config/nvim` (`shared.rc.vim` + options + keymap), `.ideavimrc`
 - Tmux: `.tmux.conf`
-- Terminal: `.dir_colors`
-- Config: `.config/nvim`, `.config/peco`
+- Config: `.config/nvim`, `.config/peco`, `.config/ghostty`
 - SSH: `.ssh/config`
 - Claude: `.claude/settings.json`
 - Gemini: `.gemini/settings.json`
 
 ## Notes
 
-- `.zsh/` holds `peco.zsh`, `prompt.zsh`, and `magic-abbrev.zsh`; editor config is `.vimrc` and `.config/nvim`
+- `.zsh/` holds shell modules (`prompt.zsh`, `alias.zsh`, `os-darwin.zsh`, `peco.zsh`, `magic-abbrev.zsh`, etc.); editor config is `.vimrc` and `.config/nvim`
 - Secrets are stored in 1Password and injected via templates
 - Work-specific settings are only applied when `pcType` is `work`
 - GitHub PATs are not embedded in git remote URLs. GitHub repository access is routed through SSH host aliases.
