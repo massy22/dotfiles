@@ -31,24 +31,15 @@
   attributesfile = ~/.gitattributes
   pager = diff-so-fancy | less --tabs=4 -RF
 [merge]
-  tool = vimdiff ff = false
-[merge "mergepbx"]
-  name = Xcode project files merger
-  driver = mergepbx %O %A %B
+  tool = vimdiff
+  ff = false
 [diff]
-  tool=vimdiff
+  tool = vimdiff
   compactionHeuristic = true
-[diff "xlsx"]
-  binary = true
-  textconv = $GOPATH/bin/git-xlsx-textconv
 [branch]
   autosetuprebase = always
 [pull]
   rebase = true
-# [pager]
-#   log  = diff-highlight | less
-#   show = diff-highlight | less
-#   diff = diff-highlight | less
 [alias]
   s   = status
   st  = status
@@ -66,7 +57,6 @@
   puc = "!f() { git push origin -u `git symbolic-ref --short HEAD` ;}; f"
   # rebase
   rbm = rebase --merge main         # mainへのrebaseはよく使うのでalias
-  rbd = rebase --merge develop
   rbc = rebase --continue
   rba = rebase --abort
   rbi = rebase -i
@@ -88,7 +78,6 @@
   cb  = checkout -b         # branch切ってcheckoutする
   ct  = checkout --track    # remoteのbranchを追跡
   cm  = checkout main
-  cd  = checkout develop
   # branch関連
   br  = branch
   ba  = branch -a           # originも含めた全てのbranchを表示
