@@ -72,7 +72,7 @@ set tabstop=2 shiftwidth=2 softtabstop=0
 augroup vimrc_indent
   autocmd!
   autocmd FileType apache,c,cpp,cs,diff,eruby,java,perl,php,python,sh,sql,vb,wsh,xhtml,xml,zsh setlocal shiftwidth=4 softtabstop=4 tabstop=4 expandtab
-  autocmd FileType css,html,javascript,jsx,ruby,haml,vim,yaml,scala setlocal shiftwidth=2 softtabstop=2 tabstop=2 expandtab
+  autocmd FileType css,html,javascript,jsx,vim,yaml,scala setlocal shiftwidth=2 softtabstop=2 tabstop=2 expandtab
   autocmd FileType go setlocal noexpandtab list tabstop=2 shiftwidth=2
 augroup END
 

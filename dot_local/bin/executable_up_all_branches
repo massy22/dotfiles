@@ -1,7 +1,0 @@
-#!/bin/bash
-ssh-agent ~/.ssh/id_rsa
-git fetch
-for branch in `git branch -r | cut -d " " -f3 | grep -v HEAD | sed -e "s/^origin\///g" | sort | uniq` ; do
-  echo ${branch}
-  git checkout ${branch} && git pull --rebase
-done

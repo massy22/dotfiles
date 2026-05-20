@@ -58,14 +58,6 @@ if command -v pyenv >/dev/null 2>&1; then
   fi
 fi
 
-# Ruby
-if [[ -z "$RBENV_ROOT" && -d /usr/local/var/rbenv ]]; then
-  export RBENV_ROOT=/usr/local/var/rbenv
-fi
-if command -v rbenv >/dev/null 2>&1; then
-  eval "$(rbenv init -)"
-fi
-
 # Go Lang
 if command -v go >/dev/null 2>&1; then
   export CGO_ENABLED=1
@@ -82,15 +74,6 @@ fi
 # tmux
 alias tma='tmux attach'
 alias tml='tmux list-window'
-
-# ec2
-# export EC2_PRIVATE_KEY="$(/bin/ls "$HOME"/.ec2/pk-*.pem | /usr/bin/head -1)"
-# export EC2_CERT="$(/bin/ls "$HOME"/.ec2/cert-*.pem | /usr/bin/head -1)"
-# export EC2_HOME="/usr/local/Library/LinkedKegs/ec2-api-tools/jars"
-
-__path_prepend_if_dir "/usr/local/opt/protobuf@2.6/bin"
-__path_prepend_if_dir "/usr/local/opt/elasticsearch@6/bin"
-# __path_prepend_if_dir "/usr/local/opt/elasticsearch/bin"
 
 # openssl
 # export PATH="/usr/local/opt/openssl@3/bin:$PATH"

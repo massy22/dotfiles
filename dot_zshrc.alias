@@ -24,16 +24,6 @@ alias 'src'='exec zsh'
 alias -g V="| nvim -"
 alias -g EV="| xargs --verbose sh -c 'nvim \"\$@\" < /dev/tty'"
 
-# rails
-alias -g RET="RAILS_ENV=test"
-alias -g RED="RAILS_ENV=development"
-alias -g REP="RAILS_ENV=production"
-
-# rake
-alias raket='RAILS_ENV=test rake'
-alias raked='RAILS_ENV=development rake'
-alias rakep='RAILS_ENV=production rake'
-
 # colorized cat
 alias ccat='pygmentize -O style=vim -f console256 -g'
 
@@ -111,101 +101,9 @@ alias sbcl='nocorrect sbcl'
 alias gosh='nocorrect gosh'
 # alias hg='nocorrect hg --encoding=utf-8'
 
-# use oh-my-zsh/plugins/extract.zsh
-#
-# extract http://d.hatena.ne.jp/jeneshicc/20110215/1297778049
-# extract () {
-  # if [ -f $1 ] ; then
-      # case $1 in
-          # *.tar.bz2)   tar xvjf $1    ;;
-          # *.tar.gz)    tar xvzf $1    ;;
-          # *.tar.xz)    tar xvJf $1    ;;
-          # *.bz2)       bunzip2 $1     ;;
-          # *.rar)       unrar x $1     ;;
-          # *.gz)        gunzip $1      ;;
-          # *.tar)       tar xvf $1     ;;
-          # *.tbz2)      tar xvjf $1    ;;
-          # *.tgz)       tar xvzf $1    ;;
-          # *.zip)       unzip $1       ;;
-          # *.Z)         uncompress $1  ;;
-          # *.7z)        7z x $1        ;;
-          # *.lzma)      lzma -dv $1    ;;
-          # *.xz)        xz -dv $1      ;;
-          # *)           echo "don't know how to extract '$1'..." ;;
-      # esac
-  # else
-      # echo "'$1' is not a valid file!"
-  # fi
-# }
-alias ex='extract'
-
-alias ev='vi ~/dotfiles/.vimrc*'
-# alias be='bundle exec'
-
-grepvim() {
-    XFS=`grep -ERUInl $* | uniq | xargs`
-    if [ "$XFS" ] ; then
-      vim `grep -ERUInl $* | uniq | xargs`
-    fi
-}
-alias grv='grepvim'
-
-gem-install() {
-    gem install $1 && rbenv rehash
-}
 function _latest() {
   echo "$1/`ls --format=single-column -t $1 | head -1`"
 }
 alias latest='_latest'
-
-# ------------------------------------
-# Docker alias and function
-#   from https://github.com/tcnksm/docker-alias
-# ------------------------------------
-
-# Get latest container ID
-alias dl="docker ps -l -q"
-
-# Get container process
-alias dps="docker ps"
-
-# Get process included stop container
-alias dpa="docker ps -a"
-
-# Get images
-alias di="docker images"
-
-# Get container IP
-alias dip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
-
-# Run deamonized container, e.g., $dkd base /bin/echo hello
-alias dkd="docker run -d -P"
-
-# Run interactive container, e.g., $dki base /bin/bash
-alias dki="docker run -i -t -P"
-
-# Execute interactive container, e.g., $dex base /bin/bash
-alias dex="docker exec -i -t"
-
-# Stop all containers
-dstop() { docker stop $(docker ps -a -q); }
-
-# Remove all containers
-drm() { docker rm $(docker ps -a -q); }
-
-# Stop and Remove all containers
-alias drmf='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)'
-
-# Remove all images
-dri() { docker rmi $(docker images -q); }
-
-# Dockerfile build, e.g., $dbu tcnksm/test
-dbu() { docker build -t=$1 .; }
-
-# Show all alias related docker
-dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
-
-# terraforming https://github.com/dtan4/terraforming
-alias terraforming='docker run --rm --name terraforming -e AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id) -e AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key) -e AWS_REGION=$(aws configure get region) quay.io/dtan4/terraforming:latest terraforming'
 
 alias ssh='TERM=xterm ssh'

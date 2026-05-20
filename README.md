@@ -122,14 +122,12 @@ chezmoi update
 - Git: `.gitconfig`, `.gitconfig-personal`, `.gitconfig.local`, `.gitignore`
 - Homebrew: `.Brewfile`
 - Vim: `.vimrc`, `.config/nvim`, `.ideavimrc`
-- Ruby: `.gemrc`, `.irbrc`, `.pryrc`
 - Tmux: `.tmux.conf`
 - Terminal: `.dir_colors`
 - Config: `.config/nvim`, `.config/peco`
 - SSH: `.ssh/config`
 - Claude: `.claude/settings.json`
 - Gemini: `.gemini/settings.json`
-- Scripts: `.local/bin/*`
 
 ## Notes
 
