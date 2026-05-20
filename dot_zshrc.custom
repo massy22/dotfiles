@@ -287,7 +287,7 @@ dumb)
 esac
 
 export EDITOR=nvim
-# PATH は ~/.zshrc.os_darwin で Homebrew / pyenv 等を設定
+# PATH は ~/.zsh/os-darwin.zsh で Homebrew / pyenv 等を設定
 typeset -U path
 path=(
   $path
@@ -335,12 +335,12 @@ function __rm_single_file() {
 
 ## alias設定
 #
-[[ -f ~/.zshrc.alias ]] && source ~/.zshrc.alias
+[[ -f ~/.zsh/alias.zsh ]] && source ~/.zsh/alias.zsh
 
 # OS-specific settings (macOS)
 case "${OSTYPE}" in
 darwin*)
-  [[ -f ~/.zshrc.os_darwin ]] && source ~/.zshrc.os_darwin
+  [[ -f ~/.zsh/os-darwin.zsh ]] && source ~/.zsh/os-darwin.zsh
   ;;
 esac
 
