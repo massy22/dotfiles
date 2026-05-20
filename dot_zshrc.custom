@@ -23,103 +23,7 @@ setopt transient_rprompt
 # colors enables us to idenfity color by $fg[red].
 autoload colors
 colors
-case ${UID} in
-0)
-    PROMPT="%B%{${fg[red]}%}%/#%{${reset_color}%}%b "
-    PROMPT2="%B%{${fg[red]}%}%_#%{${reset_color}%}%b "
-    SPROMPT="%B%{${fg[red]}%}%r is correct? [n,y,a,e]:%{${reset_color}%}%b "
-    [ -n "${REMOTEHOST}${SSH_CONNECTION}" ] &&
-        PROMPT="%{${fg[cyan]}%}$(echo ${HOST%%.*} | tr '[a-z]' '[A-Z]') ${PROMPT}"
-    ;;
-*)
-    #
-    # Color
-    #
-    DEFAULT=$'%{\e[1;0m%}'
-    RESET="%{${reset_color}%}"
-    GREEN="%{${fg[green]}%}"
-    BLUE="%{${fg[blue]}%}"
-    RED="%{${fg[red]}%}"
-    CYAN="%{${fg[cyan]}%}"
-    WHITE="%{${fg[white]}%}"
-    POH="$"
-
-    #
-    # Prompt
-    #
-    PROMPT='%{$fg_bold[blue]%}${USER}@%m ${RESET}${WHITE}${POH} ${RESET}'
-    RPROMPT='${RESET}${WHITE}[${BLUE}%(5~,%-2~/.../%2~,%~)% ${WHITE}]${RESET}'
-
-    #
-    # Vi入力モードでPROMPTの色を変える
-    # http://memo.officebrook.net/20090226.html
-    function zle-line-init zle-keymap-select {
-      case $KEYMAP in
-        vicmd)
-        PROMPT="%{$fg_bold[cyan]%}${USER}@%m ${RESET}${WHITE}${POH} ${RESET}"
-        ;;
-        main|viins)
-        PROMPT="%{$fg_bold[blue]%}${USER}@%m ${RESET}${WHITE}${POH} ${RESET}"
-        ;;
-      esac
-      zle reset-prompt
-    }
-    zle -N zle-line-init
-    zle -N zle-keymap-select
-
-    # Show git branch when you are in git repository
-    # http://d.hatena.ne.jp/mollifier/20100906/p1
-
-    # show status of git pushed to HEAD in prompt
-    function _git_not_pushed()
-    {
-      local upstream ahead
-      if [[ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ]]; then
-        upstream="$(git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null)" || {
-          echo "|?"
-          return 0
-        }
-        ahead="$(git rev-list --count "${upstream}..HEAD" 2>/dev/null)"
-        [[ "${ahead:-0}" -gt 0 ]] && echo "|?"
-      fi
-      return 0
-    }
-
-    # git のブランチ名 *と作業状態* を zsh の右プロンプトに表示＋ status に応じて色もつけてみた - Yarukidenized:ヤルキデナイズド :
-    # http://d.hatena.ne.jp/uasi/20091025/1256458798
-    autoload -Uz VCS_INFO_get_data_git; VCS_INFO_get_data_git 2> /dev/null
-
-    function rprompt-git-current-branch {
-      local name st color gitdir action pushed
-      if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
-              return
-      fi
-
-      name="$(git rev-parse --abbrev-ref=loose HEAD 2> /dev/null)"
-      if [[ -z $name ]]; then
-              return
-      fi
-
-      gitdir="$(git rev-parse --git-dir 2> /dev/null)"
-      action=`VCS_INFO_git_getaction "$gitdir"` && action="|$action"
-      pushed="$(_git_not_pushed)"
-
-      st="$(git status --porcelain=v1 2> /dev/null)"
-      if [[ -z "$st" ]]; then
-        color=%F{green}
-      elif [[ "$st" == *\?\?* ]]; then
-        color=%B%F{red}
-      else
-        color=%F{yellow}
-      fi
-
-      echo "[$color$name$action$pushed%f%b]"
-    }
-
-    RPROMPT='`rprompt-git-current-branch`${RESET}${WHITE}[${BLUE}%(5~,%-2~/.../%2~,%~)${WHITE}]${RESET}'
-
-    ;;
-esac
+[[ -f ~/.zsh/prompt.zsh ]] && source ~/.zsh/prompt.zsh
 
 # 指定したコマンド名がなく、ディレクトリ名と一致した場合 cd する
 setopt auto_cd
@@ -293,15 +197,6 @@ setopt path_dirs
 # コマンドラインがどのように展開され実行されたかを表示するようになる
 #setopt xtrace
 
-# ^でcd ..する
-function cdup() {
-echo
-cd ..
-zle reset-prompt
-}
-zle -N cdup
-# bindkey '\^' cdup
-
 # ctrl-w, ctrl-bキーで単語移動
 bindkey "^W" forward-word
 bindkey "^B" backward-word
@@ -316,24 +211,18 @@ zstyle ':zle:*' word-style unspecified
 autoload -Uz url-quote-magic
 zle -N self-insert url-quote-magic
 
-# 勝手にpushd
-setopt autopushd
-
 # エラーメッセージ本文出力に色付け
 e_normal=`echo -e "¥033[0;30m"`
 e_RED=`echo -e "¥033[1;31m"`
 e_BLUE=`echo -e "¥033[1;36m"`
 
 function __colorize_build_output() {
-    sed -e "s@[Ee]rror:.*@$e_RED&$e_normal@g" -e "s@cannot¥sfind.*@$e_RED&$e_normal@g" -e "s@[Ww]arning:.*@$e_BLUE&$e_normal@g"
+  sed -e "s@[Ee]rror:.*@$e_RED&$e_normal@g" -e "s@cannot¥sfind.*@$e_RED&$e_normal@g" -e "s@[Ww]arning:.*@$e_BLUE&$e_normal@g"
 }
+
 function make() {
-    LANG=C command make "$@" 2>&1 | __colorize_build_output
-    return $pipestatus[1]
-}
-function cwaf() {
-    LANG=C command ./waf "$@" 2>&1 | __colorize_build_output
-    return $pipestatus[1]
+  LANG=C command make "$@" 2>&1 | __colorize_build_output
+  return $pipestatus[1]
 }
 
 ## Completion configuration
@@ -341,15 +230,12 @@ function cwaf() {
 fpath=(~/.zsh $fpath)
 autoload -Uz compinit && compinit
 
-
 ## zsh editor
 #
 autoload zed
 
-
 ## Command Line Stack [Esc]-[q]
 bindkey -a 'q' push-line
-
 
 ## Alias configuration
 #
@@ -360,211 +246,98 @@ setopt complete_aliases     # aliased ls needs if file/dir completions work
 alias where="command -v"
 
 case "${OSTYPE}" in
-freebsd*|darwin*)
-    alias ls="ls -alG"
-    zle -N expand-to-home-or-insert
-    bindkey "@"  expand-to-home-or-insert
-    ;;
-linux*)
-    alias la="ls -al"
-    ;;
-esac
-
-
-case "${OSTYPE}" in
-# MacOSX
 darwin*)
-    export PATH=$PATH:/opt/local/bin:/opt/local/sbin/
-    export PATH=$PATH:/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/
-    ;;
-freebsd*)
-    case ${UID} in
-    0)
-        updateports()
-        {
-            if [ -f /usr/ports/.portsnap.INDEX ]
-            then
-                portsnap fetch update
-            else
-                portsnap fetch extract update
-            fi
-            (cd /usr/ports/; make index)
-
-            portversion -v -l \<
-        }
-        alias appsupgrade='pkgdb -F && BATCH=YES NO_CHECKSUM=YES portupgrade -a'
-        ;;
-    esac
-    ;;
+  alias ls="ls -alG"
+  expand-to-home-or-insert() {
+    if [[ -z "$LBUFFER" || "${LBUFFER[-1]}" = " " ]]; then
+      LBUFFER+="~/"
+    else
+      zle self-insert
+    fi
+  }
+  zle -N expand-to-home-or-insert
+  bindkey "@" expand-to-home-or-insert
+  ;;
+linux*)
+  alias la="ls -al"
+  ;;
 esac
-
 
 ## terminal configuration
 # http://journal.mycom.co.jp/column/zsh/009/index.html
 unset LSCOLORS
 
 case "${TERM}" in
-xterm)
-    export TERM=xterm-color
-
-    ;;
-kterm)
-    export TERM=kterm-color
-    # set BackSpace control character
-
-    stty erase
-    ;;
-
-cons25)
-    unset LANG
-  export LSCOLORS=ExFxCxdxBxegedabagacad
-
-    export LS_COLORS='di=01;32:ln=01;35:so=01;32:ex=01;31:bd=46;34:cd=43;34:su=41;30:sg=46;30'
-    zstyle ':completion:*' list-colors \
-        'di=;36;1' 'ln=;35;1' 'so=;32;1' 'ex=31;1' 'bd=46;34' 'cd=43;34'
-    ;;
-
-kterm*|xterm*)
-   # Terminal.app
-#    precmd() {
-#        echo -ne "\033]0;${USER}@${HOST%%.*}:${PWD}\007"
-#    }
-    # export LSCOLORS=exfxcxdxbxegedabagacad
-    # export LSCOLORS=gxfxcxdxbxegedabagacad
-    # export LS_COLORS='di=1;34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30'
-
-    export CLICOLOR=1
-    export LSCOLORS=ExFxCxDxBxegedabagacad
-
-    zstyle ':completion:*' list-colors \
-        'di=36' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
-    ;;
-
+xterm|kterm*|xterm*)
+  # Terminal.app 等
+  export TERM=xterm-color
+  export CLICOLOR=1
+  export LSCOLORS=ExFxCxDxBxegedabagacad
+  zstyle ':completion:*' list-colors \
+    'di=36' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
+  ;;
 dumb)
-    echo "Welcome Emacs Shell"
-    ;;
+  echo "Welcome Emacs Shell"
+  ;;
 esac
 
-
-
 export EDITOR=nvim
+# PATH は ~/.zshrc.os_darwin で Homebrew / pyenv 等を設定
 typeset -U path
 path=(
-    $path
-    "$HOME/local/bin"
-    "/usr/local/git/bin"
-    "$HOME/.local/bin"
-    "$HOME/bin"
-    "/sbin"
-    "/usr/local/bin"
+  $path
+  "$HOME/.local/bin"
+  "$HOME/bin"
+  "/sbin"
+  "/usr/local/bin"
 )
 export PATH
-export MANPATH="${MANPATH:+$MANPATH:}/opt/local/man:/usr/local/share/man"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
-[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
+[[ -s "$BUN_INSTALL/_bun" ]] && source "$BUN_INSTALL/_bun"
 [[ -d "$BUN_INSTALL/bin" ]] && path=("$BUN_INSTALL/bin" $path)
 
-expand-to-home-or-insert () {
-        if [ "$LBUFFER" = "" -o "$LBUFFER[-1]" = " " ]; then
-                LBUFFER+="~/"
-        else
-                zle self-insert
-        fi
+[[ -f ~/.zsh/magic-abbrev.zsh ]] && source ~/.zsh/magic-abbrev.zsh
+
+function rmf() {
+  for file in "$@"; do
+    __rm_single_file "$file"
+  done
 }
 
-# zsh の exntended_glob と HEAD^^^ を共存させる。
-# http://subtech.g.hatena.ne.jp/cho45/20080617/1213629154
-typeset -A abbreviations
-abbreviations=(
-  "L"    "| $PAGER"
-  "G"    "| grep"
+function __rm_single_file() {
+  if ! [[ -d ~/.Trash/ ]]; then
+    command /bin/mkdir ~/.Trash
+  fi
 
-  "HEAD^"     "HEAD\\^"
-  "HEAD^^"    "HEAD\\^\\^"
-  "HEAD^^^"   "HEAD\\^\\^\\^"
-  "HEAD^^^^"  "HEAD\\^\\^\\^\\^\\^"
-  "HEAD^^^^^" "HEAD\\^\\^\\^\\^\\^"
-)
+  if ! [[ $# -eq 1 ]]; then
+    echo "__rm_single_file: 1 argument required but $# passed."
+    return 1
+  fi
 
-magic-abbrev-expand () {
-  local MATCH
-  LBUFFER=${LBUFFER%%(#m)[-_a-zA-Z0-9^]#}
-  LBUFFER+=${abbreviations[$MATCH]:-$MATCH}
-}
-
-magic-abbrev-expand-and-insert () {
-  magic-abbrev-expand
-  zle self-insert
-}
-
-magic-abbrev-expand-and-accept () {
-  magic-abbrev-expand
-  zle accept-line
-}
-
-no-magic-abbrev-expand () {
-  LBUFFER+=' '
-}
-
-zle -N magic-abbrev-expand
-zle -N magic-abbrev-expand-and-insert
-zle -N magic-abbrev-expand-and-accept
-zle -N no-magic-abbrev-expand
-bindkey "\r"  magic-abbrev-expand-and-accept # M-x RET はできなくなる
-bindkey "^J"  accept-line # no magic
-bindkey " "   magic-abbrev-expand-and-insert
-bindkey "."   magic-abbrev-expand-and-insert
-bindkey "^x " no-magic-abbrev-expand
-
-function rmf(){
-   for file in "$@"
-   do
-      __rm_single_file "$file"
-   done
-}
-
-function __rm_single_file(){
-       if ! [ -d ~/.Trash/ ]
-       then
-               command /bin/mkdir ~/.Trash
-       fi
-
-       if ! [ $# -eq 1 ]
-       then
-               echo "__rm_single_file: 1 argument required but $# passed."
-               return 1
-       fi
-
-       if [ -e "$1" ]
-       then
-               BASENAME="$(basename "$1")"
-               NAME=$BASENAME
-               COUNT=0
-               while [ -e "$HOME/.Trash/$NAME" ]
-               do
-                       COUNT=$(($COUNT+1))
-                       NAME="$BASENAME.$COUNT"
-               done
-
-               command /bin/mv -- "$1" "$HOME/.Trash/$NAME"
-       else
-               echo "No such file or directory: $1"
-       fi
+  if [[ -e "$1" ]]; then
+    local basename="${1:t}" name="$basename" count=0
+    while [[ -e "$HOME/.Trash/$name" ]]; do
+      count=$((count + 1))
+      name="${basename}.${count}"
+    done
+    command /bin/mv -- "$1" "$HOME/.Trash/$name"
+  else
+    echo "No such file or directory: $1"
+  fi
 }
 
 ## alias設定
 #
-[ -f ~/.zshrc.alias ] && source ~/.zshrc.alias
+[[ -f ~/.zshrc.alias ]] && source ~/.zshrc.alias
 
 # OS-specific settings (macOS)
 case "${OSTYPE}" in
 darwin*)
-    [ -f ~/.zshrc.os_darwin ] && source ~/.zshrc.os_darwin
-    ;;
+  [[ -f ~/.zshrc.os_darwin ]] && source ~/.zshrc.os_darwin
+  ;;
 esac
-
 
 # ~/.zshrc
 # setting for peco.zsh
@@ -572,7 +345,7 @@ esac
 
 ## local固有設定
 #
-[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
 # Work-specific settings (Vertex AI, Claude Code, Gemini CLI, etc.)
 # are generated into ~/.zshrc.local by chezmoi

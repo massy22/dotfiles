@@ -131,7 +131,7 @@ chezmoi update
 
 ## Notes
 
-- `.zsh/` is managed by chezmoi; editor config is `.vimrc` and `.config/nvim`
+- `.zsh/` holds `peco.zsh`, `prompt.zsh`, and `magic-abbrev.zsh`; editor config is `.vimrc` and `.config/nvim`
 - Secrets are stored in 1Password and injected via templates
 - Work-specific settings are only applied when `pcType` is `work`
 - GitHub PATs are not embedded in git remote URLs. GitHub repository access is routed through SSH host aliases.
