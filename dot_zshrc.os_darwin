@@ -24,12 +24,6 @@ alias pbc='pbcopy'
 export CLICOLOR=1
 export LSCOLORS=ExFxCxDxBxegedabagacad
 
-# vim
-if [[ -x /usr/local/Cellar/macvim-kaoriya/HEAD/MacVim.app/Contents/MacOS/Vim ]]; then
-  alias vi8='env LANG=ja_JP.UTF-8 /usr/local/Cellar/macvim-kaoriya/HEAD/MacVim.app/Contents/MacOS/Vim "$@"'
-  alias vim8='env LANG=ja_JP.UTF-8 /usr/local/Cellar/macvim-kaoriya/HEAD/MacVim.app/Contents/MacOS/Vim "$@"'
-fi
-
 ## Java
 if [[ -x /usr/libexec/java_home ]]; then
   java_home="$(/usr/libexec/java_home 2>/dev/null)"
@@ -43,29 +37,6 @@ fi
 
 # haskell
 __path_prepend_if_dir "$HOME/Library/Haskell/bin"
-
-# scala
-if [[ -d "$HOME/.svm/current/rt" ]]; then
-  export SCALA_HOME="$HOME/.svm/current/rt"
-  __path_prepend_if_dir "$SCALA_HOME/bin"
-  export SCALA_DOC_HOME="$SCALA_HOME/../devel-docs/api/"
-fi
-
-# Ant
-export ANT_VERSION=1.8.0
-if [[ -d "$HOME/dev/Tools/apache-ant-${ANT_VERSION}" ]]; then
-  export ANT_HOME="$HOME/dev/Tools/apache-ant-${ANT_VERSION}"
-  export ANT_OPTS=-Xmx1g
-  __path_prepend_if_dir "$ANT_HOME/bin"
-fi
-
-# Maven2
-export MAVEN_VERSION=2.2.1
-if [[ -d "$HOME/dev/Tools/apache-maven-${MAVEN_VERSION}" ]]; then
-  export MAVEN_HOME="$HOME/dev/Tools/apache-maven-${MAVEN_VERSION}"
-  export MAVEN_OPTS=-Xmx1024M
-  __path_prepend_if_dir "$MAVEN_HOME/bin"
-fi
 
 # man path
 [[ -d /usr/local/man ]] && MANPATH="/usr/local/man:${MANPATH:-}"
@@ -93,10 +64,6 @@ if [[ -z "$RBENV_ROOT" && -d /usr/local/var/rbenv ]]; then
 fi
 if command -v rbenv >/dev/null 2>&1; then
   eval "$(rbenv init -)"
-fi
-
-if [[ -d /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/share/refe ]]; then
-  export REFE_DATA_DIR=/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/share/refe
 fi
 
 # Go Lang

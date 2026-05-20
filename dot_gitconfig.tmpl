@@ -65,7 +65,7 @@
   # push current branch to origin with --upstream
   puc = "!f() { git push origin -u `git symbolic-ref --short HEAD` ;}; f"
   # rebase
-  rbm = rebase --merge master       # masterへのrebaseはよく使うのでalias
+  rbm = rebase --merge main         # mainへのrebaseはよく使うのでalias
   rbd = rebase --merge develop
   rbc = rebase --continue
   rba = rebase --abort
@@ -87,7 +87,7 @@
   co  = checkout
   cb  = checkout -b         # branch切ってcheckoutする
   ct  = checkout --track    # remoteのbranchを追跡
-  cm  = checkout master
+  cm  = checkout main
   cd  = checkout develop
   # branch関連
   br  = branch
@@ -133,7 +133,7 @@
   cancel = !git commit -a -m 'Temporary commit for cancel' && git reset --hard HEAD~
   # diff関連
   di = diff
-  dm = diff master           # masterとのdiff
+  dm = diff main             # mainとのdiff
   dw = diff --color-words    # 単語単位でいろつけてdiff
   dc = diff --cached         # addされているものとのdiff
   ds = diff --staged         # 同上(1.6.1移行)
@@ -165,7 +165,7 @@
   gr = grep
   gn = grep -n
   sm = submodule
-  smupdate = submodule foreach "git checkout master; git pull origin master"
+  smupdate = submodule foreach "git checkout main; git pull origin main"
   # stash関連(stashもう使わないのでコメントあうと)
   # sl = stash list
   # sp = stash pop

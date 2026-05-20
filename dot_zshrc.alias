@@ -74,7 +74,6 @@ alias p='ping -c 4'
 
 #alias ls='ls -al'
 alias cp='nocorrect cp -irp'
-alias refe='nocorrect refe'
 
 # git
 alias g='git'
@@ -111,12 +110,6 @@ alias erl='nocorrect erl'
 alias sbcl='nocorrect sbcl'
 alias gosh='nocorrect gosh'
 # alias hg='nocorrect hg --encoding=utf-8'
-
-# scala
-alias scala='scala -deprecation -unchecked -explaintypes'
-alias scc='scalac -deprecation -unchecked -explaintypes'
-alias sci='scala -deprecation -unchecked -explaintypes -cp $SCALA_CLASSPATH -i ~/import.scala'
-alias sce='scala'
 
 # use oh-my-zsh/plugins/extract.zsh
 #
