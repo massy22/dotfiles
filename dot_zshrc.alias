@@ -40,9 +40,6 @@ alias tmux='TERM=screen-256color tmux'
 alias tm='tmux'
 alias tmn='tmux new-session -n zsh'
 alias tma='tmux attach'
-alias tma0='tmux attach -t 0'
-alias tma1='tmux attach -t 1'
-alias tma2='tmux attach -t 2'
 alias tml='tmux list-sessions'
 
 alias p='ping -c 4'
@@ -50,18 +47,14 @@ alias p='ping -c 4'
 # git
 alias g='git'
 alias gi='git'
-alias oppai='git'
 alias gs='git status -s -b'
 alias gst="git log --date=short --max-count=1 --pretty=format:'%Cgreen%h %cd %Cblue%cn%x09%Creset%s' | tail -1 && echo '' && git status -s -b"
 alias gc='git commit'
 alias gci='git commit -a'
-alias '偽ｔ'=git
 
 # git completion for aliases
 compdef g=git
 compdef gi=git
-compdef oppai=git
-compdef '偽ｔ'=git
 
 # jq
 alias -g JQ='jq -C "."'

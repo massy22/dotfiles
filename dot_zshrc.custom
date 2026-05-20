@@ -347,11 +347,6 @@ autoload -Uz compinit && compinit
 autoload zed
 
 
-## Prediction configuration
-#
-autoload predict-on
-#predict-off
-
 ## Command Line Stack [Esc]-[q]
 bindkey -a 'q' push-line
 
@@ -478,11 +473,6 @@ expand-to-home-or-insert () {
                 zle self-insert
         fi
 }
-
-# C-M-h でチートシートを表示する
-cheat-sheet () { zle -M "`cat ~/.zsh/cheat-sheet`" }
-zle -N cheat-sheet
-# bindkey "^[^h" cheat-sheet
 
 # zsh の exntended_glob と HEAD^^^ を共存させる。
 # http://subtech.g.hatena.ne.jp/cho45/20080617/1213629154
