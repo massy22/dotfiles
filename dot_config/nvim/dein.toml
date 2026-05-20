@@ -6,17 +6,7 @@ repo = 'Shougo/dein.vim'
 # color,look and feel
 # ==========================================================
 
-# status line
 [[plugins]]
-repo = 'vim-airline/vim-airline'
-hook_add = 'source ~/.config/nvim/plugins/airline.rc.vim'
-
-# status line
-[[plugins]]
-repo = 'vim-airline/vim-airline-themes'
-
-[[plugins]]
-depends = ['airline.vim']
 repo = 'jonathanfilip/vim-lucius'
 hook_post_source = 'source ~/.config/nvim/plugins/lucius.rc.vim'
 

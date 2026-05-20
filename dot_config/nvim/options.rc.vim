@@ -39,6 +39,7 @@ syntax enable
 " Apperance
 "-------------------------------------------------------------------------------
 
+set laststatus=2      " always show status line
 set showmatch         " highlight bracket pairs
 set number            " show line number
 set list              " list mode. show tab as following charactor
