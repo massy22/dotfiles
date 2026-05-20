@@ -21,17 +21,18 @@ if !isdirectory(s:dein_repo_dir)
 endif
 execute 'set runtimepath^=' . s:dein_repo_dir
 
-if dein#load_state(s:dein_dir)
+if !dein#load_state(s:dein_dir)
   call dein#begin(s:dein_dir)
-
-  " load pluginsettings from toml file
-  call dein#load_toml('~/.config/nvim/dein.toml',     {'lazy' : 0})
+  call dein#load_toml(expand('~/.config/nvim/dein.toml'), {'lazy': 0})
   if filereadable(expand('~/.config/nvim/deinlazy.toml'))
-    call dein#load_toml('~/.config/nvim/deinlazy.toml', {'lazy' : 1})
+    call dein#load_toml(expand('~/.config/nvim/deinlazy.toml'), {'lazy': 1})
   endif
-
   call dein#end()
   call dein#save_state()
+endif
+
+if dein#check_install()
+  call dein#install()
 endif
 
 autocmd VimEnter * call dein#call_hook('post_source')
