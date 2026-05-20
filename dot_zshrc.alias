@@ -24,9 +24,6 @@ alias 'src'='exec zsh'
 alias -g V="| nvim -"
 alias -g EV="| xargs --verbose sh -c 'nvim \"\$@\" < /dev/tty'"
 
-# colorized cat
-alias ccat='pygmentize -O style=vim -f console256 -g'
-
 # less
 alias less='less -r'
 
@@ -35,18 +32,8 @@ alias 'gr'='grep --color=auto -ERUIn'
 
 alias -g TEE="2>&1 | tee"
 
-#make
+# make
 alias 'm'='make'
-alias 'mn'='make native-code'
-alias 'mc'='make clean'
-
-# screen
-alias s='screen -U'
-alias sc='screen -S main'
-alias sn='screen'
-alias sl='screen -ls'
-alias sr='screen -r main'
-alias srr='screen -U -D -RR'
 
 # tmux
 alias tmux='TERM=screen-256color tmux'
@@ -58,19 +45,13 @@ alias tma1='tmux attach -t 1'
 alias tma2='tmux attach -t 2'
 alias tml='tmux list-sessions'
 
-alias pon='predict-on'
-alias poff='predict-off'
 alias p='ping -c 4'
-
-#alias ls='ls -al'
-alias cp='nocorrect cp -irp'
 
 # git
 alias g='git'
 alias gi='git'
 alias oppai='git'
 alias gs='git status -s -b'
-alias gst='git status -s -b'
 alias gst="git log --date=short --max-count=1 --pretty=format:'%Cgreen%h %cd %Cblue%cn%x09%Creset%s' | tail -1 && echo '' && git status -s -b"
 alias gc='git commit'
 alias gci='git commit -a'
@@ -96,14 +77,5 @@ function catjq() {
 
 alias java='nocorrect java'
 alias cp='nocorrect cp -irp'
-alias erl='nocorrect erl'
-alias sbcl='nocorrect sbcl'
-alias gosh='nocorrect gosh'
-# alias hg='nocorrect hg --encoding=utf-8'
-
-function _latest() {
-  echo "$1/`ls --format=single-column -t $1 | head -1`"
-}
-alias latest='_latest'
 
 alias ssh='TERM=xterm ssh'

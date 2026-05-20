@@ -35,19 +35,10 @@ if [[ -x /usr/libexec/java_home ]]; then
   unset java_home
 fi
 
-# haskell
-__path_prepend_if_dir "$HOME/Library/Haskell/bin"
-
 # man path
 [[ -d /usr/local/man ]] && MANPATH="/usr/local/man:${MANPATH:-}"
 [[ -d /usr/local/info ]] && INFOPATH="/usr/local/info:${INFOPATH:-}"
 export MANPATH INFOPATH
-
-# Mysql
-if [[ -d /usr/local/mysql ]]; then
-  export MYSQL_HOME=/usr/local/mysql
-  __path_prepend_if_dir "$MYSQL_HOME/bin"
-fi
 
 # Python
 __path_prepend_if_dir "$HOME/.pyenv/bin"
@@ -74,12 +65,6 @@ fi
 # tmux
 alias tma='tmux attach'
 alias tml='tmux list-window'
-
-# openssl
-# export PATH="/usr/local/opt/openssl@3/bin:$PATH"
-# export LDFLAGS="-L/usr/local/opt/openssl@3/lib"
-# export CPPFLAGS="-I/usr/local/opt/openssl@3/include"
-# export PKG_CONFIG_PATH="/usr/local/opt/openssl@3/lib/pkgconfig"
 
 # The next line updates PATH for the Google Cloud SDK.
 if [[ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
