@@ -260,19 +260,24 @@ darwin*)
   ;;
 linux*)
   alias la="ls -al"
+  export CLICOLOR=1
+  export LSCOLORS=ExFxCxDxBxegedabagacad
   ;;
 esac
 
 ## terminal configuration
 # http://journal.mycom.co.jp/column/zsh/009/index.html
+# CLICOLOR / LSCOLORS on macOS: ~/.zsh/os-darwin.zsh
 unset LSCOLORS
 
 case "${TERM}" in
 xterm|kterm*|xterm*)
   # Terminal.app 等
   export TERM=xterm-color
-  export CLICOLOR=1
-  export LSCOLORS=ExFxCxDxBxegedabagacad
+  if [[ "${OSTYPE}" != darwin* ]]; then
+    export CLICOLOR=1
+    export LSCOLORS=ExFxCxDxBxegedabagacad
+  fi
   zstyle ':completion:*' list-colors \
     'di=36' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
   ;;
