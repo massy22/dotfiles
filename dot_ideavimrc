@@ -35,4 +35,5 @@ Plug 'tpope/vim-commentary'
 "" Map \b to toggle the breakpoint on the current line
 "map \b <Action>(ToggleLineBreakpoint)
 
-set clipboard+=unnamed
+" Yank/paste via the system clipboard (+ on macOS, * on X11)
+set clipboard=unnamedplus,unnamed
