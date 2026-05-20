@@ -1,4 +1,4 @@
-# plugiin magagement
+# plugin management
 [[plugins]]
 repo = 'Shougo/dein.vim'
 
