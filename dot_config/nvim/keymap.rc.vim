@@ -16,21 +16,6 @@ cnoremap <C-n> <Down>
 cnoremap <Down>  <C-n>
 
 "-------------------------------------------------------------------------------
-" Tags
-"-------------------------------------------------------------------------------
-
-" key mappings for tags and searches
-nnoremap t  <Nop>
-" jump to current tag
-nnoremap tt  <C-]>
-" next tag
-nnoremap tj  :<C-u>tag<CR>
-" prev tag
-nnoremap tk  :<C-u>pop<CR>
-" tag list
-nnoremap tl  :<C-u>tags<CR>
-
-"-------------------------------------------------------------------------------
 " Searching
 "-------------------------------------------------------------------------------
 
@@ -87,12 +72,6 @@ nnoremap ) %
 
 " yank the word which is under cursor
 nnoremap vy vawy
-
-" visual mode block move
-set virtualedit+=block
-
-" select to end on line in visula mode
-vnoremap v $h
 
 " in insert mode,  jj fires esc
 inoremap jj <Esc>
@@ -166,14 +145,5 @@ autocmd FileType qf nnoremap <buffer> q :ccl<CR>
 autocmd FileType qf nnoremap <buffer> <ESC> :ccl<CR>
 
 " toggle quickfix window by cw
-function! s:toggle_qf_window()
-  for bufnr in range(1,  winnr('$'))
-    if getwinvar(bufnr,  '&buftype') ==# 'quickfix'
-      execute 'ccl'
-      return
-    endif
-  endfor
-  execute 'botright cw'
-endfunction
-nnoremap <silent> cw :call <SID>toggle_qf_window()<CR>
+nnoremap <silent> cw :call ToggleQfWindow()<CR>
 

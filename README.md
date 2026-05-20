@@ -121,7 +121,7 @@ chezmoi update
 - Shell: `.zshrc`, `.zshrc.custom`, `.zshrc.alias`, `.zshrc.os_darwin`, `.zshrc.local`
 - Git: `.gitconfig`, `.gitconfig-personal`, `.gitconfig.local`, `.gitignore`
 - Homebrew: `.Brewfile`
-- Vim: `.vimrc`, `.config/nvim`, `.ideavimrc`
+- Vim: `.vimrc`, `.config/nvim` (`shared.rc.vim` + options + keymap), `.ideavimrc`
 - Tmux: `.tmux.conf`
 - Terminal: `.dir_colors`
 - Config: `.config/nvim`, `.config/peco`
