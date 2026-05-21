@@ -23,5 +23,5 @@ esac
 #
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
-# Work-specific settings (Vertex AI, Claude Code, Gemini CLI, etc.)
+# Work-specific settings (Claude Code, Gemini CLI, etc.)
 # are generated into ~/.zshrc.local by chezmoi
