@@ -1,0 +1,19 @@
+# Global gitattributes (~/.gitattributes via chezmoi)
+
+* text=auto
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.bz2 binary
+*.7z binary
+*.jar binary
+*.woff binary
+*.woff2 binary
+
+*.sh linguist-detectable

@@ -119,7 +119,7 @@ chezmoi update
 ## Files managed
 
 - Shell: `.zshrc`, `.zshrc.local`, `.zsh/` (options, path, prompt, alias, os-darwin, etc.)
-- Git: `.gitconfig`, `.gitconfig-personal`, `.gitconfig.local`, `.gitignore`
+- Git: `.gitconfig`, `.gitconfig-personal`, `.gitconfig.local`, `.gitignore`, `.gitattributes`
 - Homebrew: `.Brewfile`
 - Vim: `.vimrc`, `.config/nvim` (`shared.rc.vim` + options + keymap), `.ideavimrc`
 - Tmux: `.tmux.conf`

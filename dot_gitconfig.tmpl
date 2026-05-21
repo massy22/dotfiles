@@ -23,6 +23,10 @@
   grep = auto
 [push]
   default = current
+[fetch]
+  prune = true
+[init]
+  defaultBranch = main
 [core]
   excludesfile = ~/.gitignore # globalな.gitignoreの指定
   autocrlf = input            # CRLFを自動変換
@@ -40,6 +44,8 @@
   autosetuprebase = always
 [pull]
   rebase = true
+[rebase]
+  autoStash = true
 [alias]
   s   = status
   st  = status

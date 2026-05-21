@@ -1,4 +1,5 @@
-tap "homebrew/bundle"
+# bun is provided by oven-sh/bun (not homebrew-core).
+tap "oven-sh/bun"
 
 # Core tools used by this dotfiles repository.
 brew "chezmoi"
@@ -11,10 +12,12 @@ brew "zsh"
 
 # Shell and development tools referenced from zsh, tmux, and editor configs.
 brew "tmux"
+brew "tig"
 brew "neovim"
 brew "jq"
 brew "peco"
 brew "ripgrep"
+brew "bun"
 
 # Optional language runtimes (install only what you use).
 brew "pyenv"
