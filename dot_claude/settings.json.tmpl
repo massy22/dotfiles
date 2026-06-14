@@ -105,8 +105,7 @@
     "command": "bun x ccusage statusline"
   },
   "enabledPlugins": {
-    {{ if eq .pcType "work" }}"{{ onepasswordRead "op://Private/Dotfiles Config/claude_work_plugin" }}": true,
-    "slack@claude-plugins-official": true,{{ end }}
+    "gopls-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
