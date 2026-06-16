@@ -1,6 +1,6 @@
 {{- if eq .pcType "work" -}}
-{{- $gitNameWork := onepasswordRead "op://Private/Dotfiles Config/git_name_work" -}}
-{{- $gitEmailWork := onepasswordRead "op://Private/Dotfiles Config/git_email_work" -}}
+{{- $gitNameWork := onepasswordRead "op://Private/Dotfiles Config/git_work_name" -}}
+{{- $gitEmailWork := onepasswordRead "op://Private/Dotfiles Config/git_work_email" -}}
 
 [user]
   name = {{ $gitNameWork }}

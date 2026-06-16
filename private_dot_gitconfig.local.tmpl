@@ -6,7 +6,7 @@
 
 {{- if eq .pcType "work" }}
 {{- $githubWorkOrg := onepasswordRead "op://Private/Dotfiles Config/github_work_org" }}
-{{- $githubEnterpriseHost := onepasswordRead "op://Private/Dotfiles Config/github_enterprise_host" }}
+{{- $githubEnterpriseHost := onepasswordRead "op://Private/Dotfiles Config/github_work_enterprise_host" }}
 
 [url "git@github.com-work:{{ $githubWorkOrg }}/"]
   insteadOf = https://github.com/{{ $githubWorkOrg }}/
