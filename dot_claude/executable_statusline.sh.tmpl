@@ -1,0 +1,203 @@
+#!/bin/bash
+# Claude Code status line: BQ cost by model + session info
+set -o pipefail
+
+input=$(cat)
+
+# --- Built-in session info ---
+MODEL=$(echo "$input" | jq -r '.model.display_name // .model.id // "unknown"')
+HAS_RATE_LIMITS=$(echo "$input" | jq -r 'if .rate_limits then "true" else "false" end')
+if [ "$HAS_RATE_LIMITS" = "true" ]; then PLAN="Pro/Max/Team"; else PLAN="GCP Vertex AI"; fi
+TOTAL_INPUT=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
+TOTAL_OUTPUT=$(echo "$input" | jq -r '.context_window.total_output_tokens // 0')
+USED_PCT=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
+SESSION_COST=$(echo "$input" | jq -r '.cost.total_cost_usd // 0')
+
+# Format token counts (K)
+fmt_tokens() {
+  local n=$1
+  if [ "$n" -ge 1000 ]; then
+    echo "$((n / 1000))k"
+  else
+    echo "$n"
+  fi
+}
+
+IN_FMT=$(fmt_tokens "$TOTAL_INPUT")
+OUT_FMT=$(fmt_tokens "$TOTAL_OUTPUT")
+SESSION_COST_FMT=$(printf '$%.2f' "$SESSION_COST")
+
+# Rate limits
+RATE_5H_PCT=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty' 2>/dev/null)
+RATE_7D_PCT=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty' 2>/dev/null)
+
+# Colors
+CYAN='\033[36m'
+GREEN='\033[32m'
+YELLOW='\033[33m'
+RED='\033[31m'
+BOLD='\033[1m'
+DIM='\033[2m'
+RESET='\033[0m'
+
+# Ring meter: ○ ◔ ◑ ◕ ●
+RINGS=('○' '◔' '◑' '◕' '●')
+
+ring_gradient() {
+  local pct=$1
+  if [ "$pct" -lt 50 ]; then
+    local r=$((pct * 5))
+    printf '\033[38;2;%d;200;80m' "$r"
+  else
+    local g=$((200 - (pct - 50) * 4))
+    [ "$g" -lt 0 ] && g=0
+    printf '\033[38;2;255;%d;60m' "$g"
+  fi
+}
+
+ring_fmt() {
+  local label=$1 pct=$2
+  local idx=$((pct / 25))
+  [ "$idx" -gt 4 ] && idx=4
+  local color
+  color=$(ring_gradient "$pct")
+  echo -e "${DIM}${label}${RESET} ${color}${RINGS[$idx]} ${pct}%${RESET}"
+}
+
+bar_fmt() {
+  local label=$1 pct=$2
+  local width=6
+  local filled=$((pct * width / 100))
+  [ "$filled" -gt "$width" ] && filled=$width
+  local empty=$((width - filled))
+  local color
+  color=$(ring_gradient "$pct")
+  local bar=""
+  local i
+  for ((i=0; i<filled; i++)); do bar="${bar}█"; done
+  for ((i=0; i<empty; i++)); do bar="${bar}░"; done
+  echo -e "${BOLD}${label}${RESET} ${color}${bar}${RESET} ${color}${pct}%${RESET}"
+}
+
+# Context bar color (for full mode labels)
+if [ "$USED_PCT" -ge 90 ]; then BAR_COLOR="$RED"
+elif [ "$USED_PCT" -ge 70 ]; then BAR_COLOR="$YELLOW"
+else BAR_COLOR="$GREEN"; fi
+
+# --- BQ cost config (secrets injected via 1Password at chezmoi apply time) ---
+{{ if eq .pcType "work" -}}
+BQ_PROJECT="{{ onepasswordRead "op://Private/Dotfiles Config/vertex_work_project_id" }}"
+BQ_TABLE="{{ onepasswordRead "op://Private/Dotfiles Config/claude_work_bq_table" }}"
+{{- else -}}
+BQ_PROJECT=""
+BQ_TABLE=""
+{{- end }}
+
+# --- BQ cost (cached, refresh every 5 min) ---
+USER_EMAIL=$(gcloud config get-value account 2>/dev/null)
+CACHE_FILE="/tmp/claude-statusline-bq-cost-$(whoami)"
+CACHE_FILE_7D="/tmp/claude-statusline-bq-cost-7d-$(whoami)"
+CACHE_MAX_AGE=300
+
+cache_is_stale() {
+  [ ! -f "$1" ] || \
+  [ $(($(date +%s) - $(stat -f %m "$1" 2>/dev/null || echo 0))) -gt $CACHE_MAX_AGE ]
+}
+
+if [ -n "$BQ_PROJECT" ] && cache_is_stale "$CACHE_FILE"; then
+  BQ_RESULT=$(bq query --project_id="${BQ_PROJECT}" --use_legacy_sql=false --format=json --max_rows=40 "
+    SELECT is_claude_ai, model, cost, total_input_tokens, total_output_tokens
+    FROM \`${BQ_TABLE}\`
+    WHERE user_email = '${USER_EMAIL}'
+    AND usage_date = CURRENT_DATE('Asia/Tokyo')
+    ORDER BY is_claude_ai, cost DESC
+  " 2>/dev/null)
+  if [ $? -eq 0 ] && [ -n "$BQ_RESULT" ]; then
+    echo "$BQ_RESULT" > "$CACHE_FILE"
+  fi
+fi
+
+if [ -n "$BQ_PROJECT" ] && cache_is_stale "$CACHE_FILE_7D"; then
+  BQ_7D=$(bq query --project_id="${BQ_PROJECT}" --use_legacy_sql=false --format=json --max_rows=2 "
+    SELECT is_claude_ai, ROUND(SUM(cost), 2) AS total_cost_7d
+    FROM \`${BQ_TABLE}\`
+    WHERE user_email = '${USER_EMAIL}'
+    AND usage_date >= DATE_SUB(CURRENT_DATE('Asia/Tokyo'), INTERVAL 6 DAY)
+    GROUP BY is_claude_ai
+  " 2>/dev/null)
+  if [ $? -eq 0 ] && [ -n "$BQ_7D" ]; then
+    echo "$BQ_7D" > "$CACHE_FILE_7D"
+  fi
+fi
+
+# --- Compact mode (env var: CLAUDE_STATUSLINE_COMPACT=1) ---
+COMPACT=false
+[ "${CLAUDE_STATUSLINE_COMPACT:-0}" = "1" ] && COMPACT=true
+
+# --- Parse BQ data (needed for both modes) ---
+VERTEX_DAILY=0; MAX_DAILY=0
+VERTEX_LINE=""; MAX_LINE=""
+if [ -f "$CACHE_FILE" ]; then
+  while IFS= read -r row; do
+    is_ai=$(echo "$row" | jq -r '.is_claude_ai')
+    m=$(echo "$row" | jq -r '.model')
+    c=$(echo "$row" | jq -r '.cost')
+    it=$(echo "$row" | jq -r '.total_input_tokens')
+    ot=$(echo "$row" | jq -r '.total_output_tokens')
+    short_m=$(echo "$m" | sed 's/claude-//;s/-20[0-9]*//')
+    it_fmt=$(fmt_tokens "$it")
+    ot_fmt=$(fmt_tokens "$ot")
+    detail="${short_m} ${YELLOW}\$${c}${RESET}(⬇ ${it_fmt} / ⬆ ${ot_fmt}) "
+    if [ "$is_ai" = "true" ]; then
+      MAX_DAILY=$(echo "$MAX_DAILY + $c" | bc 2>/dev/null || echo "$MAX_DAILY")
+      MAX_LINE="${MAX_LINE}${detail}"
+    else
+      VERTEX_DAILY=$(echo "$VERTEX_DAILY + $c" | bc 2>/dev/null || echo "$VERTEX_DAILY")
+      VERTEX_LINE="${VERTEX_LINE}${detail}"
+    fi
+  done < <(jq -c '.[]' "$CACHE_FILE" 2>/dev/null)
+fi
+
+VERTEX_FMT=$(printf '$%.2f' "$VERTEX_DAILY")
+MAX_FMT=$(printf '$%.2f' "$MAX_DAILY")
+
+# 7-day cost
+VERTEX_7D_FMT=""; MAX_7D_FMT=""
+if [ -f "$CACHE_FILE_7D" ]; then
+  VERTEX_7D=$(jq -r '[.[] | select(.is_claude_ai == "false")] | .[0].total_cost_7d // 0' "$CACHE_FILE_7D" 2>/dev/null)
+  MAX_7D=$(jq -r '[.[] | select(.is_claude_ai == "true")] | .[0].total_cost_7d // 0' "$CACHE_FILE_7D" 2>/dev/null)
+  VERTEX_7D_FMT=$(printf '$%.2f' "$VERTEX_7D")
+  MAX_7D_FMT=$(printf '$%.2f' "$MAX_7D")
+fi
+
+# --- Output ---
+if [ "$COMPACT" = true ]; then
+  # Short version: ring meters + costs
+  PARTS="${BOLD}${MODEL}${RESET}  $(ring_fmt ctx "$USED_PCT")"
+  [ -n "$RATE_5H_PCT" ] && PARTS="${PARTS}  $(ring_fmt 5h "${RATE_5H_PCT%.*}")"
+  [ -n "$RATE_7D_PCT" ] && PARTS="${PARTS}  $(ring_fmt 7d "${RATE_7D_PCT%.*}")"
+  if [ "$HAS_RATE_LIMITS" = "true" ]; then
+    COST_PART="💎${YELLOW}${MAX_FMT}${RESET} ⛅${YELLOW}${VERTEX_FMT}${RESET}"
+  else
+    COST_PART="⛅${YELLOW}${VERTEX_FMT}${RESET}"
+  fi
+  echo -e "${PARTS}  💰${YELLOW}${SESSION_COST_FMT}${RESET}  ${COST_PART}"
+else
+  # Full version: 2-3 lines with details (original style)
+  RATE_PART=""
+  [ -n "$RATE_5H_PCT" ] && RATE_PART="${RATE_PART} │ ⏱ $(bar_fmt "5時間枠" "${RATE_5H_PCT%.*}")"
+  [ -n "$RATE_7D_PCT" ] && RATE_PART="${RATE_PART} │ 📅 $(bar_fmt "週次枠" "${RATE_7D_PCT%.*}")"
+  echo -e "🤖 ${CYAN}${MODEL}${RESET} (${PLAN}) │ 🧠 コンテキスト ${BAR_COLOR}${USED_PCT}%${RESET}${RATE_PART} │ ⬇ 入力 ${IN_FMT} ⬆ 出力 ${OUT_FMT} │ 💰 セッション ${YELLOW}${SESSION_COST_FMT}${RESET}"
+
+  if [ -f "$CACHE_FILE" ]; then
+    VERTEX_7D_PART=""
+    [ -n "$VERTEX_7D_FMT" ] && VERTEX_7D_PART=" (過去7日間 ${YELLOW}${VERTEX_7D_FMT}${RESET})"
+    echo -e "⛅ GCP Vertex AI 本日 ${YELLOW}${VERTEX_FMT}${RESET}${VERTEX_7D_PART} │ ${VERTEX_LINE}"
+
+    if [ "$(echo "$MAX_DAILY > 0" | bc 2>/dev/null)" = "1" ] || [ "$(echo "$MAX_7D > 0" | bc 2>/dev/null)" = "1" ]; then
+      MAX_7D_PART=""
+      [ -n "$MAX_7D_FMT" ] && MAX_7D_PART=" (過去7日間 ${YELLOW}${MAX_7D_FMT}${RESET})"
+      echo -e "💎 Pro/Max/Team 本日 ${YELLOW}${MAX_FMT}${RESET}${MAX_7D_PART} │ ${MAX_LINE}"
+    fi
+  fi
+fi
