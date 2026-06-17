@@ -7,7 +7,16 @@ input=$(cat)
 # --- Built-in session info ---
 MODEL=$(echo "$input" | jq -r '.model.display_name // .model.id // "unknown"')
 HAS_RATE_LIMITS=$(echo "$input" | jq -r 'if .rate_limits then "true" else "false" end')
-if [ "$HAS_RATE_LIMITS" = "true" ]; then PLAN="Pro/Max/Team"; else PLAN="GCP Vertex AI"; fi
+# Detect the real provider instead of inferring it from .rate_limits presence.
+# At launch the stdin JSON has no .rate_limits yet, so the old else-branch
+# mislabeled subscription sessions as "GCP Vertex AI".
+if [ -n "$CLAUDE_CODE_USE_VERTEX" ]; then
+  PLAN="GCP Vertex AI"
+elif [ "$HAS_RATE_LIMITS" = "true" ]; then
+  PLAN="Pro/Max/Team"
+else
+  PLAN="Claude"
+fi
 TOTAL_INPUT=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
 TOTAL_OUTPUT=$(echo "$input" | jq -r '.context_window.total_output_tokens // 0')
 USED_PCT=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
