@@ -70,33 +70,81 @@
       "Bash(yarn prettier:*)",
       "Bash(yarn tsc:*)",
       "Bash(yarn:*)",
+      "mcp__claude_ai_Notion__notion-fetch",
+      "mcp__claude_ai_Notion__notion-query-data-sources",
+      "mcp__claude_ai_Notion__notion-search",
+      "mcp__claude_ai_Google_Drive__search_files",
       "Skill(*)",
-      "WebSearch"
+      "WebSearch",
+      {{/* WebFetch の信頼ドメイン許可リスト。評価順は deny→ask→allow で
+           specificity は効かないため、bare な "WebFetch" を ask に残すと
+           ここの allow が必ず負けて確認される。よって WebFetch は ask から
+           外し、信頼ドメインだけここで無確認にする。非信頼ドメインはモード
+           デフォルト(auto mode の classifier)任せ。
+           domain:host は apex のみ、サブドメインは別途 *.host が必要
+           (例: anthropic.com と *.anthropic.com の両方を列挙)。 */}}
+      "WebFetch(domain:anthropic.com)",
+      "WebFetch(domain:*.anthropic.com)",
+      "WebFetch(domain:claude.com)",
+      "WebFetch(domain:*.claude.com)",
+      "WebFetch(domain:claude.ai)",
+      "WebFetch(domain:*.claude.ai)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:*.github.com)",
+      "WebFetch(domain:githubusercontent.com)",
+      "WebFetch(domain:*.githubusercontent.com)",
+      "WebFetch(domain:notion.so)",
+      "WebFetch(domain:*.notion.so)",
+      "WebFetch(domain:notion.com)",
+      "WebFetch(domain:*.notion.com)",
+      "WebFetch(domain:slack.com)",
+      "WebFetch(domain:*.slack.com)",
+      "WebFetch(domain:google.com)",
+      "WebFetch(domain:*.google.com)",
+      "WebFetch(domain:googleapis.com)",
+      "WebFetch(domain:*.googleapis.com)",
+      "WebFetch(domain:atlassian.com)",
+      "WebFetch(domain:*.atlassian.com)",
+      "WebFetch(domain:*.atlassian.net)",
+      "WebFetch(domain:figma.com)",
+      "WebFetch(domain:*.figma.com)"
     ],
     "deny": [
       "Bash(rm -rf:*)"
     ],
+    {{/* ask に載せないコマンドは allow にも入れない。記載がなければモードの
+         デフォルト挙動に従うので、auto mode のときの自動承認に判断を委ねる。
+
+         前提: auto mode の classifier が第2層として rm -rf 相当・main への
+         push・データ持ち出し等を実行直前にブロックする。よって ask は
+         「classifier が既に守る危険物」ではなく「正当だが一拍置きたいもの」に絞る。
+
+         ask から意図的に外したもの:
+           - python / python3 / bash: 任意コード実行だが classifier がラッパーを
+             透視して中の実コマンドを評価するため、同程度のリスクに収まる
+           - git mv: 追跡済みリネームで git により可逆
+           - open: ファイル/URL を既定アプリで開くだけで状態を変えない
+           - xargs: 単独では無害なパイプ補助
+         ask に残すもの (外向き・破壊的・サプライチェーン): curl, gh api,
+         gh pr create/edit, git push/checkout/clean/reset/rebase, go get,
+         mv(既存ファイル上書きの恐れ), rm, osascript。
+         WebFetch は bare では ask に入れない。ask は allow より優先され
+         specificity も効かないので、bare WebFetch を ask に置くと上の信頼
+         ドメイン allow が死ぬため。非信頼ドメインはモードデフォルト任せ。 */}}
     "ask": [
-      "Bash(bash:*)",
       "Bash(curl:*)",
       "Bash(gh api:*)",
       "Bash(gh pr create:*)",
       "Bash(gh pr edit:*)",
       "Bash(git checkout:*)",
       "Bash(git clean:*)",
-      "Bash(git mv:*)",
       "Bash(git push:*)",
       "Bash(git rebase:*)",
       "Bash(git reset:*)",
       "Bash(go get:*)",
       "Bash(mv:*)",
-      "Bash(open:*)",
       "Bash(osascript:*)",
-      "Bash(python3:*)",
-      "Bash(python:*)",
-      "Bash(rm:*)",
-      "Bash(xargs:*)",
-      "WebFetch"
+      "Bash(rm:*)"
     ]
   },
   "model": "opusplan",
