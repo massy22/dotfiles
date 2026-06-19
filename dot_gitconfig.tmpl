@@ -9,8 +9,12 @@
 
 {{- if eq .pcType "work" }}
 {{- $githubWorkOrg := onepasswordRead "op://Private/Dotfiles Config/github_work_org" }}
+{{- $githubWorkAccount := onepasswordRead "op://Private/Dotfiles Config/github_work_account" }}
 # Override back to work for company org repos.
 [includeIf "gitdir:~/git/github.com/{{ $githubWorkOrg }}/**"]
+  path = ~/.gitconfig-work
+# The work GitHub account's own repos are also work-owned.
+[includeIf "gitdir:~/git/github.com/{{ $githubWorkAccount }}/**"]
   path = ~/.gitconfig-work
 {{- end }}
 
