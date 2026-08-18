@@ -1,6 +1,50 @@
+#!/bin/bash
+# chezmoi modify_ スクリプト: ~/.claude/settings.json
+#
+# 全文生成ではなくマージする。Claude Code 自身がこのファイルへ書き込む
+# (/model や /config での変更、auto mode の environment など) ため、全文生成
+# だと apply ごとにそれらが消えて追いかけっこになる。
+#
+#   defaults ... 初期値のみ。以降は Claude Code 側の変更を尊重する
+#   managed  ... dotfiles が常に上書きする
+#   それ以外 ... 既存の値をそのまま通す
+#
+# 出力は jq -S で正規化して並びを固定し、apply ごとの差分を出さない。
+set -euo pipefail
+
+if ! command -v jq >/dev/null 2>&1; then
+  echo "modify_settings.json: jq が必要 (brew bundle --global)" >&2
+  exit 1
+fi
+
+current=$(cat)
+[ -n "$current" ] || current='{}'
+if ! printf '%s' "$current" | jq -e . >/dev/null 2>&1; then
+  echo "modify_settings.json: 既存の settings.json が不正な JSON なので中断" >&2
+  exit 1
+fi
+
+defaults=$(
+  cat <<'JSON'
 {
-  {{ if eq .pcType "work" }}"env": {{ onepasswordRead "op://Private/Dotfiles Config/claude_work_env" }},
-  "otelHeadersHelper": "~/.claude/otel-headers-helper.sh",{{ end }}
+  "model": "opusplan",
+  "alwaysThinkingEnabled": true,
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
+  "voiceEnabled": true
+}
+JSON
+)
+
+managed=$(
+  cat <<'JSON'
+{
+{{ if eq .pcType "work" -}}
+  "env": {{ onepasswordRead "op://Private/Dotfiles Config/claude_work_env" }},
+  "otelHeadersHelper": "~/.claude/otel-headers-helper.sh",
+{{ end -}}
   "permissions": {
     "allow": [
       "Bash(awk:*)",
@@ -147,7 +191,6 @@
       "Bash(rm:*)"
     ]
   },
-  "model": "opusplan",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh",
@@ -192,12 +235,14 @@
     "gopls-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true
   },
-  "alwaysThinkingEnabled": true,
   "language": "日本語",
-  "skipWorkflowUsageWarning": true,
-  "voice": {
-    "enabled": true,
-    "mode": "hold"
-  },
-  "voiceEnabled": true
+  "skipWorkflowUsageWarning": true
 }
+JSON
+)
+
+jq -S -n \
+  --argjson defaults "$defaults" \
+  --argjson current "$current" \
+  --argjson managed "$managed" \
+  '$defaults * $current * $managed'
