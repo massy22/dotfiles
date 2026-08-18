@@ -125,7 +125,7 @@ chezmoi update
 - Tmux: `.tmux.conf`
 - Config: `.config/nvim`, `.config/peco`, `.config/ghostty`
 - SSH: `.ssh/config`
-- Claude: `.claude/settings.json`, `.claude/statusline.sh`, `.claude/tmux-claude-state.sh`, `.claude/otel-headers-helper.sh`
+- Claude: `.claude/settings.json`, `.claude/CLAUDE.md`, `.claude/statusline.sh`, `.claude/tmux-claude-state.sh`, `.claude/otel-headers-helper.sh`
 - Scripts: `.local/bin/tmux-claude-next`
 - Gemini: `.gemini/settings.json`
 
