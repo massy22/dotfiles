@@ -114,27 +114,25 @@ cache_is_stale() {
 }
 
 if [ -n "$BQ_PROJECT" ] && cache_is_stale "$CACHE_FILE"; then
-  BQ_RESULT=$(bq query --project_id="${BQ_PROJECT}" --use_legacy_sql=false --format=json --max_rows=40 "
+  if BQ_RESULT=$(bq query --project_id="${BQ_PROJECT}" --use_legacy_sql=false --format=json --max_rows=40 "
     SELECT is_claude_ai, model, cost, total_input_tokens, total_output_tokens
     FROM \`${BQ_TABLE}\`
     WHERE user_email = '${USER_EMAIL}'
     AND usage_date = CURRENT_DATE('Asia/Tokyo')
     ORDER BY is_claude_ai, cost DESC
-  " 2>/dev/null)
-  if [ $? -eq 0 ] && [ -n "$BQ_RESULT" ]; then
+  " 2>/dev/null) && [ -n "$BQ_RESULT" ]; then
     echo "$BQ_RESULT" > "$CACHE_FILE"
   fi
 fi
 
 if [ -n "$BQ_PROJECT" ] && cache_is_stale "$CACHE_FILE_7D"; then
-  BQ_7D=$(bq query --project_id="${BQ_PROJECT}" --use_legacy_sql=false --format=json --max_rows=2 "
+  if BQ_7D=$(bq query --project_id="${BQ_PROJECT}" --use_legacy_sql=false --format=json --max_rows=2 "
     SELECT is_claude_ai, ROUND(SUM(cost), 2) AS total_cost_7d
     FROM \`${BQ_TABLE}\`
     WHERE user_email = '${USER_EMAIL}'
     AND usage_date >= DATE_SUB(CURRENT_DATE('Asia/Tokyo'), INTERVAL 6 DAY)
     GROUP BY is_claude_ai
-  " 2>/dev/null)
-  if [ $? -eq 0 ] && [ -n "$BQ_7D" ]; then
+  " 2>/dev/null) && [ -n "$BQ_7D" ]; then
     echo "$BQ_7D" > "$CACHE_FILE_7D"
   fi
 fi
