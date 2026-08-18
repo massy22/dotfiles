@@ -91,24 +91,26 @@ Edit `dot_Brewfile.tmpl` in this repository when adding or removing packages. Do
 
 Create a Secure Note in 1Password named `Dotfiles Config` with the following fields:
 
-**命名規則:**
-- `*_personal` - 個人アカウント用
-- `*_work` / `*_work_*` - 仕事用（work PC でのみ使用）
+**命名規則:** `<domain>_work_<attr>`（ドメインを先頭、work マーカーを中間に置く）
 
 | Field | Description | Required |
 |-------|-------------|----------|
-| `git_name_work` | Work Git user name | Work only |
-| `git_email_work` | Work email address | Work only |
+| `git_work_name` | Work Git user name | Work only |
+| `git_work_email` | Work email address | Work only |
 | `github_work_org` | Work GitHub organization (e.g., `myorg`) | Work only |
-| `github_enterprise_host` | GitHub Enterprise host | Work only |
+| `github_work_account` | Work GitHub account name | Work only |
+| `github_work_enterprise_host` | GitHub Enterprise host | Work only |
 | `claude_work_env` | Claude Code env settings (JSON) | Work only |
-| `claude_work_plugin` | Claude work plugin name | Work only |
-| `otel_bearer_token` | OTEL bearer token for Claude Code headers | Work only |
+| `claude_work_bq_table` | BigQuery table backing the statusline cost display | Work only |
+| `otel_work_bearer_token` | OTEL bearer token for Claude Code headers | Work only |
 | `gemini_work_telemetry` | Gemini telemetry settings (JSON) | Work only |
-| `work_tools_path` | PATH to work tools | Work only |
-| `work_migration_dir` | Migration directory | Work only |
-| `work_spanner_migration_dir` | Spanner migration directory | Work only |
+| `tools_work_path` | PATH to work tools | Work only |
+| `migration_work_dir` | Migration directory | Work only |
+| `spanner_work_migration_dir` | Spanner migration directory | Work only |
 | `vertex_work_project_id` | Vertex AI / GCP project ID | Work only |
+
+The list above is the complete set referenced by the templates; verify with
+`grep -rhoE 'op://[^"]+' --include='*.tmpl' .`
 
 ## Update
 
