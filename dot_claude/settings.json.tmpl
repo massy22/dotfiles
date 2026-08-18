@@ -153,6 +153,41 @@
     "command": "~/.claude/statusline.sh",
     "refreshInterval": 10
   },
+  {{- /* tmux のステータスラインに Claude Code の状態を出すための hook。
+       ~/.claude/tmux-claude-state.sh がウィンドウオプション @cc を書き、
+       dot_tmux.conf の window-status-format がそれを表示する。
+       args を使う exec 形式では ~ が展開されないのでシェル形式で書く。 */}}
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          { "type": "command", "command": "~/.claude/tmux-claude-state.sh busy" }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt|idle_prompt|agent_needs_input",
+        "hooks": [
+          { "type": "command", "command": "~/.claude/tmux-claude-state.sh wait" }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "~/.claude/tmux-claude-state.sh done" }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          { "type": "command", "command": "~/.claude/tmux-claude-state.sh clear" }
+        ]
+      }
+    ]
+  },
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true

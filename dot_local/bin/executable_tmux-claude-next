@@ -1,0 +1,21 @@
+#!/bin/bash
+# @cc が付いたウィンドウのうち、入力待ち (wait) を優先し、無ければ完了
+# (done) のものへ移動する。@cc は Claude Code の hook
+# (~/.claude/tmux-claude-state.sh) が書く。
+set -u
+
+[ -n "${TMUX:-}" ] || exit 0
+
+# 'done' はループ終端と紛れるためクォートする (shellcheck SC1010)
+for want in wait 'done'; do
+  # セッション名に空白が含まれても壊れないよう区切りは | にする
+  target=$(tmux list-windows -a -F '#{@cc}|#{session_name}:#{window_index}' |
+    awk -F'|' -v want="$want" '$1 == want { print $2; exit }')
+  if [ -n "$target" ]; then
+    tmux switch-client -t "${target%%:*}" 2>/dev/null
+    tmux select-window -t "$target"
+    exit 0
+  fi
+done
+
+tmux display-message "Claude: no window is waiting"

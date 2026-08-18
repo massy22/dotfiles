@@ -125,8 +125,26 @@ chezmoi update
 - Tmux: `.tmux.conf`
 - Config: `.config/nvim`, `.config/peco`, `.config/ghostty`
 - SSH: `.ssh/config`
-- Claude: `.claude/settings.json`
+- Claude: `.claude/settings.json`, `.claude/statusline.sh`, `.claude/tmux-claude-state.sh`, `.claude/otel-headers-helper.sh`
+- Scripts: `.local/bin/tmux-claude-next`
 - Gemini: `.gemini/settings.json`
+
+## Claude Code + tmux
+
+Claude Code sessions report their state to the tmux status line, so a
+window that is waiting for you is visible from any other window.
+
+- `.claude/settings.json` registers hooks that call
+  `.claude/tmux-claude-state.sh`, which stores the state in the tmux
+  window option `@cc`.
+- `.tmux.conf` renders `@cc` next to the window index:
+  orange `●` waiting for approval or input, green `●` response finished,
+  blue `◌` still working.
+- `prefix + C-j` jumps to the waiting window (falling back to a finished
+  one) via `.local/bin/tmux-claude-next`.
+
+After `chezmoi apply`, reload tmux with `prefix + r` and restart Claude
+Code so the new hooks are picked up.
 
 ## Notes
 
