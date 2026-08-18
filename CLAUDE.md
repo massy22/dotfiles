@@ -16,11 +16,49 @@ by `chezmoi apply`.
   `dot_claude/modify_settings.json.tmpl` is a `modify_` script: it receives
   the current target file on stdin and merges into it, so it has to stay
   idempotent (feeding its own output back must produce the same bytes).
+  Claude Code writes to that file too — `/model`, `/config`, and the auto
+  mode `environment` block — so keys this repository does not manage must
+  pass through untouched.
 - Secrets come from 1Password through `onepasswordRead`. This repository is
   public: never commit a secret, a work organisation or account name, an
   internal hostname, a real email address, or an absolute path containing a
   user name.
-- Work-only settings are gated on `pcType == "work"`.
+- Work-only settings are gated on `pcType == "work"`, either in the template
+  or through a conditional entry in `.chezmoiignore`.
+- Do not reintroduce `TERM` overrides. `options.zsh` used to rewrite any
+  `xterm*` TERM to `xterm-color`, an 8-colour terminfo, and the `tmux` alias
+  forced `screen-256color`, which hid the real terminal from tmux so its
+  `xterm*` `terminal-features` patterns could never match. The terminal's own
+  TERM is correct; tmux sets `tmux-256color` for what runs inside it.
+- peco styles use palette indices (`on_8`), not hex, so they follow whatever
+  terminal theme is set. Keep highlighted rows dark-background/light-text:
+  peco draws matched substrings in cyan, which disappears on a light band.
+
+## Claude Code integration
+
+A session reports its state to the tmux status line, so a window waiting for
+input is visible from any other window. Three pieces have to agree:
+
+- `dot_claude/modify_settings.json.tmpl` registers hooks on
+  `UserPromptSubmit`, `Notification`, `Stop`, and `SessionEnd`.
+- `dot_claude/executable_tmux-claude-state.sh` writes `busy`, `wait`, or
+  `done` into the tmux *window* option `@cc` for `$TMUX_PANE`, or clears it.
+  It no-ops outside tmux.
+- `dot_tmux.conf` renders `@cc` in `window-status-format`, and
+  `dot_local/bin/executable_tmux-claude-next` (`prefix + C-j`) jumps to the
+  first window whose `@cc` is `wait`, falling back to `done`.
+
+Two things bite when editing these:
+
+- Hooks use the shell form (`"command": "~/.claude/… busy"`), not the exec
+  form with `args`, because exec form does not tilde-expand the path.
+- A `#[…]` style tag inside a `#{?…}` tmux conditional must not contain a
+  comma. tmux reads it as the argument separator and the branch silently
+  disappears, so use single-attribute tags such as `#[fg=colour214]`.
+
+`allow-passthrough`, `extended-keys`, and the `extkeys` terminal-feature come
+from Claude Code's own terminal documentation; without them notifications,
+the progress bar, and Shift+Enter do not survive tmux.
 
 ## Verifying a change
 
@@ -30,7 +68,7 @@ chezmoi diff   # what would change in $HOME
 ```
 
 For `dot_tmux.conf`, a throwaway server reports config errors that
-`start-server` swallows:
+`start-server` swallows and exits 0 on:
 
 ```bash
 tmux -L check -f /dev/null new-session -d
@@ -43,11 +81,37 @@ When `pcType` is `work` it also needs `OP_ACCOUNT` set, or `op signin`
 first, because templates read from 1Password.
 
 After applying, reload with `prefix + r` for tmux and `src` (aliased to
-`exec zsh`) for the shell; restart Claude Code for settings or hook
-changes.
+`exec zsh`) for the shell; restart Claude Code for settings or hook changes.
+A changed `TERM` needs more than a reload: the client's TERM is fixed at
+attach time and a pane's at creation time, so detach and re-attach from a
+shell that has re-read `alias.zsh`, then open a new window.
+
+## Things that do not clean up after themselves
+
+- `tmux source-file` adds and overwrites bindings but never removes one that
+  was deleted from the config. After dropping a `bind`, run
+  `tmux unbind <key>` in the running server too. To find leftovers, diff
+  `tmux list-keys` against a throwaway server sourcing the same file.
+- `chezmoi apply` does not delete a target whose source entry was removed.
+  Delete the generated file in `$HOME` by hand.
+- Every `make check` recipe containing a loop must start with
+  `set -euo pipefail`. Without it the recipe's exit status is the last
+  iteration's, so a failure in the middle passes silently — which is how a
+  broken `settings.json` render once reached `main`.
+
+## Tried and removed
+
+Built, used, and taken out. Do not re-propose without new information:
+
+- `ccw`, a shell function that picked a repository with ghq + peco and opened
+  a tmux window running `claude`. The window's command was `claude`, so
+  exiting it destroyed the window and its scrollback, unlike a window made
+  with `prefix + c`.
+- `prefix + g` and `prefix + G` popups for `tig status` and a shell. They
+  duplicated what switching windows already gives.
 
 ## Commits
 
 Conventional Commits in English, with a scope naming the area (`tmux`,
-`claude`, `zsh`, `git`, `statusline`, `chezmoi`, ...). Use the body to
+`claude`, `zsh`, `git`, `statusline`, `chezmoi`, `peco`, ...). Use the body to
 explain *why* whenever the reason is not obvious from the diff.
