@@ -269,9 +269,9 @@ esac
 unset LSCOLORS
 
 case "${TERM}" in
-xterm|kterm*|xterm*)
-  # Terminal.app 等
-  export TERM=xterm-color
+xterm*|kterm*|screen*|tmux*)
+  # 端末が申告した TERM は書き換えない。xterm-color へ落とすと 8 色端末に
+  # なり、Ghostty (xterm-ghostty) や tmux (tmux-256color) の色が失われる。
   if [[ "${OSTYPE}" != darwin* ]]; then
     export CLICOLOR=1
     export LSCOLORS=ExFxCxDxBxegedabagacad

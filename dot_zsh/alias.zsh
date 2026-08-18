@@ -36,7 +36,8 @@ alias -g TEE="2>&1 | tee"
 alias 'm'='make'
 
 # tmux
-alias tmux='TERM=screen-256color tmux'
+# TERM は上書きしない。screen-256color を被せると tmux 側で外側の端末を
+# 判別できず、terminal-features の xterm* / ghostty* が効かなくなる。
 alias tm='tmux'
 alias tmn='tmux new-session -n zsh'
 alias tma='tmux attach'
@@ -71,4 +72,6 @@ function catjq() {
 alias java='nocorrect java'
 alias cp='nocorrect cp -irp'
 
-alias ssh='TERM=xterm ssh'
+# 接続先に xterm-ghostty / tmux-256color の terminfo が無いことが多いので
+# 広く存在する 256 色の TERM に落として渡す (xterm だと 8 色になる)。
+alias ssh='TERM=xterm-256color ssh'
