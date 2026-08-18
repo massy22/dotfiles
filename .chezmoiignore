@@ -1,0 +1,6 @@
+{{- /* このリポジトリ自身のファイル。$HOME に配置する対象ではない。
+     とくに CLAUDE.md は ~/CLAUDE.md になると $HOME 以下の全プロジェクトの
+     セッションに読み込まれてしまうため、必ず除外しておく。 */}}
+CLAUDE.md
+Makefile
+README.md
