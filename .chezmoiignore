@@ -4,3 +4,9 @@
 CLAUDE.md
 Makefile
 README.md
+
+{{ if ne .pcType "work" -}}
+{{- /* OTel ヘッダは work 専用。テンプレートが 1Password を無条件に読むため、
+     personal で管理対象に含めると apply が op signin で失敗する。 */}}
+.claude/otel-headers-helper.sh
+{{ end -}}
