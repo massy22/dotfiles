@@ -356,12 +356,45 @@ if [ "$(echo "$MAX_DAILY > 0" | bc 2>/dev/null)" = "1" ] ||
   HAS_SUB_USAGE=true
 fi
 
+# --- Model-scoped weekly window (Fable) ---
+# Claude Code hands the status line only five_hour and seven_day: every other
+# claim is dropped while the payload is built, the model-scoped weekly one
+# included, so this cannot come from stdin. /usage does fetch the full set and
+# leaves it in ~/.claude.json as cachedUsageUtilization, so read it from there.
+# Nothing else refreshes that cache, which is why the age is worth printing.
+SCOPED_PART=""
+SCOPED_COMPACT=""
+if [ -f "$HOME/.claude.json" ]; then
+  while IFS=$'\t' read -r fetched_ms scope_name scope_pct; do
+    [ -n "$scope_name" ] || continue
+    scope_tag=""
+    if [ "$fetched_ms" -gt 0 ]; then
+      scope_age=$(($(date +%s) - fetched_ms / 1000))
+      if [ "$scope_age" -gt 3600 ]; then
+        scope_tag=" ${DIM}⌛$(fmt_age "$scope_age")${RESET}"
+      fi
+    fi
+    SCOPED_PART="${SCOPED_PART} │ 📖 $(bar_fmt "${scope_name}枠" "${scope_pct%.*}")${scope_tag}"
+    SCOPED_COMPACT="${SCOPED_COMPACT}  $(ring_fmt "$scope_name" "${scope_pct%.*}")${scope_tag:+ ${DIM}⌛${RESET}}"
+  done < <(jq -r '
+    (.oauthAccount.accountUuid // "") as $uuid
+    | .cachedUsageUtilization
+    | select(. != null and (.accountUuid // "") == $uuid)
+    | (.fetchedAtMs // 0) as $t
+    | (.utilization.limits // [])
+    | map(select(.kind == "weekly_scoped" and ((.scope.model.display_name // "") != "")))
+    | .[]
+    | [$t, .scope.model.display_name, (.percent // 0)] | @tsv
+  ' "$HOME/.claude.json" 2>/dev/null)
+fi
+
 # --- Output ---
 if [ "$COMPACT" = true ]; then
   # Short version: ring meters + costs
   PARTS="${BOLD}${MODEL}${RESET}  $(ring_fmt ctx "$USED_PCT")"
   [ -n "$RATE_5H_PCT" ] && PARTS="${PARTS}  $(ring_fmt 5h "${RATE_5H_PCT%.*}")"
   [ -n "$RATE_7D_PCT" ] && PARTS="${PARTS}  $(ring_fmt 7d "${RATE_7D_PCT%.*}")"
+  PARTS="${PARTS}${SCOPED_COMPACT}"
   COST_PART=""
   if [ "$BQ_ENABLED" = true ]; then
     if [ -f "$CACHE_FILE" ]; then
@@ -377,7 +410,7 @@ else
   RATE_PART=""
   [ -n "$RATE_5H_PCT" ] && RATE_PART="${RATE_PART} │ ⏱ $(bar_fmt "5時間枠" "${RATE_5H_PCT%.*}")"
   [ -n "$RATE_7D_PCT" ] && RATE_PART="${RATE_PART} │ 📅 $(bar_fmt "週次枠" "${RATE_7D_PCT%.*}")"
-  echo -e "🤖 ${CYAN}${MODEL}${RESET} (${PLAN}) │ 🧠 コンテキスト ${BAR_COLOR}${USED_PCT}%${RESET}${RATE_PART} │ ⬇ 入力 ${IN_FMT} ⬆ 出力 ${OUT_FMT} │ 💰 セッション ${YELLOW}${SESSION_COST_FMT}${RESET}"
+  echo -e "🤖 ${CYAN}${MODEL}${RESET} (${PLAN}) │ 🧠 コンテキスト ${BAR_COLOR}${USED_PCT}%${RESET}${RATE_PART}${SCOPED_PART} │ ⬇ 入力 ${IN_FMT} ⬆ 出力 ${OUT_FMT} │ 💰 セッション ${YELLOW}${SESSION_COST_FMT}${RESET}"
 
   if [ "$BQ_ENABLED" = true ]; then
     if [ -f "$CACHE_FILE" ]; then

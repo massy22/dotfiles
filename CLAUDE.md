@@ -91,6 +91,16 @@ Claude Code feeds it on stdin carries the model, context window, cost and
 - `.rate_limits` proves a session is spending subscription quota, but it is
   absent until the first response arrives. It can confirm, never decide alone:
   keying off it is what once labelled subscription sessions as Vertex.
+- The model-scoped weekly window — Fable's, which Claude Code labels
+  `Fable 5 limit` internally — is not on stdin either. `rate_limits` is
+  assembled from `five_hour` and `seven_day` alone, and every other claim is
+  dropped: `seven_day_opus`, `seven_day_sonnet` and the overage-included one
+  that Fable consumes. It comes from `~/.claude.json`
+  `cachedUsageUtilization` instead, which `/usage` writes and nothing else
+  refreshes, hence the age beside the bar and no bar until `/usage` has been
+  opened once. Look for `utilization.limits[]` with `kind: weekly_scoped` and
+  a `scope.model.display_name`; the `percent` there is already 0-100, while
+  the utilisation figures on stdin are fractions.
 
 The BigQuery lines are Vertex-only, and gated on the session actually running
 on Vertex. The export receives rows for Vertex traffic and nothing else, so a
