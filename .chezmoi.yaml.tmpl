@@ -1,11 +1,13 @@
 {{- $pcType := promptStringOnce . "pcType" "PC type (personal/work)" -}}
-{{- $opAccount := promptStringOnce . "onepassword.account" "1Password account ID (op account list で確認)" -}}
+{{- $opAccount := promptStringOnce . "onepasswordAccount" "1Password account_uuid" -}}
 {{- $sourceDir := .chezmoi.sourceDir -}}
 
 sourceDir: "{{ $sourceDir }}"
 
+{{/* The account has to live under data:. chezmoi parses its own
+     onepassword: section into a struct of command/mode/prompt only, so an
+     account key there is dropped without a word and cannot be read back from
+     a template. Templates hand it to onepasswordRead themselves. */ -}}
 data:
   pcType: {{ $pcType | quote }}
-
-onepassword:
-  account: {{ $opAccount | quote }}
+  onepasswordAccount: {{ $opAccount | quote }}

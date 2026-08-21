@@ -5,9 +5,9 @@
   insteadOf = git@github.com:massy22/
 
 {{- if eq .pcType "work" }}
-{{- $githubWorkOrg := onepasswordRead "op://Private/Dotfiles Config/github_work_org" }}
-{{- $githubWorkAccount := onepasswordRead "op://Private/Dotfiles Config/github_work_account" }}
-{{- $githubEnterpriseHost := onepasswordRead "op://Private/Dotfiles Config/github_work_enterprise_host" }}
+{{- $githubWorkOrg := onepasswordRead "op://Private/Dotfiles Config/github_work_org" .onepasswordAccount }}
+{{- $githubWorkAccount := onepasswordRead "op://Private/Dotfiles Config/github_work_account" .onepasswordAccount }}
+{{- $githubEnterpriseHost := onepasswordRead "op://Private/Dotfiles Config/github_work_enterprise_host" .onepasswordAccount }}
 
 [url "git@github.com-work:{{ $githubWorkOrg }}/"]
   insteadOf = https://github.com/{{ $githubWorkOrg }}/

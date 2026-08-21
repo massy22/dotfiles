@@ -8,8 +8,8 @@
   path = ~/.gitconfig-personal
 
 {{- if eq .pcType "work" }}
-{{- $githubWorkOrg := onepasswordRead "op://Private/Dotfiles Config/github_work_org" }}
-{{- $githubWorkAccount := onepasswordRead "op://Private/Dotfiles Config/github_work_account" }}
+{{- $githubWorkOrg := onepasswordRead "op://Private/Dotfiles Config/github_work_org" .onepasswordAccount }}
+{{- $githubWorkAccount := onepasswordRead "op://Private/Dotfiles Config/github_work_account" .onepasswordAccount }}
 # Override back to work for company org repos.
 [includeIf "gitdir:~/git/github.com/{{ $githubWorkOrg }}/**"]
   path = ~/.gitconfig-work

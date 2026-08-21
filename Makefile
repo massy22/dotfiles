@@ -55,7 +55,7 @@ check-shell:
 	config_file="$$(mktemp "$${TMPDIR:-/tmp}/chezmoi.XXXXXX.yaml")"; \
 	rendered="$$(mktemp "$${TMPDIR:-/tmp}/rendered.XXXXXX.sh")"; \
 	trap 'rm -f "$$config_file" "$$rendered"' EXIT; \
-	printf 'data:\n  pcType: personal\n' > "$$config_file"; \
+	printf 'data:\n  pcType: personal\n  onepasswordAccount: ""\n' > "$$config_file"; \
 	for target in $(SHELL_TARGETS); do \
 		echo "shellcheck (rendered) $$target"; \
 		chezmoi --config "$$config_file" --source . cat "$$HOME/$$target" > "$$rendered"; \
@@ -83,7 +83,7 @@ check-chezmoi:
 	config_file="$$(mktemp "$${TMPDIR:-/tmp}/chezmoi.XXXXXX.yaml")"; \
 	rendered="$$(mktemp "$${TMPDIR:-/tmp}/rendered.XXXXXX")"; \
 	trap 'rm -f "$$config_file" "$$rendered"' EXIT; \
-	printf 'data:\n  pcType: personal\n' > "$$config_file"; \
+	printf 'data:\n  pcType: personal\n  onepasswordAccount: ""\n' > "$$config_file"; \
 	for target in $(CHEZMOI_TARGETS); do \
 		echo "chezmoi cat $$target"; \
 		chezmoi --config "$$config_file" --source . cat "$$HOME/$$target" > "$$rendered"; \
@@ -101,7 +101,7 @@ check-brewfile:
 	config_file="$$(mktemp "$${TMPDIR:-/tmp}/chezmoi.XXXXXX.yaml")"; \
 	brewfile="$$(mktemp "$${TMPDIR:-/tmp}/Brewfile.XXXXXX")"; \
 	trap 'rm -f "$$config_file" "$$brewfile"' EXIT; \
-	printf 'data:\n  pcType: personal\n' > "$$config_file"; \
+	printf 'data:\n  pcType: personal\n  onepasswordAccount: ""\n' > "$$config_file"; \
 	chezmoi --config "$$config_file" --source . cat "$$HOME/.Brewfile" > "$$brewfile"; \
 	if ! command -v brew >/dev/null 2>&1; then \
 		echo "brew not found; skipping brew bundle check"; \

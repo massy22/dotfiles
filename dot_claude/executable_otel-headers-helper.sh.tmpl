@@ -1,3 +1,3 @@
 #!/bin/bash
 EMAIL=$(gcloud config get-value account 2>/dev/null)
-echo "{\"Authorization\": \"Bearer {{ onepasswordRead "op://Private/Dotfiles Config/otel_work_bearer_token" }}\", \"X-User-Email\": \"${EMAIL}\"}"
+echo "{\"Authorization\": \"Bearer {{ onepasswordRead "op://Private/Dotfiles Config/otel_work_bearer_token" .onepasswordAccount }}\", \"X-User-Email\": \"${EMAIL}\"}"

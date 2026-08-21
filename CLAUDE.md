@@ -19,10 +19,22 @@ by `chezmoi apply`.
   Claude Code writes to that file too — `/model`, `/config`, and the auto
   mode `environment` block — so keys this repository does not manage must
   pass through untouched.
-- Secrets come from 1Password through `onepasswordRead`. This repository is
-  public: never commit a secret, a work organisation or account name, an
-  internal hostname, a real email address, or an absolute path containing a
-  user name.
+- Secrets come from 1Password through `onepasswordRead`, and every call
+  passes `.onepasswordAccount` as its second argument. With more than one
+  account configured, `op signin` without `--account` fails, and chezmoi has
+  nowhere to keep that account for you: its own `onepassword:` config section
+  parses into a struct of `command`/`mode`/`prompt`, so an `account` key there
+  is dropped silently and cannot be read back. Hence `data.onepasswordAccount`
+  in `.chezmoi.yaml.tmpl`, handed over by hand at all 17 call sites. chezmoi
+  renders with `missingkey=error`, so a config that defines `pcType` has to
+  define this key too — which is why the synthetic configs in the Makefile
+  set it to the empty string. Keep that prompt's text free of `=`:
+  `chezmoi init --promptString` matches on the prompt text rather than the
+  key, and splits each pair on the first `=`, so a prompt containing one
+  cannot be answered anywhere without a TTY.
+- This repository is public: never commit a secret, a work organisation or
+  account name, an internal hostname, a real email address, or an absolute
+  path containing a user name.
 - Work-only settings are gated on `pcType == "work"`, either in the template
   or through a conditional entry in `.chezmoiignore`.
 - Do not reintroduce `TERM` overrides. `options.zsh` used to rewrite any
@@ -111,8 +123,9 @@ tmux -L check kill-server
 ```
 
 Do not run `chezmoi apply` unless asked; it rewrites files in `$HOME`.
-When `pcType` is `work` it also needs `OP_ACCOUNT` set, or `op signin`
-first, because templates read from 1Password.
+When `pcType` is `work` it reads from 1Password, so the desktop app has to be
+running and unlocked with CLI integration enabled. The account itself comes
+from `data.onepasswordAccount`, so `OP_ACCOUNT` does not need to be set.
 
 After applying, reload with `prefix + r` for tmux and `src` (aliased to
 `exec zsh`) for the shell; restart Claude Code for settings or hook changes.

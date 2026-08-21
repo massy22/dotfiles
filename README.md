@@ -38,7 +38,18 @@ chezmoi apply
 During `chezmoi init`, you will be prompted for:
 
 - `pcType`: Enter `personal` or `work`
-- `1Password account ID`: Run `op account list` to find your account ID
+- `1Password account_uuid`: Run `op account list --format=json` and use the
+  `account_uuid` field, not the `user_uuid` that the plain `op account list`
+  table shows. Every `onepasswordRead` passes it explicitly, so `op` never has
+  to choose between accounts and `OP_ACCOUNT` does not have to be in the
+  environment.
+
+Without a TTY, answer the prompt on the command line instead. The flag matches
+on the prompt text, not on the data key:
+
+```bash
+chezmoi init --promptString '1Password account_uuid=<account_uuid>'
+```
 
 ### GitHub SSH account routing
 

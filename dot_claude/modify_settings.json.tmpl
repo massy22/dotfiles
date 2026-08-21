@@ -42,7 +42,7 @@ managed=$(
   cat <<'JSON'
 {
 {{ if eq .pcType "work" -}}
-  "env": {{ onepasswordRead "op://Private/Dotfiles Config/claude_work_env" }},
+  "env": {{ onepasswordRead "op://Private/Dotfiles Config/claude_work_env" .onepasswordAccount }},
   "otelHeadersHelper": "~/.claude/otel-headers-helper.sh",
 {{ end -}}
   "permissions": {
