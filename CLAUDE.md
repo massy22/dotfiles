@@ -60,6 +60,32 @@ Two things bite when editing these:
 from Claude Code's own terminal documentation; without them notifications,
 the progress bar, and Shift+Enter do not survive tmux.
 
+## Status line
+
+`dot_claude/executable_statusline.sh.tmpl` renders the session line. The JSON
+Claude Code feeds it on stdin carries the model, context window, cost and
+`rate_limits`, but *not* the plan or the provider, so both are derived:
+
+- Provider comes from the `CLAUDE_CODE_USE_*` env vars, checked in the same
+  order as Claude Code's own resolver (bedrock, foundry, anthropicAws,
+  anthropicGoogleCloud, mantle, vertex, else first party) and with the same
+  truthiness test, where only `1`/`true`/`yes`/`on` count. A plain `-n` test
+  would read `CLAUDE_CODE_USE_VERTEX=0` as Vertex.
+- Plan comes from `~/.claude.json` `.oauthAccount`: `organizationType`
+  (`claude_pro`/`claude_max`/`claude_team`/`claude_enterprise`) and
+  `userRateLimitTier` (`default_claude_max_5x`/`_20x`/`_zero`), which is the
+  part that differs between two seats on the same plan. That file belongs to
+  Claude Code, so treat every key as optional and keep the fallbacks.
+- `.rate_limits` proves a session is spending subscription quota, but it is
+  absent until the first response arrives. It can confirm, never decide alone:
+  keying off it is what once labelled subscription sessions as Vertex.
+
+The BigQuery lines split on `is_claude_ai`, a two-value column, so the labels
+can be precise but the split cannot get finer. A failed `bq` no longer drops
+those lines silently — it prints `⛅ BQ 取得不可 (…)` with the reason, and data
+that outlived a failed refresh carries its age. `gcloud 再認証が必要` means the
+token expired: run `gcloud auth login`.
+
 ## Verifying a change
 
 ```bash

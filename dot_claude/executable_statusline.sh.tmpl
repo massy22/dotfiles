@@ -7,20 +7,116 @@ input=$(cat)
 # --- Built-in session info ---
 MODEL=$(echo "$input" | jq -r '.model.display_name // .model.id // "unknown"')
 HAS_RATE_LIMITS=$(echo "$input" | jq -r 'if .rate_limits then "true" else "false" end')
-# Detect the real provider instead of inferring it from .rate_limits presence.
-# At launch the stdin JSON has no .rate_limits yet, so the old else-branch
-# mislabeled subscription sessions as "GCP Vertex AI".
-if [ -n "$CLAUDE_CODE_USE_VERTEX" ]; then
-  PLAN="GCP Vertex AI"
-elif [ "$HAS_RATE_LIMITS" = "true" ]; then
-  PLAN="Pro/Max/Team"
-else
-  PLAN="Claude"
-fi
 TOTAL_INPUT=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
 TOTAL_OUTPUT=$(echo "$input" | jq -r '.context_window.total_output_tokens // 0')
 USED_PCT=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
 SESSION_COST=$(echo "$input" | jq -r '.cost.total_cost_usd // 0')
+
+# --- Provider and plan ---
+# The status line JSON carries neither, so both are derived here.
+#
+# Provider: the same env vars in the same order as Claude Code's own resolver,
+# with its truthiness test too (only 1/true/yes/on count), so
+# CLAUDE_CODE_USE_VERTEX=0 reads as off instead of as Vertex.
+#
+# Plan: ~/.claude.json .oauthAccount is the only local source. organizationType
+# names the plan and userRateLimitTier the size of the 5h/weekly windows, which
+# is what actually differs between two seats on the same plan.
+env_on() {
+  case "$(printf '%s' "${1:-}" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')" in
+  1 | true | yes | on) return 0 ;;
+  *) return 1 ;;
+  esac
+}
+
+PROVIDER="firstParty"
+PROVIDER_LABEL=""
+PROVIDER_REGION=""
+if env_on "${CLAUDE_CODE_USE_BEDROCK:-}"; then
+  PROVIDER="bedrock"
+  PROVIDER_LABEL="Amazon Bedrock"
+  PROVIDER_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-}}"
+elif env_on "${CLAUDE_CODE_USE_FOUNDRY:-}"; then
+  PROVIDER="foundry"
+  PROVIDER_LABEL="Microsoft Foundry"
+elif env_on "${CLAUDE_CODE_USE_ANTHROPIC_AWS:-}"; then
+  PROVIDER="anthropicAws"
+  PROVIDER_LABEL="Claude Platform on AWS"
+  PROVIDER_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-}}"
+elif env_on "${CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD:-}"; then
+  PROVIDER="anthropicGoogleCloud"
+  PROVIDER_LABEL="Claude Platform on Google Cloud"
+  PROVIDER_REGION="${ANTHROPIC_GOOGLE_CLOUD_LOCATION:-}"
+elif env_on "${CLAUDE_CODE_USE_MANTLE:-}"; then
+  PROVIDER="mantle"
+  PROVIDER_LABEL="Amazon Bedrock (Mantle)"
+  PROVIDER_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-}}"
+elif env_on "${CLAUDE_CODE_USE_VERTEX:-}"; then
+  PROVIDER="vertex"
+  PROVIDER_LABEL="Vertex AI"
+  # Claude Code falls back to us-east5 when CLOUD_ML_REGION is unset.
+  PROVIDER_REGION="${CLOUD_ML_REGION:-us-east5}"
+fi
+
+PLAN_NAME=""
+PLAN_TIER=""
+if [ -f "$HOME/.claude.json" ]; then
+  ACCOUNT=$(jq -r '.oauthAccount // {} | "\(.organizationType // "")|\(.userRateLimitTier // "")"' "$HOME/.claude.json" 2>/dev/null)
+  ORG_TYPE="${ACCOUNT%%|*}"
+  RATE_TIER="${ACCOUNT##*|}"
+  case "$ORG_TYPE" in
+  claude_pro) PLAN_NAME="Pro" ;;
+  claude_max) PLAN_NAME="Max" ;;
+  claude_team) PLAN_NAME="Team" ;;
+  claude_enterprise) PLAN_NAME="Enterprise" ;;
+  esac
+  case "$RATE_TIER" in
+  "") ;;
+  default_claude_max_5x) PLAN_TIER="Max 5x" ;;
+  default_claude_max_20x) PLAN_TIER="Max 20x" ;;
+  default_claude_zero) PLAN_TIER="枠なし" ;;
+  # An unknown tier is worth showing raw; guessing at it would be worse.
+  *) PLAN_TIER="${RATE_TIER#default_claude_}" ;;
+  esac
+  # A Max plan is named by its tier, so "Max · Max 20x" says it twice.
+  if [ "$PLAN_NAME" = "Max" ] && [ -n "$PLAN_TIER" ]; then
+    PLAN_NAME="$PLAN_TIER"
+    PLAN_TIER=""
+  fi
+  [ "$PLAN_TIER" = "$PLAN_NAME" ] && PLAN_TIER=""
+fi
+
+# What this session is spending: a provider label off the env, or the plan.
+# .rate_limits is the one authoritative "this is subscription quota" signal, so
+# it outranks a stray API key in the env; it is absent until the first response
+# though, which is what the account file covers.
+BASE_HOST="${ANTHROPIC_BASE_URL:-}"
+BASE_HOST="${BASE_HOST#*://}"
+BASE_HOST="${BASE_HOST%%/*}"
+BASE_HOST="${BASE_HOST##*@}"
+BASE_HOST="${BASE_HOST%%:*}"
+if [ "$PROVIDER" != "firstParty" ]; then
+  PLAN="${PROVIDER_LABEL}${PROVIDER_REGION:+ · ${PROVIDER_REGION}}"
+elif [ -n "$BASE_HOST" ] && [ "$BASE_HOST" != "api.anthropic.com" ]; then
+  PLAN="API プロキシ · ${BASE_HOST}"
+elif [ "$HAS_RATE_LIMITS" = "true" ]; then
+  PLAN="${PLAN_NAME:-Claude}${PLAN_TIER:+ · ${PLAN_TIER}}"
+elif [ -n "${ANTHROPIC_API_KEY:-}${ANTHROPIC_AUTH_TOKEN:-}" ]; then
+  PLAN="API 従量"
+elif [ -n "$PLAN_NAME" ]; then
+  PLAN="${PLAN_NAME}${PLAN_TIER:+ · ${PLAN_TIER}}"
+else
+  PLAN="Claude"
+fi
+
+# BQ splits the usage export on is_claude_ai: subscription seats on one side,
+# metered API usage on the other. Name each after what it actually is.
+if [ -n "$PLAN_NAME" ]; then
+  BQ_SUB_LABEL="${PLAN_NAME}${PLAN_TIER:+/${PLAN_TIER}} 枠"
+else
+  BQ_SUB_LABEL="サブスク枠"
+fi
+BQ_API_LABEL="Vertex AI 従量"
 
 # Format token counts (K)
 fmt_tokens() {
@@ -106,34 +202,98 @@ BQ_TABLE=""
 USER_EMAIL=$(gcloud config get-value account 2>/dev/null)
 CACHE_FILE="/tmp/claude-statusline-bq-cost-$(whoami)"
 CACHE_FILE_7D="/tmp/claude-statusline-bq-cost-7d-$(whoami)"
+# Named per user rather than per PID on purpose. Claude Code aborts the
+# previous status line run before starting the next one, so a run killed while
+# bq is still answering never reaches its own cleanup, and a per-PID path would
+# leave a file behind on every abort. One reused path cannot accumulate, and
+# the worst a race between two sessions costs is a garbled reason string.
+BQ_ERR_FILE="/tmp/claude-statusline-bq-err-$(whoami)"
 CACHE_MAX_AGE=300
+BQ_STATUS=""
 
-cache_is_stale() {
-  [ ! -f "$1" ] || \
-  [ $(($(date +%s) - $(stat -f %m "$1" 2>/dev/null || echo 0))) -gt $CACHE_MAX_AGE ]
+cache_age() {
+  [ -f "$1" ] || return 1
+  echo $(($(date +%s) - $(stat -f %m "$1" 2>/dev/null || echo 0)))
 }
 
-if [ -n "$BQ_PROJECT" ] && cache_is_stale "$CACHE_FILE"; then
-  if BQ_RESULT=$(bq query --project_id="${BQ_PROJECT}" --use_legacy_sql=false --format=json --max_rows=40 "
-    SELECT is_claude_ai, model, cost, total_input_tokens, total_output_tokens
-    FROM \`${BQ_TABLE}\`
-    WHERE user_email = '${USER_EMAIL}'
-    AND usage_date = CURRENT_DATE('Asia/Tokyo')
-    ORDER BY is_claude_ai, cost DESC
-  " 2>/dev/null) && [ -n "$BQ_RESULT" ]; then
-    echo "$BQ_RESULT" > "$CACHE_FILE"
+cache_is_stale() {
+  local age
+  age=$(cache_age "$1") || return 0
+  [ "$age" -gt "$CACHE_MAX_AGE" ]
+}
+
+fmt_age() {
+  local s=$1
+  if [ "$s" -lt 3600 ]; then
+    echo "$((s / 60))分前"
+  elif [ "$s" -lt 86400 ]; then
+    echo "$((s / 3600))時間前"
+  else
+    echo "$((s / 86400))日前"
   fi
+}
+
+# Why the query failed is the useful part: an expired gcloud token is one
+# command away from fixed, and dropping the BQ lines silently hid that.
+bq_fail_reason() {
+  case "$1" in
+  *Reauthentication* | *"auth tokens"* | *"gcloud auth login"*) echo "gcloud 再認証が必要" ;;
+  *"Access Denied"* | *"Permission denied"* | *"permission"*) echo "権限なし" ;;
+  *"Not found"* | *"not found"*) echo "テーブルが見つからない" ;;
+  *) echo "クエリ失敗" ;;
+  esac
+}
+
+run_bq() {
+  local dest=$1 rows=$2 sql=$3 out
+  if out=$(bq query --project_id="${BQ_PROJECT}" --use_legacy_sql=false \
+    --format=json --max_rows="$rows" "$sql" 2>"$BQ_ERR_FILE") && [ -n "$out" ]; then
+    printf '%s\n' "$out" >"$dest"
+    return 0
+  fi
+  if [ -z "$BQ_STATUS" ]; then
+    BQ_STATUS=$(bq_fail_reason "$(cat "$BQ_ERR_FILE" 2>/dev/null)")
+  fi
+  return 1
+}
+
+if [ -n "$BQ_PROJECT" ]; then
+  if ! command -v bq >/dev/null 2>&1; then
+    BQ_STATUS="bq コマンドがない"
+  else
+    if cache_is_stale "$CACHE_FILE"; then
+      run_bq "$CACHE_FILE" 40 "
+        SELECT is_claude_ai, model, cost, total_input_tokens, total_output_tokens
+        FROM \`${BQ_TABLE}\`
+        WHERE user_email = '${USER_EMAIL}'
+        AND usage_date = CURRENT_DATE('Asia/Tokyo')
+        ORDER BY is_claude_ai, cost DESC
+      " || true
+    fi
+    if cache_is_stale "$CACHE_FILE_7D"; then
+      run_bq "$CACHE_FILE_7D" 2 "
+        SELECT is_claude_ai, ROUND(SUM(cost), 2) AS total_cost_7d
+        FROM \`${BQ_TABLE}\`
+        WHERE user_email = '${USER_EMAIL}'
+        AND usage_date >= DATE_SUB(CURRENT_DATE('Asia/Tokyo'), INTERVAL 6 DAY)
+        GROUP BY is_claude_ai
+      " || true
+    fi
+  fi
+  rm -f "$BQ_ERR_FILE"
 fi
 
-if [ -n "$BQ_PROJECT" ] && cache_is_stale "$CACHE_FILE_7D"; then
-  if BQ_7D=$(bq query --project_id="${BQ_PROJECT}" --use_legacy_sql=false --format=json --max_rows=2 "
-    SELECT is_claude_ai, ROUND(SUM(cost), 2) AS total_cost_7d
-    FROM \`${BQ_TABLE}\`
-    WHERE user_email = '${USER_EMAIL}'
-    AND usage_date >= DATE_SUB(CURRENT_DATE('Asia/Tokyo'), INTERVAL 6 DAY)
-    GROUP BY is_claude_ai
-  " 2>/dev/null) && [ -n "$BQ_7D" ]; then
-    echo "$BQ_7D" > "$CACHE_FILE_7D"
+# The detail slot after the separator holds the per-model breakdown. An empty
+# result set is not the same as a quiet day, so it says so there rather than
+# leaving a separator with nothing behind it.
+#
+# Data that survived a failed refresh is still worth showing, but not without
+# saying how old it is.
+BQ_AGE_TAG=""
+if [ -f "$CACHE_FILE" ]; then
+  BQ_AGE=$(cache_age "$CACHE_FILE")
+  if [ "$BQ_AGE" -gt "$CACHE_MAX_AGE" ]; then
+    BQ_AGE_TAG=" ${DIM}⌛$(fmt_age "$BQ_AGE")${BQ_STATUS:+・${BQ_STATUS}}${RESET}"
   fi
 fi
 
@@ -168,7 +328,9 @@ fi
 VERTEX_FMT=$(printf '$%.2f' "$VERTEX_DAILY")
 MAX_FMT=$(printf '$%.2f' "$MAX_DAILY")
 
-# 7-day cost
+# 7-day cost. Keep the numbers at 0 when the cache is missing so the
+# comparisons below stay valid arithmetic.
+VERTEX_7D=0; MAX_7D=0
 VERTEX_7D_FMT=""; MAX_7D_FMT=""
 if [ -f "$CACHE_FILE_7D" ]; then
   VERTEX_7D=$(jq -r '[.[] | select(.is_claude_ai == "false")] | .[0].total_cost_7d // 0' "$CACHE_FILE_7D" 2>/dev/null)
@@ -177,18 +339,32 @@ if [ -f "$CACHE_FILE_7D" ]; then
   MAX_7D_FMT=$(printf '$%.2f' "$MAX_7D")
 fi
 
+# 💎 is about today's subscription-side usage, not about what this session
+# happens to be talking to, so both modes gate it on the same number.
+HAS_SUB_USAGE=false
+if [ "$(echo "$MAX_DAILY > 0" | bc 2>/dev/null)" = "1" ] ||
+  [ "$(echo "$MAX_7D > 0" | bc 2>/dev/null)" = "1" ]; then
+  HAS_SUB_USAGE=true
+fi
+
 # --- Output ---
 if [ "$COMPACT" = true ]; then
   # Short version: ring meters + costs
   PARTS="${BOLD}${MODEL}${RESET}  $(ring_fmt ctx "$USED_PCT")"
   [ -n "$RATE_5H_PCT" ] && PARTS="${PARTS}  $(ring_fmt 5h "${RATE_5H_PCT%.*}")"
   [ -n "$RATE_7D_PCT" ] && PARTS="${PARTS}  $(ring_fmt 7d "${RATE_7D_PCT%.*}")"
-  if [ "$HAS_RATE_LIMITS" = "true" ]; then
-    COST_PART="💎${YELLOW}${MAX_FMT}${RESET} ⛅${YELLOW}${VERTEX_FMT}${RESET}"
+  if [ -f "$CACHE_FILE" ]; then
+    if [ "$HAS_SUB_USAGE" = true ]; then
+      COST_PART="💎${YELLOW}${MAX_FMT}${RESET} ⛅${YELLOW}${VERTEX_FMT}${RESET}"
+    else
+      COST_PART="⛅${YELLOW}${VERTEX_FMT}${RESET}"
+    fi
+  elif [ -n "$BQ_PROJECT" ]; then
+    COST_PART="⛅${DIM}--${RESET}"
   else
-    COST_PART="⛅${YELLOW}${VERTEX_FMT}${RESET}"
+    COST_PART=""
   fi
-  echo -e "${PARTS}  💰${YELLOW}${SESSION_COST_FMT}${RESET}  ${COST_PART}"
+  echo -e "${PARTS}  💰${YELLOW}${SESSION_COST_FMT}${RESET}${COST_PART:+  ${COST_PART}}"
 else
   # Full version: 2-3 lines with details (original style)
   RATE_PART=""
@@ -199,12 +375,14 @@ else
   if [ -f "$CACHE_FILE" ]; then
     VERTEX_7D_PART=""
     [ -n "$VERTEX_7D_FMT" ] && VERTEX_7D_PART=" (過去7日間 ${YELLOW}${VERTEX_7D_FMT}${RESET})"
-    echo -e "⛅ GCP Vertex AI 本日 ${YELLOW}${VERTEX_FMT}${RESET}${VERTEX_7D_PART} │ ${VERTEX_LINE}"
+    echo -e "⛅ ${BQ_API_LABEL}${BQ_AGE_TAG} 本日 ${YELLOW}${VERTEX_FMT}${RESET}${VERTEX_7D_PART} │ ${VERTEX_LINE:-${DIM}該当行なし${RESET}}"
 
-    if [ "$(echo "$MAX_DAILY > 0" | bc 2>/dev/null)" = "1" ] || [ "$(echo "$MAX_7D > 0" | bc 2>/dev/null)" = "1" ]; then
+    if [ "$HAS_SUB_USAGE" = true ]; then
       MAX_7D_PART=""
       [ -n "$MAX_7D_FMT" ] && MAX_7D_PART=" (過去7日間 ${YELLOW}${MAX_7D_FMT}${RESET})"
-      echo -e "💎 Pro/Max/Team 本日 ${YELLOW}${MAX_FMT}${RESET}${MAX_7D_PART} │ ${MAX_LINE}"
+      echo -e "💎 ${BQ_SUB_LABEL} 本日 ${YELLOW}${MAX_FMT}${RESET}${MAX_7D_PART} │ ${MAX_LINE:-${DIM}該当行なし${RESET}}"
     fi
+  elif [ -n "$BQ_PROJECT" ]; then
+    echo -e "⛅ ${DIM}BQ 取得不可 (${BQ_STATUS:-理由不明})${RESET}"
   fi
 fi
