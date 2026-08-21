@@ -199,13 +199,21 @@ BQ_TABLE=""
 {{- end }}
 
 # --- BQ cost (cached, refresh every 5 min) ---
-USER_EMAIL=$(gcloud config get-value account 2>/dev/null)
+# The export only receives rows for Vertex traffic, so on a subscription seat
+# there is nothing in it to find: no query, no parsing, no line. Everything
+# below hangs off this one flag so the display cannot promise data that was
+# never fetched.
+BQ_ENABLED=false
+if [ -n "$BQ_PROJECT" ] && [ "$PROVIDER" = "vertex" ]; then
+  BQ_ENABLED=true
+fi
+
 CACHE_FILE="/tmp/claude-statusline-bq-cost-$(whoami)"
 CACHE_FILE_7D="/tmp/claude-statusline-bq-cost-7d-$(whoami)"
 # Named per user rather than per PID on purpose. Claude Code aborts the
 # previous status line run before starting the next one, so a run killed while
-# bq is still answering never reaches its own cleanup, and a per-PID path would
-# leave a file behind on every abort. One reused path cannot accumulate, and
+# bq is still answering never reaches its own cleanup — with $$ in the name
+# every abort left another file behind. One reused path cannot accumulate, and
 # the worst a race between two sessions costs is a garbled reason string.
 BQ_ERR_FILE="/tmp/claude-statusline-bq-err-$(whoami)"
 CACHE_MAX_AGE=300
@@ -257,10 +265,11 @@ run_bq() {
   return 1
 }
 
-if [ -n "$BQ_PROJECT" ]; then
+if [ "$BQ_ENABLED" = true ]; then
   if ! command -v bq >/dev/null 2>&1; then
     BQ_STATUS="bq コマンドがない"
   else
+    USER_EMAIL=$(gcloud config get-value account 2>/dev/null)
     if cache_is_stale "$CACHE_FILE"; then
       run_bq "$CACHE_FILE" 40 "
         SELECT is_claude_ai, model, cost, total_input_tokens, total_output_tokens
@@ -290,7 +299,7 @@ fi
 # Data that survived a failed refresh is still worth showing, but not without
 # saying how old it is.
 BQ_AGE_TAG=""
-if [ -f "$CACHE_FILE" ]; then
+if [ "$BQ_ENABLED" = true ] && [ -f "$CACHE_FILE" ]; then
   BQ_AGE=$(cache_age "$CACHE_FILE")
   if [ "$BQ_AGE" -gt "$CACHE_MAX_AGE" ]; then
     BQ_AGE_TAG=" ${DIM}⌛$(fmt_age "$BQ_AGE")${BQ_STATUS:+・${BQ_STATUS}}${RESET}"
@@ -304,7 +313,7 @@ COMPACT=false
 # --- Parse BQ data (needed for both modes) ---
 VERTEX_DAILY=0; MAX_DAILY=0
 VERTEX_LINE=""; MAX_LINE=""
-if [ -f "$CACHE_FILE" ]; then
+if [ "$BQ_ENABLED" = true ] && [ -f "$CACHE_FILE" ]; then
   while IFS= read -r row; do
     is_ai=$(echo "$row" | jq -r '.is_claude_ai')
     m=$(echo "$row" | jq -r '.model')
@@ -332,7 +341,7 @@ MAX_FMT=$(printf '$%.2f' "$MAX_DAILY")
 # comparisons below stay valid arithmetic.
 VERTEX_7D=0; MAX_7D=0
 VERTEX_7D_FMT=""; MAX_7D_FMT=""
-if [ -f "$CACHE_FILE_7D" ]; then
+if [ "$BQ_ENABLED" = true ] && [ -f "$CACHE_FILE_7D" ]; then
   VERTEX_7D=$(jq -r '[.[] | select(.is_claude_ai == "false")] | .[0].total_cost_7d // 0' "$CACHE_FILE_7D" 2>/dev/null)
   MAX_7D=$(jq -r '[.[] | select(.is_claude_ai == "true")] | .[0].total_cost_7d // 0' "$CACHE_FILE_7D" 2>/dev/null)
   VERTEX_7D_FMT=$(printf '$%.2f' "$VERTEX_7D")
@@ -353,16 +362,14 @@ if [ "$COMPACT" = true ]; then
   PARTS="${BOLD}${MODEL}${RESET}  $(ring_fmt ctx "$USED_PCT")"
   [ -n "$RATE_5H_PCT" ] && PARTS="${PARTS}  $(ring_fmt 5h "${RATE_5H_PCT%.*}")"
   [ -n "$RATE_7D_PCT" ] && PARTS="${PARTS}  $(ring_fmt 7d "${RATE_7D_PCT%.*}")"
-  if [ -f "$CACHE_FILE" ]; then
-    if [ "$HAS_SUB_USAGE" = true ]; then
-      COST_PART="💎${YELLOW}${MAX_FMT}${RESET} ⛅${YELLOW}${VERTEX_FMT}${RESET}"
-    else
+  COST_PART=""
+  if [ "$BQ_ENABLED" = true ]; then
+    if [ -f "$CACHE_FILE" ]; then
       COST_PART="⛅${YELLOW}${VERTEX_FMT}${RESET}"
+      [ "$HAS_SUB_USAGE" = true ] && COST_PART="💎${YELLOW}${MAX_FMT}${RESET} ${COST_PART}"
+    else
+      COST_PART="⛅${DIM}--${RESET}"
     fi
-  elif [ -n "$BQ_PROJECT" ]; then
-    COST_PART="⛅${DIM}--${RESET}"
-  else
-    COST_PART=""
   fi
   echo -e "${PARTS}  💰${YELLOW}${SESSION_COST_FMT}${RESET}${COST_PART:+  ${COST_PART}}"
 else
@@ -372,17 +379,19 @@ else
   [ -n "$RATE_7D_PCT" ] && RATE_PART="${RATE_PART} │ 📅 $(bar_fmt "週次枠" "${RATE_7D_PCT%.*}")"
   echo -e "🤖 ${CYAN}${MODEL}${RESET} (${PLAN}) │ 🧠 コンテキスト ${BAR_COLOR}${USED_PCT}%${RESET}${RATE_PART} │ ⬇ 入力 ${IN_FMT} ⬆ 出力 ${OUT_FMT} │ 💰 セッション ${YELLOW}${SESSION_COST_FMT}${RESET}"
 
-  if [ -f "$CACHE_FILE" ]; then
-    VERTEX_7D_PART=""
-    [ -n "$VERTEX_7D_FMT" ] && VERTEX_7D_PART=" (過去7日間 ${YELLOW}${VERTEX_7D_FMT}${RESET})"
-    echo -e "⛅ ${BQ_API_LABEL}${BQ_AGE_TAG} 本日 ${YELLOW}${VERTEX_FMT}${RESET}${VERTEX_7D_PART} │ ${VERTEX_LINE:-${DIM}該当行なし${RESET}}"
+  if [ "$BQ_ENABLED" = true ]; then
+    if [ -f "$CACHE_FILE" ]; then
+      VERTEX_7D_PART=""
+      [ -n "$VERTEX_7D_FMT" ] && VERTEX_7D_PART=" (過去7日間 ${YELLOW}${VERTEX_7D_FMT}${RESET})"
+      echo -e "⛅ ${BQ_API_LABEL}${BQ_AGE_TAG} 本日 ${YELLOW}${VERTEX_FMT}${RESET}${VERTEX_7D_PART} │ ${VERTEX_LINE:-${DIM}該当行なし${RESET}}"
 
-    if [ "$HAS_SUB_USAGE" = true ]; then
-      MAX_7D_PART=""
-      [ -n "$MAX_7D_FMT" ] && MAX_7D_PART=" (過去7日間 ${YELLOW}${MAX_7D_FMT}${RESET})"
-      echo -e "💎 ${BQ_SUB_LABEL} 本日 ${YELLOW}${MAX_FMT}${RESET}${MAX_7D_PART} │ ${MAX_LINE:-${DIM}該当行なし${RESET}}"
+      if [ "$HAS_SUB_USAGE" = true ]; then
+        MAX_7D_PART=""
+        [ -n "$MAX_7D_FMT" ] && MAX_7D_PART=" (過去7日間 ${YELLOW}${MAX_7D_FMT}${RESET})"
+        echo -e "💎 ${BQ_SUB_LABEL} 本日 ${YELLOW}${MAX_FMT}${RESET}${MAX_7D_PART} │ ${MAX_LINE:-${DIM}該当行なし${RESET}}"
+      fi
+    else
+      echo -e "⛅ ${DIM}BQ 取得不可 (${BQ_STATUS:-理由不明})${RESET}"
     fi
-  elif [ -n "$BQ_PROJECT" ]; then
-    echo -e "⛅ ${DIM}BQ 取得不可 (${BQ_STATUS:-理由不明})${RESET}"
   fi
 fi

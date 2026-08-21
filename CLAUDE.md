@@ -80,11 +80,19 @@ Claude Code feeds it on stdin carries the model, context window, cost and
   absent until the first response arrives. It can confirm, never decide alone:
   keying off it is what once labelled subscription sessions as Vertex.
 
-The BigQuery lines split on `is_claude_ai`, a two-value column, so the labels
-can be precise but the split cannot get finer. A failed `bq` no longer drops
-those lines silently — it prints `⛅ BQ 取得不可 (…)` with the reason, and data
-that outlived a failed refresh carries its age. `gcloud 再認証が必要` means the
-token expired: run `gcloud auth login`.
+The BigQuery lines are Vertex-only, and gated on the session actually running
+on Vertex. The export receives rows for Vertex traffic and nothing else, so a
+subscription seat gets an empty result however the query is written, which is
+what made a permanent `本日 $0.00` look like a broken query. Do not lift that
+gate to "fix" a missing line; check the provider first. The table also drops
+rows after a few months, so history older than that is gone rather than
+mismatched.
+
+Within the section the rows split on `is_claude_ai`, a two-value column, so
+the labels can be precise but the split cannot get finer. A failed `bq` no
+longer drops the lines silently — it prints `⛅ BQ 取得不可 (…)` with the
+reason, and data that outlived a failed refresh carries its age.
+`gcloud 再認証が必要` means the token expired: run `gcloud auth login`.
 
 ## Verifying a change
 
