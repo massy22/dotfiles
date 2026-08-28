@@ -159,6 +159,9 @@ managed=$(
          前提: auto mode の classifier が第2層として rm -rf 相当・main への
          push・データ持ち出し等を実行直前にブロックする。よって ask は
          「classifier が既に守る危険物」ではなく「正当だが一拍置きたいもの」に絞る。
+         この前提は推測で置かない: classifier のルールは 2.1.246 以降
+         /permissions の Auto mode タブに一覧されるので、ask を増減させる前に
+         そこで実物を見る。
 
          ask から意図的に外したもの:
            - python / python3 / bash: 任意コード実行だが classifier がラッパーを
