@@ -107,12 +107,9 @@ managed=$(
       "Bash(tree:*)",
       "Bash(unzip:*)",
       "Bash(wc:*)",
-      "Bash(yarn build:*)",
-      "Bash(yarn eslint:*)",
-      "Bash(yarn lint:*)",
-      "Bash(yarn lint:fix:*)",
-      "Bash(yarn prettier:*)",
-      "Bash(yarn tsc:*)",
+      {{- /* Bash(cmd:*) は前方一致なので、Bash(yarn:*) があれば
+           yarn build / lint / tsc … の個別行は一つも効かない。
+           サブコマンド単位で絞りたくなったら広い行を外すのが先。 */}}
       "Bash(yarn:*)",
       "mcp__claude_ai_Notion__notion-fetch",
       "mcp__claude_ai_Notion__notion-query-data-sources",
