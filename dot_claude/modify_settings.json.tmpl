@@ -236,6 +236,10 @@ managed=$(
     "skill-creator@claude-plugins-official": true
   },
   "language": "日本語",
+{{- /* transcript の保持日数。既定の 30 日だと 2 ヶ月前のセッションを
+     /resume で辿れず、過去のやり取りを掘り返せない。ログは 1 ヶ月で
+     40MB 程度なので 10 年保持しても数 GB に収まる。0 は不可 (1 以上)。 */}}
+  "cleanupPeriodDays": 3650,
   "skipWorkflowUsageWarning": true
 }
 JSON
