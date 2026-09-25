@@ -44,6 +44,11 @@ managed=$(
 {{ if eq .pcType "work" -}}
   "env": {{ onepasswordRead "op://Private/Dotfiles Config/claude_work_env" .onepasswordAccount }},
   "otelHeadersHelper": "~/.claude/otel-headers-helper.sh",
+{{/* auto mode の環境説明は社内の組織名・サービス・機微データの所在を含むので、中身は 1Password に置く。
+     managed なので apply のたびに 1Password の値で上書きされる。変えるときは 1Password 側を編集する */ -}}
+  "autoMode": {
+    "environment": {{ onepasswordRead "op://Private/Dotfiles Config/claude_automode_env" .onepasswordAccount }}
+  },
 {{ end -}}
   "permissions": {
     "allow": [
