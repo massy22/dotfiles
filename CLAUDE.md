@@ -19,13 +19,21 @@ by `chezmoi apply`.
   Claude Code writes to that file too — `/model`, `/config`, and the auto
   mode `environment` block — so keys this repository does not manage must
   pass through untouched.
-- Secrets come from 1Password through `onepasswordRead`, and every call
-  passes `.onepasswordAccount` as its second argument. With more than one
-  account configured, `op signin` without `--account` fails, and chezmoi has
-  nowhere to keep that account for you: its own `onepassword:` config section
-  parses into a struct of `command`/`mode`/`prompt`, so an `account` key there
-  is dropped silently and cannot be read back. Hence `data.onepasswordAccount`
-  in `.chezmoi.yaml.tmpl`, handed over by hand at all 16 call sites. chezmoi
+- Secrets are fields of a single 1Password item, `Private/Dotfiles Config`,
+  read with `onepasswordItemFields "Dotfiles Config" "Private"
+  .onepasswordAccount` and indexed by field label (`$op.<label>.value`). Do
+  not go back to one `onepasswordRead` per field: each is its own `op read`
+  of about two seconds, run one after another, and twelve of them made up
+  almost all of a 25-second `chezmoi apply`. chezmoi caches the item call by
+  its arguments, so every template can repeat it verbatim and `op item get`
+  still runs once per apply. A new secret is a new field on that item, not a
+  new item. Every call passes `.onepasswordAccount` explicitly. With more
+  than one account configured, `op signin` without `--account` fails, and
+  chezmoi has nowhere to keep that account for you: its own `onepassword:`
+  config section parses into a struct of `command`/`mode`/`prompt`, so an
+  `account` key there is dropped silently and cannot be read back. Hence
+  `data.onepasswordAccount` in `.chezmoi.yaml.tmpl`, handed over by hand at
+  every call site. chezmoi
   renders with `missingkey=error`, so a config that defines `pcType` has to
   define this key too — which is why the synthetic configs in the Makefile
   set it to the empty string. Keep that prompt's text free of `=`:

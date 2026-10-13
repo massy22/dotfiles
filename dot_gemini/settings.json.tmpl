@@ -12,5 +12,5 @@
   "ui": {
     "theme": "Default"
   }{{ if eq .pcType "work" }},
-  "telemetry": {{ onepasswordRead "op://Private/Dotfiles Config/gemini_work_telemetry" .onepasswordAccount }}{{ end }}
+  "telemetry": {{ (index (onepasswordItemFields "Dotfiles Config" "Private" .onepasswordAccount) "gemini_work_telemetry").value }}{{ end }}
 }

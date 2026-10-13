@@ -191,8 +191,9 @@ else BAR_COLOR="$GREEN"; fi
 
 # --- BQ cost config (secrets injected via 1Password at chezmoi apply time) ---
 {{ if eq .pcType "work" -}}
-BQ_PROJECT="{{ onepasswordRead "op://Private/Dotfiles Config/vertex_work_project_id" .onepasswordAccount }}"
-BQ_TABLE="{{ onepasswordRead "op://Private/Dotfiles Config/claude_work_bq_table" .onepasswordAccount }}"
+{{- $op := onepasswordItemFields "Dotfiles Config" "Private" .onepasswordAccount -}}
+BQ_PROJECT="{{ $op.vertex_work_project_id.value }}"
+BQ_TABLE="{{ $op.claude_work_bq_table.value }}"
 {{- else -}}
 BQ_PROJECT=""
 BQ_TABLE=""

@@ -40,7 +40,7 @@ During `chezmoi init`, you will be prompted for:
 - `pcType`: Enter `personal` or `work`
 - `1Password account_uuid`: Run `op account list --format=json` and use the
   `account_uuid` field, not the `user_uuid` that the plain `op account list`
-  table shows. Every `onepasswordRead` passes it explicitly, so `op` never has
+  table shows. Every 1Password lookup passes it explicitly, so `op` never has
   to choose between accounts and `OP_ACCOUNT` does not have to be in the
   environment.
 
