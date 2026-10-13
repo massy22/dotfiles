@@ -24,6 +24,22 @@ if ! printf '%s' "$current" | jq -e . >/dev/null 2>&1; then
   exit 1
 fi
 
+# テレメトリは 2026-10 から管理者配信 (remote-settings.json) に移った。
+# かつてここで入れていた env と otelHeadersHelper は、外しても上の素通しで
+# 残り続ける。配信側は OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf だが、
+# 残った OTEL_EXPORTER_OTLP_METRICS_PROTOCOL=grpc のほうが優先されて
+# メトリクスだけ壊れるので、当時の値を明示的に消す。
+current=$(printf '%s' "$current" | jq '
+  del(
+    .env.CLAUDE_CODE_ENABLE_TELEMETRY,
+    .env.OTEL_EXPORTER_OTLP_ENDPOINT,
+    .env.OTEL_EXPORTER_OTLP_METRICS_PROTOCOL,
+    .env.OTEL_METRICS_EXPORTER
+  )
+  | if .otelHeadersHelper == "~/.claude/otel-headers-helper.sh" then del(.otelHeadersHelper) else . end
+  | if .env == {} then del(.env) else . end
+')
+
 defaults=$(
   cat <<'JSON'
 {
@@ -42,8 +58,6 @@ managed=$(
   cat <<'JSON'
 {
 {{ if eq .pcType "work" -}}
-  "env": {{ onepasswordRead "op://Private/Dotfiles Config/claude_work_env" .onepasswordAccount }},
-  "otelHeadersHelper": "~/.claude/otel-headers-helper.sh",
 {{/* auto mode の環境説明は社内の組織名・サービス・機微データの所在を含むので、中身は 1Password に置く。
      managed なので apply のたびに 1Password の値で上書きされる。変えるときは 1Password 側を編集する */ -}}
   "autoMode": {

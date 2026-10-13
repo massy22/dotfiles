@@ -25,7 +25,7 @@ by `chezmoi apply`.
   nowhere to keep that account for you: its own `onepassword:` config section
   parses into a struct of `command`/`mode`/`prompt`, so an `account` key there
   is dropped silently and cannot be read back. Hence `data.onepasswordAccount`
-  in `.chezmoi.yaml.tmpl`, handed over by hand at all 17 call sites. chezmoi
+  in `.chezmoi.yaml.tmpl`, handed over by hand at all 16 call sites. chezmoi
   renders with `missingkey=error`, so a config that defines `pcType` has to
   define this key too — which is why the synthetic configs in the Makefile
   set it to the empty string. Keep that prompt's text free of `=`:

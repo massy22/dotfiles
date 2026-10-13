@@ -111,9 +111,8 @@ Create a Secure Note in 1Password named `Dotfiles Config` with the following fie
 | `github_work_org` | Work GitHub organization (e.g., `myorg`) | Work only |
 | `github_work_account` | Work GitHub account name | Work only |
 | `github_work_enterprise_host` | GitHub Enterprise host | Work only |
-| `claude_work_env` | Claude Code env settings (JSON) | Work only |
+| `claude_automode_env` | Claude Code auto mode environment description (JSON) | Work only |
 | `claude_work_bq_table` | BigQuery table backing the statusline cost display | Work only |
-| `otel_work_bearer_token` | OTEL bearer token for Claude Code headers | Work only |
 | `gemini_work_telemetry` | Gemini telemetry settings (JSON) | Work only |
 | `tools_work_path` | PATH to work tools | Work only |
 | `migration_work_dir` | Migration directory | Work only |
@@ -138,7 +137,7 @@ chezmoi update
 - Tmux: `.tmux.conf`
 - Config: `.config/nvim`, `.config/peco`, `.config/ghostty`
 - SSH: `.ssh/config`
-- Claude: `.claude/settings.json`, `.claude/CLAUDE.md`, `.claude/statusline.sh`, `.claude/tmux-claude-state.sh`, `.claude/otel-headers-helper.sh`
+- Claude: `.claude/settings.json`, `.claude/CLAUDE.md`, `.claude/statusline.sh`, `.claude/tmux-claude-state.sh`
 - Scripts: `.local/bin/tmux-claude-next`
 - Gemini: `.gemini/settings.json`
 
