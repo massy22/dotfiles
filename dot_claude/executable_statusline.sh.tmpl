@@ -389,10 +389,71 @@ if [ -f "$HOME/.claude.json" ]; then
   ' "$HOME/.claude.json" 2>/dev/null)
 fi
 
+# --- Prompt cache ---
+# Absent until the first response, and caching_observed stays false on a
+# provider or gateway that reports no cache tokens: either way, no segment.
+# warm is as of when the payload was built, so expiry is checked against the
+# clock here as well; refreshInterval keeps re-running this while idle, which
+# is when a 1h cache quietly goes cold and the next prompt pays to rebuild it.
+# Fields go through "|" rather than a tab: tabs are IFS whitespace, so read
+# would collapse an empty field and shift every column after it.
+CACHE_PART=""
+CACHE_COMPACT=""
+IFS='|' read -r PC_OBSERVED PC_WARM PC_EXPIRES PC_HIT PC_MISSES PC_RECACHE PC_CAUSE < <(
+  echo "$input" | jq -r '
+    .prompt_cache // {}
+    | [ (.caching_observed // false),
+        (.warm // false),
+        (if .expires_at == null then "-" else (.expires_at | floor) end),
+        (if .hit_ratio == null then "-" else (.hit_ratio * 100 | floor) end),
+        (.misses // 0),
+        (.recache_tokens_if_cold // "-"),
+        (.last_miss_cause.causes[0]? // "-") ]
+    | map(tostring) | join("|")
+  ' 2>/dev/null
+)
+if [ "$PC_OBSERVED" = "true" ]; then
+  PC_LEFT=""
+  [ "$PC_EXPIRES" != "-" ] && PC_LEFT=$((PC_EXPIRES - $(date +%s)))
+  if [ "$PC_WARM" = "true" ] && { [ -z "$PC_LEFT" ] || [ "$PC_LEFT" -gt 0 ]; }; then
+    PC_STATE="🔥${PC_LEFT:+ 残り$(((PC_LEFT + 59) / 60))分}"
+    PC_STATE_COMPACT=""
+  else
+    PC_STATE="${CYAN}❄ 冷${RESET}"
+    [ "$PC_RECACHE" != "-" ] && PC_STATE="${PC_STATE} ${DIM}次で $(fmt_tokens "$PC_RECACHE") 再書込${RESET}"
+    PC_STATE_COMPACT="${CYAN}❄${RESET}"
+  fi
+
+  PC_HIT_FMT=""
+  if [ "$PC_HIT" != "-" ]; then
+    if [ "$PC_HIT" -ge 80 ]; then PC_HIT_COLOR="$GREEN"
+    elif [ "$PC_HIT" -ge 50 ]; then PC_HIT_COLOR="$YELLOW"
+    else PC_HIT_COLOR="$RED"; fi
+    PC_HIT_FMT="${PC_HIT_COLOR}${PC_HIT}%${RESET}"
+  fi
+
+  # Cause names are Claude Code's; an unknown one is shown raw, as with tiers.
+  PC_MISS_PART=""
+  if [ "$PC_MISSES" -gt 0 ]; then
+    case "$PC_CAUSE" in
+    -) PC_CAUSE_LABEL="" ;;
+    ttl_expired*) PC_CAUSE_LABEL="TTL 切れ" ;;
+    tools_changed) PC_CAUSE_LABEL="ツール変更" ;;
+    system_prompt_changed) PC_CAUSE_LABEL="システムプロンプト変更" ;;
+    likely_server_side) PC_CAUSE_LABEL="サーバー側" ;;
+    *) PC_CAUSE_LABEL="$PC_CAUSE" ;;
+    esac
+    PC_MISS_PART=" ${DIM}取りこぼし ${PC_MISSES}${PC_CAUSE_LABEL:+ (直近: ${PC_CAUSE_LABEL})}${RESET}"
+  fi
+
+  CACHE_PART=" │ ♻ キャッシュ${PC_HIT_FMT:+ ${PC_HIT_FMT}} ${PC_STATE}${PC_MISS_PART}"
+  CACHE_COMPACT="  ♻${PC_HIT_FMT:-${DIM}--${RESET}}${PC_STATE_COMPACT}"
+fi
+
 # --- Output ---
 if [ "$COMPACT" = true ]; then
   # Short version: ring meters + costs
-  PARTS="${BOLD}${MODEL}${RESET}  $(ring_fmt ctx "$USED_PCT")"
+  PARTS="${BOLD}${MODEL}${RESET}  $(ring_fmt ctx "$USED_PCT")${CACHE_COMPACT}"
   [ -n "$RATE_5H_PCT" ] && PARTS="${PARTS}  $(ring_fmt 5h "${RATE_5H_PCT%.*}")"
   [ -n "$RATE_7D_PCT" ] && PARTS="${PARTS}  $(ring_fmt 7d "${RATE_7D_PCT%.*}")"
   PARTS="${PARTS}${SCOPED_COMPACT}"
@@ -411,7 +472,7 @@ else
   RATE_PART=""
   [ -n "$RATE_5H_PCT" ] && RATE_PART="${RATE_PART} │ ⏱ $(bar_fmt "5時間枠" "${RATE_5H_PCT%.*}")"
   [ -n "$RATE_7D_PCT" ] && RATE_PART="${RATE_PART} │ 📅 $(bar_fmt "週次枠" "${RATE_7D_PCT%.*}")"
-  echo -e "🤖 ${CYAN}${MODEL}${RESET} (${PLAN}) │ 🧠 コンテキスト ${BAR_COLOR}${USED_PCT}%${RESET}${RATE_PART}${SCOPED_PART} │ ⬇ 入力 ${IN_FMT} ⬆ 出力 ${OUT_FMT} │ 💰 セッション ${YELLOW}${SESSION_COST_FMT}${RESET}"
+  echo -e "🤖 ${CYAN}${MODEL}${RESET} (${PLAN}) │ 🧠 コンテキスト ${BAR_COLOR}${USED_PCT}%${RESET}${CACHE_PART}${RATE_PART}${SCOPED_PART} │ ⬇ 入力 ${IN_FMT} ⬆ 出力 ${OUT_FMT} │ 💰 セッション ${YELLOW}${SESSION_COST_FMT}${RESET}"
 
   if [ "$BQ_ENABLED" = true ]; then
     if [ -f "$CACHE_FILE" ]; then
