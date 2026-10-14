@@ -255,9 +255,11 @@ managed=$(
       }
     ]
   },
+  {{- /* skill-creator はプラグインでは入れない。claude.ai アカウントの同期で
+       同じスキルが届き、そちらの方が新しい (アップロード前の SKILL.md 検証など)。
+       両方入れると同名で二重に読み込まれ、コンテキストも二重に食う。 */}}
   "enabledPlugins": {
-    "gopls-lsp@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": true
+    "gopls-lsp@claude-plugins-official": true
   },
   "language": "日本語",
 {{- /* transcript の保持日数。既定の 30 日だと 2 ヶ月前のセッションを
