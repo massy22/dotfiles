@@ -7,7 +7,7 @@ sourceDir: "{{ $sourceDir }}"
 {{/* The account has to live under data:. chezmoi parses its own
      onepassword: section into a struct of command/mode/prompt only, so an
      account key there is dropped without a word and cannot be read back from
-     a template. Templates hand it to onepasswordRead themselves. */ -}}
+     a template. Every onepasswordItemFields call passes it explicitly. */ -}}
 data:
   pcType: {{ $pcType | quote }}
   onepasswordAccount: {{ $opAccount | quote }}
