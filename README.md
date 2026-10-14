@@ -119,8 +119,15 @@ Create a Secure Note in 1Password named `Dotfiles Config` with the following fie
 | `spanner_work_migration_dir` | Spanner migration directory | Work only |
 | `vertex_work_project_id` | Vertex AI / GCP project ID | Work only |
 
-The list above is the complete set referenced by the templates; verify with
-`grep -rhoE 'op://[^"]+' --include='*.tmpl' .`
+The list above is the complete set referenced by the templates. A template
+reads a field either as `$op.<label>` or as
+`(index (onepasswordItemFields …) "<label>").value`; to list every label in
+use:
+
+```bash
+grep -rhoE '\$op\.[a-z0-9_]+|"[a-z0-9_]+"\)\.value' --include='*.tmpl' . |
+  sed -E 's/^\$op\.//; s/^"([a-z0-9_]+)".*/\1/' | sort -u
+```
 
 ## Update
 
