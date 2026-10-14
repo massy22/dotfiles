@@ -99,8 +99,8 @@ Claude Code feeds it on stdin carries the model, context window, cost and
 - `.rate_limits` proves a session is spending subscription quota, but it is
   absent until the first response arrives. It can confirm, never decide alone:
   keying off it is what once labelled subscription sessions as Vertex.
-- The model-scoped weekly window — Fable's, which Claude Code labels
-  `Fable 5 limit` internally — is not on stdin either. `rate_limits` is
+- The model-scoped weekly window (Fable's, at the time of writing) is not
+  on stdin either. `rate_limits` is
   assembled from `five_hour` and `seven_day` alone, and every other claim is
   dropped: `seven_day_opus`, `seven_day_sonnet` and the overage-included one
   that Fable consumes. It comes from `~/.claude.json`
@@ -119,9 +119,9 @@ rows after a few months, so history older than that is gone rather than
 mismatched.
 
 Within the section the rows split on `is_claude_ai`, a two-value column, so
-the labels can be precise but the split cannot get finer. A failed `bq` no
-longer drops the lines silently — it prints `⛅ BQ 取得不可 (…)` with the
-reason, and data that outlived a failed refresh carries its age.
+the labels can be precise but the split cannot get finer. A failed `bq`
+prints `⛅ BQ 取得不可 (…)` with the reason, and data that outlived a failed
+refresh carries its age.
 `gcloud 再認証が必要` means the token expired: run `gcloud auth login`.
 
 ## Verifying a change
@@ -149,7 +149,7 @@ After applying, reload with `prefix + r` for tmux and `src` (aliased to
 `exec zsh`) for the shell; restart Claude Code for settings or hook changes.
 A changed `TERM` needs more than a reload: the client's TERM is fixed at
 attach time and a pane's at creation time, so detach and re-attach from a
-shell that has re-read `alias.zsh`, then open a new window.
+fresh shell, then open a new window.
 
 ## Things that do not clean up after themselves
 
