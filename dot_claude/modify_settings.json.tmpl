@@ -45,6 +45,9 @@ defaults=$(
 {
   "model": "opusplan",
   "alwaysThinkingEnabled": true,
+{{- /* 広い Ghostty だと地の文が画面端まで伸びて読みにくい。表とコードブロックは
+     全幅のまま。日本語は 1 文字 2 桁なので 100 桁でおよそ 50 文字で折り返す */}}
+  "maxProseWidth": 100,
   "voice": {
     "enabled": true,
     "mode": "hold"
